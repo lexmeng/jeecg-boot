@@ -4,13 +4,13 @@ MAINTAINER jeecgos@163.com
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-RUN mkdir -p /jeecg-boot/config/jeecg/
+RUN mkdir -p /devopsweb/config/
 
-WORKDIR /jeecg-boot
+WORKDIR /devopsweb
 
 EXPOSE 8080
 
-ADD ./src/main/resources/jeecg ./config/jeecg
+ADD ./src/main/resources/jeecg ./config
 ADD ./target/jeecg-boot-module-system-3.3.0.jar ./
 
-CMD sleep 60;java -Djava.security.egd=file:/dev/./urandom -jar jeecg-boot-module-system-3.3.0.jar
+CMD java -Djava.security.egd=file:/dev/./urandom -jar jeecg-boot-module-system-3.3.0.jar
