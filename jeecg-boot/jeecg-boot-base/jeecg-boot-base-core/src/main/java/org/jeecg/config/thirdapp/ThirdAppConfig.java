@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 第三方App对接配置
+ *
  * @author: jeecg-boot
  */
 @Configuration
@@ -19,6 +20,8 @@ public class ThirdAppConfig {
      * 企业微信
      */
     public final static String WECHAT_ENTERPRISE = "WECHAT_ENTERPRISE";
+
+    public final static String FEISHU = "FEISHU";
 
     /**
      * 是否启用 第三方App对接
@@ -55,6 +58,10 @@ public class ThirdAppConfig {
         return this.type.getDINGTALK();
     }
 
+    public ThirdAppTypeItemVo getFeishu() {
+        return this.type.getFEISHU();
+    }
+
     /**
      * 获取企业微信是否启用
      */
@@ -72,6 +79,14 @@ public class ThirdAppConfig {
     public boolean isDingtalkEnabled() {
         try {
             return this.enabled && this.getDingtalk().isEnabled();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isFeishuEnable() {
+        try {
+            return this.enabled && this.getFeishu().isEnabled();
         } catch (Exception e) {
             return false;
         }

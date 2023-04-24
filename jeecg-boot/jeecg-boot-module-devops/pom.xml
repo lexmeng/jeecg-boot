@@ -28,6 +28,16 @@
             <artifactId>jeecg-system-local-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.larksuite.oapi</groupId>
+            <artifactId>oapi-sdk</artifactId>
+        </dependency>
+
+        <dependency>
+            <artifactId>oapi-sdk-servlet-ext</artifactId>
+            <groupId>com.larksuite.oapi</groupId>
+        </dependency>
+
     </dependencies>
 
 </project>

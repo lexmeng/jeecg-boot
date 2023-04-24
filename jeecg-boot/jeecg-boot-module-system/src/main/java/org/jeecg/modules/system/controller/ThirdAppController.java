@@ -2,16 +2,26 @@ package org.jeecg.modules.system.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jeecg.dingtalk.api.core.response.Response;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.dto.message.MessageDTO;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.constant.CacheConstant;
 import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.config.thirdapp.ThirdAppConfig;
 import org.jeecg.modules.system.service.impl.ThirdAppDingtalkServiceImpl;
+import org.jeecg.modules.system.service.impl.ThirdAppFeishuServiceImpl;
 import org.jeecg.modules.system.service.impl.ThirdAppWechatEnterpriseServiceImpl;
 import org.jeecg.modules.system.vo.thirdapp.SyncInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -19,9 +29,11 @@ import java.util.Map;
 
 /**
  * 第三方App对接
+ *
  * @author: jeecg-boot
  */
 @Slf4j
+@Api(tags = "第三方 APP 对接")
 @RestController("thirdAppController")
 @RequestMapping("/sys/thirdApp")
 public class ThirdAppController {
@@ -33,6 +45,8 @@ public class ThirdAppController {
     ThirdAppWechatEnterpriseServiceImpl wechatEnterpriseService;
     @Autowired
     ThirdAppDingtalkServiceImpl dingtalkService;
+    @Autowired
+    ThirdAppFeishuServiceImpl feishuService;
 
     /**
      * 获取启用的系统
@@ -157,6 +171,31 @@ public class ThirdAppController {
             }
         }
         return Result.error("钉钉同步功能已禁用");
+    }
+
+
+    /**
+     * 同步【飞书】[部门]到本地
+     *
+     * @param ids
+     * @return
+     */
+    @ApiOperation(value = "同步飞书组织架构到本地", notes = "同步飞书用户，部门信息到本地")
+    @GetMapping("/sync/feishu/toLocal")
+    @CacheEvict(value = {CacheConstant.SYS_DEPARTS_CACHE, CacheConstant.SYS_DEPART_IDS_CACHE}, allEntries = true)
+    public Result<SyncInfoVo> syncFeiShuDepartToLocal(@RequestParam(value = "ids", required = false) String ids) {
+        if (thirdAppConfig.isFeishuEnable()) {
+            final SyncInfoVo userSyncInfo = feishuService.syncThirdAppUserToLocal();
+            final SyncInfoVo departSyncInfo = feishuService.syncThirdAppDepartmentToLocal(ids);
+            final SyncInfoVo siv = feishuService.syncDepartmentUser();
+            final SyncInfoVo syncInfo = SyncInfoVo.merge(SyncInfoVo.merge(userSyncInfo, departSyncInfo), siv);
+            if (syncInfo.getFailInfo().size() == 0) {
+                return Result.OK("同步成功", syncInfo);
+            } else {
+                return Result.error("同步失败", syncInfo);
+            }
+        }
+        return Result.error("飞书同步功能已禁用");
     }
 
     /**

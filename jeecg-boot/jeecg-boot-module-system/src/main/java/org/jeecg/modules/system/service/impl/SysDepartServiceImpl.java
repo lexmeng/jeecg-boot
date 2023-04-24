@@ -14,8 +14,20 @@ import org.jeecg.common.constant.SymbolConstant;
 import org.jeecg.common.util.FillRuleUtil;
 import org.jeecg.common.util.YouBianCodeUtil;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.system.entity.*;
-import org.jeecg.modules.system.mapper.*;
+import org.jeecg.modules.system.entity.SysDepart;
+import org.jeecg.modules.system.entity.SysDepartPermission;
+import org.jeecg.modules.system.entity.SysDepartRole;
+import org.jeecg.modules.system.entity.SysDepartRolePermission;
+import org.jeecg.modules.system.entity.SysDepartRoleUser;
+import org.jeecg.modules.system.entity.SysUser;
+import org.jeecg.modules.system.entity.SysUserDepart;
+import org.jeecg.modules.system.mapper.SysDepartMapper;
+import org.jeecg.modules.system.mapper.SysDepartPermissionMapper;
+import org.jeecg.modules.system.mapper.SysDepartRoleMapper;
+import org.jeecg.modules.system.mapper.SysDepartRolePermissionMapper;
+import org.jeecg.modules.system.mapper.SysDepartRoleUserMapper;
+import org.jeecg.modules.system.mapper.SysUserDepartMapper;
+import org.jeecg.modules.system.mapper.SysUserMapper;
 import org.jeecg.modules.system.model.DepartIdModel;
 import org.jeecg.modules.system.model.SysDepartTreeModel;
 import org.jeecg.modules.system.service.ISysDepartService;
@@ -25,7 +37,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -138,8 +156,12 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 			if (sysDepart.getParentId() == null) {
 				sysDepart.setParentId("");
 			}
-			String s = UUID.randomUUID().toString().replace("-", "");
-			sysDepart.setId(s);
+
+			if (StringUtils.isBlank(sysDepart.getId())) {
+				String s = UUID.randomUUID().toString().replace("-", "");
+				sysDepart.setId(s);
+			}
+
 			// 先判断该对象有无父级ID,有则意味着不是最高级,否则意味着是最高级
 			// 获取父级ID
 			String parentId = sysDepart.getParentId();

@@ -269,6 +269,7 @@ cas:
 logging:
   level:
     org.jeecg.modules.system.mapper: info
+    org.jeecg.modules.devops: debug
 #swagger
 knife4j:
   #开启增强配置
@@ -306,7 +307,7 @@ justauth:
     timeout: 1h
 #第三方APP对接
 third-app:
-  enabled: false
+  enabled: true
   type:
     #企业微信
     WECHAT_ENTERPRISE:
@@ -327,3 +328,9 @@ third-app:
       # appSecret
       client-secret: ??
       agent-id: ??
+    FEISHU:
+      enabled: true
+      # appKey
+      client-id: ??
+      # appSecret
+      client-secret: ??

@@ -23,4 +23,6 @@ public class ThirdAppTypeConfig {
      */
     private ThirdAppTypeItemVo DINGTALK;
 
+    private ThirdAppTypeItemVo FEISHU;
+
 }
