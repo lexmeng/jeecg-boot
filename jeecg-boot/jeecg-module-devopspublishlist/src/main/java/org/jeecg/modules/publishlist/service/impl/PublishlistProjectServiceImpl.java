@@ -1,0 +1,27 @@
+package org.jeecg.modules.publishlist.service.impl;
+
+import org.jeecg.modules.publishlist.entity.PublishlistProject;
+import org.jeecg.modules.publishlist.mapper.PublishlistProjectMapper;
+import org.jeecg.modules.publishlist.service.IPublishlistProjectService;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * @Description: 发布单项目表
+ * @Author: jeecg-boot
+ * @Date:   2023-04-17
+ * @Version: V1.0
+ */
+@Service
+public class PublishlistProjectServiceImpl extends ServiceImpl<PublishlistProjectMapper, PublishlistProject> implements IPublishlistProjectService {
+	
+	@Autowired
+	private PublishlistProjectMapper publishlistProjectMapper;
+	
+	@Override
+	public List<PublishlistProject> selectByMainId(String mainId) {
+		return publishlistProjectMapper.selectByMainId(mainId);
+	}
+}
