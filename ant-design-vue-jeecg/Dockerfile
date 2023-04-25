@@ -5,7 +5,6 @@ ADD . ant-design-vue-jeecg
 WORKDIR ant-design-vue-jeecg
 
 RUN npm config set registry https://registry.npm.taobao.org && \
-    npm i -g yarn && \
     yarn install && \
     yarn run build
 
@@ -37,7 +36,6 @@ RUN echo "server {  \
     &&  mkdir -p /var/www/html
 
 COPY --from=builder ant-design-vue-jeecg/dist/ /var/www/html/
-RUN ls -alh /var/www/html/
 
 EXPOSE 80
 EXPOSE 443

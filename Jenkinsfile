@@ -25,17 +25,21 @@ spec:
     imagePullPolicy: "Always"
     resources:
       limits:
-        memory: "2Gi"
-        cpu: "3000m"
+        memory: "6Gi"
+        cpu: "8000m"
       requests:
-        memory: "2Gi"
-        cpu: "3000m"
+        memory: "6Gi"
+        cpu: "8000m"
     tty: true
     volumeMounts:
       - mountPath: "/root/.m2/repository"
         name: "jenkins-common"
         subPath: "maven3/repository"
         readOnly: false
+      - mountPath: "/ant-design-vue-jeecg/node_modules"
+        name: "jenkins-common"
+        readOnly: false
+        subPath: "devopsweb_frontend/node_modules"
       - mountPath: "/cache"
         name: "jenkins-common"
         readOnly: false
