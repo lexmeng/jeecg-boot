@@ -22,7 +22,7 @@ spec:
     command:
       - "cat"
     image: "harbor-ofs.kyligence.com/kaniko-project/executor:latest"
-    imagePullPolicy: "IfNotPresent"
+    imagePullPolicy: "Always"
     resources:
       limits:
         memory: "2Gi"
