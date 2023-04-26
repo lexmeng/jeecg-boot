@@ -21,6 +21,17 @@ public class Config {
 
     public static String IssueTypeBug = "bug";//同jira系统保持一致
 
+    public static String IteratePlaceholderPrefix = "$$Iterate";
+
+    public static String IteratePlaceholderIssue = "$$Iterate(issue)";
+
+    public static String IteratePlaceholderIssueBug = "$$Iterate(issue-bug)";
+
+    public static String IteratePlaceholderIssueStory = "$$Iterate(issue-story)";
+
+    public static String HistoryPlaceholderPrefix = "$$History";
+
+    public static String HistoryPlaceholderDocumentVersion = "$$History(document-version)";
     public static String ReleaseInfoTypeReleaseNote = "ReleaseNote";
     public static String ReleaseInfoTypeReleaseMail = "ReleaseMail";
     public static String ReleaseInfoTypeHandBookPR = "HandBookPR";
@@ -46,9 +57,9 @@ public class Config {
 
         releaseNotePlaceholderList.add("${productBehaviorChangeUrl}");//from 前端输入
 
-        releaseNotePlaceholderList.add("Iterate(issue)");//循环占位符
-        releaseNotePlaceholderList.add("Iterate(issue-story)");//循环占位符
-        releaseNotePlaceholderList.add("Iterate(issue-bug)");//循环占位符
+        releaseNotePlaceholderList.add(IteratePlaceholderIssue);//循环占位符
+        releaseNotePlaceholderList.add(IteratePlaceholderIssueStory);//循环占位符
+        releaseNotePlaceholderList.add(IteratePlaceholderIssueBug);//循环占位符
 
         releaseNoteIteratePlacerholderList.add("${issueName}");
         releaseNoteIteratePlacerholderList.add("${issueChName}");

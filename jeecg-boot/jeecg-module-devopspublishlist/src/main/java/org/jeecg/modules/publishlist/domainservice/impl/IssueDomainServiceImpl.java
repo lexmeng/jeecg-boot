@@ -35,7 +35,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
     public void publish(String publishlistId, List<Issue> issueList){
         //读取发布单对应的issue信息
         QueryWrapper<Issue> wrapper = new QueryWrapper<>();
-        wrapper.eq("publishlistId", publishlistId);
+        wrapper.eq("publishlist_id", publishlistId);
         List<Issue> oldIssueList = issueService.list(wrapper);
 
         //存储入history中

@@ -334,3 +334,7 @@ third-app:
       client-id: ??
       # appSecret
       client-secret: ??
+jira:
+  account-name: name_here
+  sign: sign_here
+

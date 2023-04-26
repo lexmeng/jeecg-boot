@@ -1,6 +1,7 @@
 package org.jeecg.modules.publishlist.bpservice;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.commons.collections4.map.LinkedMap;
 import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
@@ -20,10 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,19 +50,52 @@ public class ReleaseInfoBPService {
     private IIssueDomainService issueDomainService;
 
 
+    public String replaceHistoryIteratePlaceholder(String content, List<Issue> issueList, LinkedMap<String, Publishlist> historyVersionPublishlist, LinkedMap<String, List<Issue>> historyVersionIssueList){
+        Pattern historyIteratePattern = Pattern.compile("\\$\\$History\\(.+?\\)");
+        Matcher matcher = historyIteratePattern.matcher(content);
+
+        while(matcher.find()){
+            String group = matcher.group(0);
+            Integer index = matcher.end();
+
+            if(!group.equals(Config.HistoryPlaceholderDocumentVersion)){
+                throw new RuntimeException("非法的占位符："+group);
+            }
+
+            String versionContent = getNextBracketAfterIteratePlaceholder(content, index);
+            String resultContent= replacePlaceholderInHistory(historyVersionPublishlist, historyVersionIssueList, versionContent);
+
+            content = content.replace(Config.HistoryPlaceholderDocumentVersion+versionContent, resultContent);
+
+            matcher = historyIteratePattern.matcher(content);
+        }
+        return content;
+    }
+
+    public String replacePublishlistPlaceholder(String content,Publishlist publishlist){
+        Map<String, String> placeholderContentMap = new HashMap<>();
+        placeholderContentMap.put("${pmName}", publishlist.getPmName());
+        placeholderContentMap.put("${productName}", publishlist.getProductName());
+        placeholderContentMap.put("${versionName}", publishlist.getVersionName());
+        placeholderContentMap.put("${versionType}", publishlist.getVersionType());
+
+        content = releaseInfoDomainService.replacePlaceholder(content, placeholderContentMap);
+        return content;
+    }
+
     public String replaceIteratePlaceholder(String content,List<Issue> issueList){
-        Pattern iteratePattern = Pattern.compile("Iterate\\(.+?\\)");
+        Pattern iteratePattern = Pattern.compile("\\$\\$Iterate\\(.+?\\)");
         Matcher matcher = iteratePattern.matcher(content);
 
         while(matcher.find()){
             String group = matcher.group(0);
             Integer index = matcher.end();
-            if (group.equals("Iterate(issue)")){
+            if (group.equals(Config.IteratePlaceholderIssue)){
                 String issueContent = getNextBracketAfterIteratePlaceholder(content, index);
                 String resultContent= replacePlaceholderInIterate(issueList, issueContent);
-                content = content.replace("Iterate(issue)"+issueContent, resultContent);
+                content = content.replace(Config.IteratePlaceholderIssue+issueContent, resultContent);
 
-            }else if(group.equals("Iterate(issue-story)")){
+            }else if(group.equals(Config.IteratePlaceholderIssueStory)){
                 List<Issue> storyIssueList = new ArrayList<>();
                 for(Issue issue: issueList){
                     if(issue.getIssueType().equals(Config.IssueTypeStory)){
@@ -73,8 +104,8 @@ public class ReleaseInfoBPService {
                 }
                 String issueContent = getNextBracketAfterIteratePlaceholder(content, index);
                 String resultContent= replacePlaceholderInIterate(storyIssueList, issueContent);
-                content = content.replace("Iterate(issue-story)"+issueContent, resultContent);
-            }else if(group.equals("Iterate(issue-bug)")){
+                content = content.replace(Config.IteratePlaceholderIssueStory+issueContent, resultContent);
+            }else if(group.equals(Config.IteratePlaceholderIssueBug)){
                 List<Issue> bugIssueList = new ArrayList<>();
                 for(Issue issue: issueList){
                     if(issue.getIssueType().equals(Config.IssueTypeBug)){
@@ -84,13 +115,31 @@ public class ReleaseInfoBPService {
 
                 String issueContent = getNextBracketAfterIteratePlaceholder(content, index);
                 String resultContent= replacePlaceholderInIterate(bugIssueList, issueContent);
-                content = content.replace("Iterate(issue-bug)"+issueContent, resultContent);
+                content = content.replace(Config.IteratePlaceholderIssueBug+issueContent, resultContent);
             }else{
                 throw new RuntimeException("循环占位符错误！");
             }
             matcher = iteratePattern.matcher(content);
         }
         return content;
+    }
+
+    private String replacePlaceholderInHistory(LinkedMap<String, Publishlist> historyVersionPublishlist, LinkedMap<String, List<Issue>> historyVersionIssueList, String historyContent){
+        String resultContent="";
+        List<String> strList = new ArrayList<>();
+
+        for(String version : historyVersionPublishlist.keySet()){
+            String tempContent;
+            tempContent = replacePublishlistPlaceholder(historyContent, historyVersionPublishlist.get(version));
+            tempContent = replaceIteratePlaceholder(tempContent, historyVersionIssueList.get(version));
+            strList.add(tempContent);
+        }
+
+        for(String str : strList){
+            resultContent = resultContent.concat(str.substring(1, str.length()-1));//去掉字符串前后的大括弧
+            resultContent = resultContent.concat("\n\t");
+        }
+        return resultContent;
     }
 
     private String replacePlaceholderInIterate(List<Issue> issueList, String issueContent){
@@ -199,17 +248,34 @@ public class ReleaseInfoBPService {
         //四、读取模板内容
         String content = template.getContent();
 
-        //五、根据前端内容和发布单字段值，替代相应占位符
+        //五、先替换history占位符中的内容
+        QueryWrapper<Publishlist> wrapper = new QueryWrapper<>();
+        wrapper.eq("document_version", publishlist.getDocumentVersion()).orderByDesc("document_version");
+        List<Publishlist> publishlistsList= publishlistService.list(wrapper);
+
+        List<Issue> issueList = issueDomainService.getIssueListForRelease(publishlistId);
+
+        LinkedMap<String, Publishlist> historyVersionPublishlist = new LinkedMap<>();
+        LinkedMap<String, List<Issue>> historyVersionIssueList = new LinkedMap<>();
+        for(Publishlist historyPublishlist : publishlistsList){
+            historyVersionPublishlist.put(historyPublishlist.getVersionName(), historyPublishlist);
+
+            List<Issue> tempIssueList = issueDomainService.getIssueListForRelease(historyPublishlist.getId());
+            historyVersionIssueList.put(historyPublishlist.getVersionName(), tempIssueList);
+        }
+
+        content = replaceHistoryIteratePlaceholder(content, issueList, historyVersionPublishlist, historyVersionIssueList);
+
+        //六、替代历史占位符和循环占位符，包括issue相关和releaseInfo相关
+        content = replaceIteratePlaceholder(content,issueList);
+
+        //七、根据前端内容和发布单字段值，替代相应占位符
         placeholderContentMap.put("${pmName}", publishlist.getPmName());
         placeholderContentMap.put("${productName}", publishlist.getProductName());
         placeholderContentMap.put("${versionName}", publishlist.getVersionName());
         placeholderContentMap.put("${versionType}", publishlist.getVersionType());
 
         content = releaseInfoDomainService.replacePlaceholder(content, placeholderContentMap);
-
-        //六、替代循环占位符，包括issue相关和releaseInfo相关
-        List<Issue> issueList = issueDomainService.getIssueListForRelease(publishlistId);
-        content = replaceIteratePlaceholder(content,issueList);
 
         return content;
     }

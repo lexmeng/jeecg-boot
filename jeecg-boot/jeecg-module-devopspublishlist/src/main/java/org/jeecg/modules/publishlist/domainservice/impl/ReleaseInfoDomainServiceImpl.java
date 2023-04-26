@@ -115,7 +115,7 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
     private List<String> getAllIteratePlaceholder(String content){
         List<String> iteratePlaceholderList = new ArrayList<>();
 
-        Pattern iteratePattern = Pattern.compile("Iterate\\(.+?\\)");
+        Pattern iteratePattern = Pattern.compile("\\$\\$Iterate\\(.+?\\)");
         Matcher matcher = iteratePattern.matcher(content);
         while(matcher.find()){
             String group = matcher.group(0);
