@@ -9,14 +9,12 @@
 name: Java CI with Maven
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+    paths: ["jeecg-boot/**"]
 
 jobs:
-  build:
-
+  maven:
     runs-on: ubuntu-latest
 
     steps:
