@@ -17,6 +17,10 @@ jobs:
   maven:
     runs-on: ubuntu-latest
 
+    concurrency:
+      group: maven-${{ github.ref }}
+      cancel-in-progress: true
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 8

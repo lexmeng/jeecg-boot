@@ -10,13 +10,20 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    concurrency:
+      group: nodejs-${{ github.ref }}
+      cancel-in-progress: true
+
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: '14'
           cache: 'yarn'
-      - run: cd ant-design-vue-jeecg
-      - run: yarn install
-      - run: yarn run build
+          cache-dependency-path: "ant-design-vue-jeecg/yarn.lock"
+      - name: Build
+        working-directory: ant-design-vue-jeecg
+        run: |
+          yarn install
+          yarn run build
