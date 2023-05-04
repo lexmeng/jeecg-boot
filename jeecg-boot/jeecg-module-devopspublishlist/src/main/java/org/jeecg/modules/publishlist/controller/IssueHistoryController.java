@@ -29,7 +29,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
  */
 @Api(tags="issue历史表")
 @RestController
-@RequestMapping("/io.kyligence/issueHistory")
+@RequestMapping("/release/issueHistory")
 @Slf4j
 public class IssueHistoryController extends JeecgController<IssueHistory, IIssueHistoryService> {
 	@Autowired

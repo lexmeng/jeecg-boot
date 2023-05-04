@@ -58,6 +58,9 @@ public class PublishlistBPService {
         //根据输入信息，生成发布单
         saveIssueListAndPublishlist(totalIssueList, publishlist, publishlistProjectList);
 
+        //保存issue信息
+        issueDomainService.saveIssueListFirstTime(publishlistId, totalIssueList);
+
     }
 
     public void publish(String publishlistId){

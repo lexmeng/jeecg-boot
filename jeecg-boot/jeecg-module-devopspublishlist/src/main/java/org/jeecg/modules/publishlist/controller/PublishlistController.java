@@ -47,7 +47,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
  */
 @Api(tags="发布单")
 @RestController
-@RequestMapping("/io.kyligence/publishlist")
+@RequestMapping("/release")
 @Slf4j
 public class PublishlistController {
 	@Autowired

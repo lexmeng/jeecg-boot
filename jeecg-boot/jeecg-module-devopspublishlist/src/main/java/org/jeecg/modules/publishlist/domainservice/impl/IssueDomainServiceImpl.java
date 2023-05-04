@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class IssueDomainServiceImpl implements IIssueDomainService {
@@ -38,7 +36,8 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         wrapper.eq("publishlist_id", publishlistId);
         List<Issue> oldIssueList = issueService.list(wrapper);
 
-        //存储入history中
+        //发布的时候不存入history中
+        /*
         List<IssueHistory> issueHistoryList = new ArrayList<>();
         for(Issue issue : oldIssueList){
             IssueHistory issueHistory = convertIssueToHistoryIssue(issue);
@@ -46,11 +45,29 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         }
 
         issueHistoryService.saveBatch(issueHistoryList);
+        */
 
-        //删除原来的issue信息
-        issueService.removeBatchByIds(issueList);
+        updateIssueList(publishlistId, issueList);
 
-        //更新新的issue列表
+    }
+
+    @Override
+    //更新发布单issue列表，非第一次拉取
+    @Transactional
+    public void updateIssueList(String publishlistId, List<Issue> issueList){
+        //1、删除原来的issue信息，非首次，issue列表里必然是有的。
+        Map<String,Object> map = new HashMap<>();
+        map.put("publishilist_id",publishlistId);
+
+        List<Issue> listIssueList = issueService.listByMap(map);
+        if(listIssueList.isEmpty()){
+            throw new RuntimeException("发布单对应issue列表为空！");
+        }
+
+        issueService.removeByMap(map);
+        //issueService.removeBatchByIds(issueList);
+
+        //2、更新新的issue列表
         issueService.saveBatch(issueList);
 
     }
@@ -62,6 +79,9 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         List<Issue> issueList = new ArrayList<>();
 
         SearchResult searchResult = jiraClientUtils.searchIssueByProjectAndFixVersions(projectName, jiraVersionName);
+        if(searchResult.getTotal()==0){
+            throw new RuntimeException("拉取的jira issue数为空，请先新建jira issue！");
+        }
         for(com.atlassian.jira.rest.client.api.domain.Issue issue: searchResult.getIssues()){
             Issue localIssue = convertIssueToLocalIssue(issue, publishlistId);
             issueList.add(localIssue);
@@ -152,5 +172,39 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
     }
 
 
+
+
+    //首次保存issue列表
+    @Transactional
+    public void saveIssueListFirstTime(String publishlistId, List<Issue> issueList){
+        //1、如果发现已存在issue信息，则报错
+        QueryWrapper<Issue> wrapper = new QueryWrapper<>();
+        wrapper.eq("publishlist_id", publishlistId);
+        List<Issue> oldIssueList = issueService.list(wrapper);
+
+        if(!oldIssueList.isEmpty()){
+            throw new RuntimeException("首次拉取issue时，系统issue列表非空！");
+        }
+
+        QueryWrapper<IssueHistory> wrapperForHistoru = new QueryWrapper<>();
+        List<IssueHistory> oldIssueHistoryList = issueHistoryService.list(wrapperForHistoru);
+
+        if(!oldIssueHistoryList.isEmpty()){
+            throw new RuntimeException("首次拉取issue时，系统issue历史列表非空！");
+        }
+
+        //2、存入history中
+        List<IssueHistory> issueHistoryList = new ArrayList<>();
+        for(Issue issue : oldIssueList){
+            IssueHistory issueHistory = convertIssueToHistoryIssue(issue);
+            issueHistoryList.add(issueHistory);
+        }
+
+        issueHistoryService.saveBatch(issueHistoryList);
+
+        //、存入issue中
+        issueService.saveBatch(issueList);
+
+    }
 
 }

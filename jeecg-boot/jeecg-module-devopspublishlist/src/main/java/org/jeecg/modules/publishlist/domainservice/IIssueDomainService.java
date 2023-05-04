@@ -15,4 +15,9 @@ public interface IIssueDomainService {
     public List<Issue> getStoryIssueListForRelease(String publishlistId);
 
     public List<Issue> getBugIssueListForRelease(String publishlistId);
+
+    public void updateIssueList(String publishlistId, List<Issue> issueList);
+
+    public void saveIssueListFirstTime(String publishlistId, List<Issue> issueList);
+
 }

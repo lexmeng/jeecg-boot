@@ -29,7 +29,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
  */
 @Api(tags="模板")
 @RestController
-@RequestMapping("/io.kyligence/template")
+@RequestMapping("/release/template")
 @Slf4j
 public class TemplateController extends JeecgController<Template, ITemplateService> {
 	@Autowired

@@ -29,7 +29,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
  */
 @Api(tags="release信息表")
 @RestController
-@RequestMapping("/io.kyligence/releaseInfo")
+@RequestMapping("/release/releaseInfo")
 @Slf4j
 public class ReleaseInfoController extends JeecgController<ReleaseInfo, IReleaseInfoService> {
 	@Autowired
