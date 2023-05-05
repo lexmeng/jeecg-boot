@@ -2,6 +2,8 @@ package org.jeecg.modules.publishlist.domainservice.impl;
 
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.entity.Issue;
@@ -9,6 +11,7 @@ import org.jeecg.modules.publishlist.entity.IssueHistory;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.service.IIssueHistoryService;
 import org.jeecg.modules.publishlist.service.IIssueService;
+import org.jeecg.modules.publishlist.tools.IssueSearchResult;
 import org.jeecg.modules.publishlist.tools.JiraClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,16 +81,25 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
     public List<Issue> getIssueListByProject(String publishlistId, String projectName, String jiraVersionName){
         List<Issue> issueList = new ArrayList<>();
 
-        SearchResult searchResult = jiraClientUtils.searchIssueByProjectAndFixVersions(projectName, jiraVersionName);
-        if(searchResult.getTotal()==0){
+        //SearchResult searchResult = jiraClientUtils.searchIssueByProjectAndFixVersions(projectName, jiraVersionName);
+        IssueSearchResult restSearchResult = jiraClientUtils.restSearchIssueByProjectAndFixVersions(projectName, jiraVersionName);
+        if(restSearchResult.getTotal()==0){
             throw new RuntimeException("拉取的jira issue数为空，请先新建jira issue！");
         }
-        for(com.atlassian.jira.rest.client.api.domain.Issue issue: searchResult.getIssues()){
+
+        /*for(com.atlassian.jira.rest.client.api.domain.Issue issue: searchResult.getIssues()){
             Issue localIssue = convertIssueToLocalIssue(issue, publishlistId);
             issueList.add(localIssue);
+        }*/
+
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        for(Issue issue : restSearchResult.getIssues()){
+            issue.setPublishlistId(publishlistId);
+            issue.setCreateBy(sysUser.getId());
+            issue.setCreateTime(new Date());
         }
 
-        return issueList;
+        return restSearchResult.getIssues();
     }
 
 

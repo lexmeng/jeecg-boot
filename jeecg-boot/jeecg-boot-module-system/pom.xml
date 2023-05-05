@@ -12,6 +12,14 @@
 
 	<repositories>
 		<repository>
+			<id>atlassian-external</id>
+			<name>atlassian-external</name>
+			<url>https://packages.atlassian.com/maven-external</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
 			<id>aliyun</id>
 			<name>aliyun Repository</name>
 			<url>https://maven.aliyun.com/repository/public</url>
@@ -27,9 +35,15 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+
 	</repositories>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.larksuite.oapi</groupId>
+			<artifactId>oapi-sdk</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.jeecgframework.boot</groupId>
 			<artifactId>jeecg-system-local-api</artifactId>

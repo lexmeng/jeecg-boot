@@ -13,7 +13,48 @@
     <groupId>org.jeecg.modules.devopspublishlist</groupId>
     <version>3.3.0</version>
 
+
     <repositories>
+
+        <repository>
+            <id>atlassian-external</id>
+            <name>atlassian-external</name>
+            <url>https://packages.atlassian.com/maven-external</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>atlassian-3rdparty</id>
+            <name>atlassian-3rdparty</name>
+            <url>https://packages.atlassian.com/3rdparty</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+
+
+        <repository>
+            <id>maven repository</id>
+            <name>Maven Repository</name>
+            <url>https://repo1.maven.org/maven2/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+
+        <repository>
+            <id>jahia</id>
+            <name>jahia repository</name>
+            <url>https://maven.jahia.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
         <repository>
             <id>aliyun</id>
             <name>aliyun Repository</name>
@@ -22,6 +63,9 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
+
+
         <repository>
             <id>jeecg</id>
             <name>jeecg Repository</name>
@@ -53,11 +97,17 @@
             <artifactId>jira-rest-java-client-core</artifactId>
             <version>5.2.4</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.atlassian.fugue/fugue -->
         <dependency>
             <groupId>io.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
             <version>4.7.2</version>
         </dependency>
+<!--        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-api</artifactId>
+            <version>7.6.1</version>
+        </dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -69,6 +119,25 @@
             <artifactId>jenkins-client</artifactId>
             <version>0.3.8</version>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>3.14.2</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>1.5.4</version>
+        </dependency>
+
 
     </dependencies>
 </project>

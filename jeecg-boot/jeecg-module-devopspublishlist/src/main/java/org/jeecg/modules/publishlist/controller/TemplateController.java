@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.modules.publishlist.tools.IdTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -68,6 +69,7 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	//@RequiresPermissions("org.jeecg.modules.demo:template:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Template template) {
+		template.setId(IdTool.generalId());
 		templateService.save(template);
 		return Result.OK("添加成功！");
 	}

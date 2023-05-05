@@ -34,8 +34,8 @@ public class Config {
     public static String HistoryPlaceholderDocumentVersion = "$$History(document-version)";
     public static String ReleaseInfoTypeReleaseNote = "ReleaseNote";
     public static String ReleaseInfoTypeReleaseMail = "ReleaseMail";
-    public static String ReleaseInfoTypeHandBookPR = "HandBookPR";
-    public static String ReleaseInfoTypeProductPackagePR = "ProductPackagePR";
+    public static String ReleaseInfoTypeHandBookPR = "HandBookPRContent";
+    public static String ReleaseInfoTypeProductPackagePR = "ProductPackagePRContent";
     public static String ReleaseInfoTypeCompanyWebsite = "CompanyWebsite";
 
     public static Map<String, List<String>> KE_PLACEHODLER_MAP= new HashMap<>();
