@@ -1,4 +1,13 @@
 /target/
 /.idea/
 *.iml
+
+## backend
+**/target
+**/logs
+
+## front
+**/*.lock
+
+.DS_Store
 rebel.xml
