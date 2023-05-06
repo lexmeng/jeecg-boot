@@ -9,10 +9,12 @@ import org.jeecg.modules.publishlist.service.IPublishlistProjectService;
 import org.jeecg.modules.publishlist.service.IPublishlistService;
 import org.jeecg.modules.publishlist.tools.JiraClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class IssueBPService {
 
     @Autowired
