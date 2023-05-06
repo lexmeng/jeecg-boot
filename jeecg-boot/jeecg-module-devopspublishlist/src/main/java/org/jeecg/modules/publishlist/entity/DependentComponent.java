@@ -14,43 +14,50 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.UnsupportedEncodingException;
 
 /**
- * @Description: 发布单项目表
+ * @Description: 依赖组件
  * @Author: jeecg-boot
- * @Date:   2023-04-17
+ * @Date:   2023-05-06
  * @Version: V1.0
  */
-@ApiModel(value="publishlist_project对象", description="发布单项目表")
+@ApiModel(value="dependent_component对象", description="依赖组件")
 @Data
-@TableName("publishlist_project")
-public class PublishlistProject implements Serializable {
+@TableName("dependent_component")
+public class DependentComponent implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
-    private String id;
-	/**publishlist的id*/
-    @ApiModelProperty(value = "publishlist的id")
-    private String publishlistId;
-	/**项目id*/
-	@Excel(name = "jira项目id", width = 15)
-    @ApiModelProperty(value = "项目id")
-    private String projectId;
-
+    private java.lang.String id;
+	/**组件中文名*/
+	@Excel(name = "组件中文名", width = 15)
+    @ApiModelProperty(value = "组件中文名")
+    private java.lang.String componentCnName;
+	/**组件英文名*/
+	@Excel(name = "组件英文名", width = 15)
+    @ApiModelProperty(value = "组件英文名")
+    private java.lang.String componentEnName;
+	/**组件版本*/
+	@Excel(name = "组件版本", width = 15)
+    @ApiModelProperty(value = "组件版本")
+    private java.lang.String version;
+	/**发布单id*/
+    @ApiModelProperty(value = "发布单id")
+    private java.lang.String publishlistId;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
-    private String createBy;
+    private java.lang.String createBy;
 	/**创建日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "创建日期")
-    private Date createTime;
+    private java.util.Date createTime;
 	/**更新人*/
     @ApiModelProperty(value = "更新人")
-    private String updateBy;
+    private java.lang.String updateBy;
 	/**更新日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
-    private Date updateTime;
+    private java.util.Date updateTime;
 }

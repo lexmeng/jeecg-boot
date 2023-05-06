@@ -3,6 +3,8 @@ package org.jeecg.modules.publishlist.vo;
 import java.util.List;
 
 import lombok.Data;
+import org.jeecg.modules.publishlist.entity.DependentComponent;
+import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.jeecgframework.poi.excel.annotation.ExcelCollection;
@@ -84,6 +86,18 @@ public class PublishlistPage {
 	@Excel(name = "产品经理名", width = 15)
 	@ApiModelProperty(value = "产品经理名")
     private String pmName;
+	/**commid id*/
+	@Excel(name = "commid id", width = 15)
+	@ApiModelProperty(value = "commid id")
+    private String commitId;
+	/**用户手册中文链接*/
+	@Excel(name = "用户手册中文链接", width = 15)
+	@ApiModelProperty(value = "用户手册中文链接")
+    private String urerManualEnLink;
+	/**用户手册英文链接*/
+	@Excel(name = "用户手册英文链接", width = 15)
+	@ApiModelProperty(value = "用户手册英文链接")
+    private String userManualChLink;
 	/**创建人*/
 	@ApiModelProperty(value = "创建人")
     private String createBy;
@@ -104,5 +118,11 @@ public class PublishlistPage {
 	@ExcelCollection(name="发布单项目表")
 	@ApiModelProperty(value = "发布单项目表")
 	private List<PublishlistProject> publishlistProjectList;
+	@ExcelCollection(name="依赖组件")
+	@ApiModelProperty(value = "依赖组件")
+	private List<DependentComponent> dependentComponentList;
+	@ExcelCollection(name="产品包的下载地址")
+	@ApiModelProperty(value = "产品包的下载地址")
+	private List<PackageUrl> packageUrlList;
 
 }

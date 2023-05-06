@@ -3,8 +3,10 @@ package org.jeecg.modules.publishlist.bpservice;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.impl.PublishlistDomainServiceImpl;
 import org.jeecg.modules.publishlist.entity.Issue;
+import org.jeecg.modules.publishlist.entity.Project;
 import org.jeecg.modules.publishlist.entity.Publishlist;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
+import org.jeecg.modules.publishlist.service.IProjectService;
 import org.jeecg.modules.publishlist.service.IPublishlistProjectService;
 import org.jeecg.modules.publishlist.service.IPublishlistService;
 import org.jeecg.modules.publishlist.tools.JiraClientUtils;
@@ -32,6 +34,9 @@ public class IssueBPService {
     @Autowired
     private ReleaseInfoBPService releaseInfoBPService;
 
+    @Autowired
+    private IProjectService projectService;
+
 
     //更新issue列表的业务流程
     public void updateIssueList(String publishlistId){
@@ -43,7 +48,8 @@ public class IssueBPService {
         //更新issue信息
         List<Issue> totalIssueList = new ArrayList<>();
         for(PublishlistProject publishlistProject : projectList){
-            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, publishlistProject.getProjectName(), publishlistProject.getJiraVersionName());
+            Project project = projectService.getById(publishlistProject.getProjectId());
+            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, project.getName(), publishlist.getJiraVersionName());
             totalIssueList.addAll(issueList);
         }
 

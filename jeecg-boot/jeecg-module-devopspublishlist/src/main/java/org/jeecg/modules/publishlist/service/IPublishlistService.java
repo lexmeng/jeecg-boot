@@ -1,5 +1,7 @@
 package org.jeecg.modules.publishlist.service;
 
+import org.jeecg.modules.publishlist.entity.DependentComponent;
+import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.entity.Publishlist;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -20,16 +22,20 @@ public interface IPublishlistService extends IService<Publishlist> {
 	 *
 	 * @param publishlist
 	 * @param publishlistProjectList
+	 * @param dependentComponentList
+	 * @param packageUrlList
 	 */
-	public void saveMain(Publishlist publishlist,List<PublishlistProject> publishlistProjectList) ;
+	public void saveMain(Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList) ;
 	
 	/**
 	 * 修改一对多
 	 *
    * @param publishlist
    * @param publishlistProjectList
+   * @param dependentComponentList
+   * @param packageUrlList
 	 */
-	public void updateMain(Publishlist publishlist,List<PublishlistProject> publishlistProjectList);
+	public void updateMain(Publishlist publishlist,List<PublishlistProject> publishlistProjectList,List<DependentComponent> dependentComponentList,List<PackageUrl> packageUrlList);
 	
 	/**
 	 * 删除一对多

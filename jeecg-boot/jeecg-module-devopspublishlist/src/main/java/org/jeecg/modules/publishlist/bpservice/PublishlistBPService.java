@@ -6,14 +6,8 @@ import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
 import org.jeecg.modules.publishlist.domainservice.IReleaseInfoDomainService;
 import org.jeecg.modules.publishlist.domainservice.impl.IssueDomainServiceImpl;
-import org.jeecg.modules.publishlist.entity.Issue;
-import org.jeecg.modules.publishlist.entity.Publishlist;
-import org.jeecg.modules.publishlist.entity.PublishlistProject;
-import org.jeecg.modules.publishlist.entity.ReleaseInfo;
-import org.jeecg.modules.publishlist.service.IIssueService;
-import org.jeecg.modules.publishlist.service.IPublishlistProjectService;
-import org.jeecg.modules.publishlist.service.IPublishlistService;
-import org.jeecg.modules.publishlist.service.IReleaseInfoService;
+import org.jeecg.modules.publishlist.entity.*;
+import org.jeecg.modules.publishlist.service.*;
 import org.jeecg.modules.publishlist.tools.IdTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,14 +44,18 @@ public class PublishlistBPService {
     @Autowired
     private ReleaseInfoBPService releaseInfoBPService;
 
+    @Autowired
+    private IProjectService projectService;
+
     //新建发布单
-    public void createPublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList){
+    public void createPublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
         //生成publishlist存储的Id
         String publishlistId = IdTool.generalId();
 
         List<Issue> totalIssueList = new ArrayList<>();
         for(PublishlistProject publishlistProject : publishlistProjectList){
-            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, publishlistProject.getProjectName(), publishlistProject.getJiraVersionName());
+            Project project = projectService.getById(publishlistProject.getProjectId());
+            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, project.getName(), publishlist.getJiraVersionName());
             totalIssueList.addAll(issueList);
         }
 
@@ -65,7 +63,7 @@ public class PublishlistBPService {
         issueDomainService.saveIssueListFirstTime(publishlistId, totalIssueList);
 
         //根据输入信息，生成发布单
-        savePublishlist(totalIssueList, publishlist, publishlistProjectList);
+        savePublishlist(totalIssueList, publishlist, publishlistProjectList, dependentComponentList, packageUrlList);
 
         //更新releaseInfo信息
         releaseInfoBPService.updateReleaseInfo(publishlistId);
@@ -82,7 +80,8 @@ public class PublishlistBPService {
         //更新issue信息，现有issue存储issue history中
         List<Issue> totalIssueList = new ArrayList<>();
         for(PublishlistProject publishlistProject : projectList){
-            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, publishlistProject.getProjectName(), publishlistProject.getJiraVersionName());
+            Project project = projectService.getById(publishlistProject.getProjectId());
+            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, project.getName(), publishlist.getJiraVersionName());
             totalIssueList.addAll(issueList);
         }
         issueDomainService.publish(publishlistId, totalIssueList);
@@ -125,9 +124,9 @@ public class PublishlistBPService {
 
 
     @Transactional
-    private void savePublishlist(List<Issue> issueList, Publishlist publishlist, List<PublishlistProject> publishlistProjectList){
+    private void savePublishlist(List<Issue> issueList, Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
         //issueService.saveBatch(issueList);
 
-        publishlistService.saveMain(publishlist, publishlistProjectList);
+        publishlistService.saveMain(publishlist, publishlistProjectList, dependentComponentList, packageUrlList);
     }
 }

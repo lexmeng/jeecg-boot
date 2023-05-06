@@ -14,43 +14,46 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.UnsupportedEncodingException;
 
 /**
- * @Description: 发布单项目表
+ * @Description: 产品包的下载地址
  * @Author: jeecg-boot
- * @Date:   2023-04-17
+ * @Date:   2023-05-06
  * @Version: V1.0
  */
-@ApiModel(value="publishlist_project对象", description="发布单项目表")
+@ApiModel(value="package_url对象", description="产品包的下载地址")
 @Data
-@TableName("publishlist_project")
-public class PublishlistProject implements Serializable {
+@TableName("package_url")
+public class PackageUrl implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
-    private String id;
-	/**publishlist的id*/
-    @ApiModelProperty(value = "publishlist的id")
-    private String publishlistId;
-	/**项目id*/
-	@Excel(name = "jira项目id", width = 15)
-    @ApiModelProperty(value = "项目id")
-    private String projectId;
-
+    private java.lang.String id;
+	/**云存储类型*/
+	@Excel(name = "云存储类型", width = 15)
+    @ApiModelProperty(value = "云存储类型")
+    private java.lang.String storageType;
+	/**包url*/
+	@Excel(name = "包url", width = 15)
+    @ApiModelProperty(value = "包url")
+    private java.lang.String packageUrl;
+	/**发布单id*/
+    @ApiModelProperty(value = "发布单id")
+    private java.lang.String publishlistId;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
-    private String createBy;
+    private java.lang.String createBy;
 	/**创建日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "创建日期")
-    private Date createTime;
+    private java.util.Date createTime;
 	/**更新人*/
     @ApiModelProperty(value = "更新人")
-    private String updateBy;
+    private java.lang.String updateBy;
 	/**更新日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
-    private Date updateTime;
+    private java.util.Date updateTime;
 }

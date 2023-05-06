@@ -47,6 +47,9 @@ public class ReleaseInfoBPService {
     @Autowired
     private IPublishlistProjectService publishlistProjectService;
 
+    @Autowired
+    private IProjectService projectService;
+
 
     public String replaceHistoryIteratePlaceholder(String content, List<Issue> issueList, LinkedMap<String, Publishlist> historyVersionPublishlist, LinkedMap<String, List<Issue>> historyVersionIssueList){
         Pattern historyIteratePattern = Pattern.compile("\\$\\$History\\(.+?\\)");
@@ -334,7 +337,8 @@ public class ReleaseInfoBPService {
         List<PublishlistProject> projectList = publishlistProjectService.selectByMainId(publishlist.getId());
         List<Issue> totalIssueList = new ArrayList<>();
         for(PublishlistProject publishlistProject : projectList){
-            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, publishlistProject.getProjectName(), publishlistProject.getJiraVersionName());
+            Project project = projectService.getById(publishlistProject.getProjectId());
+            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, project.getName(), publishlist.getJiraVersionName());
             totalIssueList.addAll(issueList);
         }
 

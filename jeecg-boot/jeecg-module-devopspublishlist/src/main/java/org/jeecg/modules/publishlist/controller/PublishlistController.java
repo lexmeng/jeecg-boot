@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jeecg.modules.publishlist.bpservice.PublishlistBPService;
 import org.jeecg.modules.publishlist.bpservice.ReleaseInfoBPService;
+import org.jeecg.modules.publishlist.entity.DependentComponent;
+import org.jeecg.modules.publishlist.entity.PackageUrl;
+import org.jeecg.modules.publishlist.service.IDependentComponentService;
+import org.jeecg.modules.publishlist.service.IPackageUrlService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -33,6 +37,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
@@ -58,6 +63,12 @@ public class PublishlistController {
 
 	@Autowired
 	private ReleaseInfoBPService releaseInfoBPService;
+	
+	@Autowired
+	private IDependentComponentService dependentComponentService;
+	
+	@Autowired
+	private IPackageUrlService packageUrlService;
 	
 	/**
 	 * 分页列表查询
@@ -93,7 +104,7 @@ public class PublishlistController {
 	public Result<String> add(@RequestBody PublishlistPage publishlistPage) {
 		Publishlist publishlist = new Publishlist();
 		BeanUtils.copyProperties(publishlistPage, publishlist);
-		publishlistBPService.createPublishlist(publishlist, publishlistPage.getPublishlistProjectList());
+		publishlistService.saveMain(publishlist, publishlistPage.getPublishlistProjectList(),publishlistPage.getDependentComponentList(),publishlistPage.getPackageUrlList());
 		return Result.OK("添加成功！");
 	}
 	
@@ -113,7 +124,7 @@ public class PublishlistController {
 		if(publishlistEntity==null) {
 			return Result.error("未找到对应数据");
 		}
-		publishlistService.updateMain(publishlist, publishlistPage.getPublishlistProjectList());
+		publishlistService.updateMain(publishlist, publishlistPage.getPublishlistProjectList(),publishlistPage.getDependentComponentList(),publishlistPage.getPackageUrlList());
 		return Result.OK("编辑成功!");
 	}
 	
@@ -184,6 +195,32 @@ public class PublishlistController {
 		List<PublishlistProject> publishlistProjectList = publishlistProjectService.selectByMainId(id);
 		return Result.OK(publishlistProjectList);
 	}
+	/**
+	 * 通过id查询
+	 *
+	 * @param id
+	 * @return
+	 */
+	//@AutoLog(value = "依赖组件通过主表ID查询")
+	@ApiOperation(value="依赖组件主表ID查询", notes="依赖组件-通主表ID查询")
+	@GetMapping(value = "/queryDependentComponentByMainId")
+	public Result<List<DependentComponent>> queryDependentComponentListByMainId(@RequestParam(name="id",required=true) String id) {
+		List<DependentComponent> dependentComponentList = dependentComponentService.selectByMainId(id);
+		return Result.OK(dependentComponentList);
+	}
+	/**
+	 * 通过id查询
+	 *
+	 * @param id
+	 * @return
+	 */
+	//@AutoLog(value = "产品包的下载地址通过主表ID查询")
+	@ApiOperation(value="产品包的下载地址主表ID查询", notes="产品包的下载地址-通主表ID查询")
+	@GetMapping(value = "/queryPackageUrlByMainId")
+	public Result<List<PackageUrl>> queryPackageUrlListByMainId(@RequestParam(name="id",required=true) String id) {
+		List<PackageUrl> packageUrlList = packageUrlService.selectByMainId(id);
+		return Result.OK(packageUrlList);
+	}
 
     /**
     * 导出excel
@@ -213,6 +250,10 @@ public class PublishlistController {
           BeanUtils.copyProperties(main, vo);
           List<PublishlistProject> publishlistProjectList = publishlistProjectService.selectByMainId(main.getId());
           vo.setPublishlistProjectList(publishlistProjectList);
+          List<DependentComponent> dependentComponentList = dependentComponentService.selectByMainId(main.getId());
+          vo.setDependentComponentList(dependentComponentList);
+          List<PackageUrl> packageUrlList = packageUrlService.selectByMainId(main.getId());
+          vo.setPackageUrlList(packageUrlList);
           pageList.add(vo);
       }
 
@@ -248,7 +289,7 @@ public class PublishlistController {
               for (PublishlistPage page : list) {
                   Publishlist po = new Publishlist();
                   BeanUtils.copyProperties(page, po);
-                  publishlistService.saveMain(po, page.getPublishlistProjectList());
+                  publishlistService.saveMain(po, page.getPublishlistProjectList(),page.getDependentComponentList(),page.getPackageUrlList());
               }
               return Result.OK("文件导入成功！数据行数:" + list.size());
           } catch (Exception e) {

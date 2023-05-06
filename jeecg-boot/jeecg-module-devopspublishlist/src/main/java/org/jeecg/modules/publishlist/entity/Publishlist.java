@@ -90,6 +90,18 @@ public class Publishlist implements Serializable {
 	@Excel(name = "产品经理名", width = 15)
     @ApiModelProperty(value = "产品经理名")
     private String pmName;
+	/**commid id*/
+	@Excel(name = "commid id", width = 15)
+    @ApiModelProperty(value = "commid id")
+    private java.lang.String commitId;
+	/**用户手册中文链接*/
+	@Excel(name = "用户手册中文链接", width = 15)
+    @ApiModelProperty(value = "用户手册中文链接")
+    private java.lang.String urerManualEnLink;
+	/**用户手册英文链接*/
+	@Excel(name = "用户手册英文链接", width = 15)
+    @ApiModelProperty(value = "用户手册英文链接")
+    private java.lang.String userManualChLink;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private String createBy;

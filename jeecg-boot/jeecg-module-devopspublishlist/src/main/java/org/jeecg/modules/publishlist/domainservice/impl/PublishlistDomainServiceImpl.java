@@ -27,7 +27,13 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
     @Autowired
     PublishlistStatusMachine statusMachine;
 
-    public int newPublishlist(Publishlist publishlist, List<PublishlistProject> projectList){
+    /**
+     * deprecated/removed
+     * @param publishlist
+     * @param projectList
+     * @return
+     */
+    /*public int newPublishlist(Publishlist publishlist, List<PublishlistProject> projectList){
         validate(publishlist, projectList);
 
         String id = IdTool.generalId();
@@ -40,12 +46,11 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
         for(PublishlistProject project : projectList){
             project.setPublishlistId(id);
             project.setId(IdTool.generalId());
-            project.setProjectName(publishlist.getName());
             result =publishlistProjectMapper.insert(project);
         }
 
         return result;
-    }
+    }*/
 
     private void validate(Publishlist publishlist, List<PublishlistProject> projectList){
         String productLineName = publishlist.getProductLineName().toUpperCase();
