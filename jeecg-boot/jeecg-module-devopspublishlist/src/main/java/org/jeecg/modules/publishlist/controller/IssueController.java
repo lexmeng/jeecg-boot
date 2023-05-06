@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.publishlist.bpservice.IssueBPService;
 import org.jeecg.modules.publishlist.entity.Issue;
 import org.jeecg.modules.publishlist.service.IIssueService;
 
@@ -34,6 +35,9 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 public class IssueController extends JeecgController<Issue, IIssueService> {
 	@Autowired
 	private IIssueService issueService;
+
+	@Autowired
+	private IssueBPService issueBPService;
 	
 	/**
 	 * 分页列表查询
@@ -133,6 +137,18 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 		}
 		return Result.OK(issue);
 	}
+
+	 /**
+	  * 更新issue列表
+	  * @param publishlistId
+	  */
+	 @AutoLog(value = "更新issue列表")
+	 @ApiOperation(value="更新issue列表", notes="更新issue列表")
+	 @RequestMapping(value = "/updateIssueList", method = {RequestMethod.PUT,RequestMethod.POST})
+	 public Result<String> updateIssueList(@RequestParam(name="publishlistId",required=true)String publishlistId){
+		 issueBPService.updateIssueList(publishlistId);
+		 return Result.OK("更新成功！");
+	 }
 
     /**
     * 导出excel

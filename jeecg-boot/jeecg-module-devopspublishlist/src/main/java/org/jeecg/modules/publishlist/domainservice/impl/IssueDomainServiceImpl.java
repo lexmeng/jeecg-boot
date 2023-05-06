@@ -60,7 +60,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
     public void updateIssueList(String publishlistId, List<Issue> issueList){
         //1、删除原来的issue信息，非首次，issue列表里必然是有的。
         Map<String,Object> map = new HashMap<>();
-        map.put("publishilist_id",publishlistId);
+        map.put("publishlist_id",publishlistId);
 
         List<Issue> listIssueList = issueService.listByMap(map);
         if(listIssueList.isEmpty()){

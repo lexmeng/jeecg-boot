@@ -6,20 +6,15 @@ import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
 import org.jeecg.modules.publishlist.domainservice.IReleaseInfoDomainService;
-import org.jeecg.modules.publishlist.entity.Issue;
-import org.jeecg.modules.publishlist.entity.Publishlist;
-import org.jeecg.modules.publishlist.entity.ReleaseInfo;
-import org.jeecg.modules.publishlist.entity.Template;
-import org.jeecg.modules.publishlist.service.IIssueService;
-import org.jeecg.modules.publishlist.service.IPublishlistService;
-import org.jeecg.modules.publishlist.service.IReleaseInfoService;
-import org.jeecg.modules.publishlist.service.ITemplateService;
+import org.jeecg.modules.publishlist.entity.*;
+import org.jeecg.modules.publishlist.service.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -48,6 +43,9 @@ public class ReleaseInfoBPService {
 
     @Autowired
     private IIssueDomainService issueDomainService;
+
+    @Autowired
+    private IPublishlistProjectService publishlistProjectService;
 
 
     public String replaceHistoryIteratePlaceholder(String content, List<Issue> issueList, LinkedMap<String, Publishlist> historyVersionPublishlist, LinkedMap<String, List<Issue>> historyVersionIssueList){
@@ -318,5 +316,89 @@ public class ReleaseInfoBPService {
      */
     public String generateCompanyWebsiteContent(String publishlistId, Map<String, String> placeholderContentMap) throws RuntimeException{
         return generateTemplateContent(publishlistId, Config.ReleaseInfoTypeCompanyWebsite, placeholderContentMap);
+    }
+
+    /**
+     * 更新releaseInfo信息，调用时机：首次拉取issue后，更新issue后，发布单发布前更新issue后
+     */
+    @Transactional
+    public void updateReleaseInfo(String publishlistId){
+        Publishlist publishlist = publishlistService.getById(publishlistId);
+        if(!publishlistDomainService.isPublished(publishlistId)){
+            throw new RuntimeException("发布状态错误！");
+        }
+
+        List<ReleaseInfo> releaseInfoList = new ArrayList<>();
+
+        //1、拉取issue列表
+        List<PublishlistProject> projectList = publishlistProjectService.selectByMainId(publishlist.getId());
+        List<Issue> totalIssueList = new ArrayList<>();
+        for(PublishlistProject publishlistProject : projectList){
+            List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, publishlistProject.getProjectName(), publishlistProject.getJiraVersionName());
+            totalIssueList.addAll(issueList);
+        }
+
+
+        //2、删除之前生成的release info信息
+        Map<String,Object> map = new HashMap<>();
+        map.put("publishlist_id",publishlistId);
+        releaseInfoService.removeByMap(map);
+
+
+        //3、生成release info信息
+        for(Issue issue: totalIssueList){
+            //如果不需要生成发布信息，则跳过
+            if(issue.getIssueName().contains(Config.IssuePublishFilterString)){
+                continue;
+            }
+
+            ReleaseInfo releaseInfo;
+            if(publishlist.getProductLineName().toUpperCase().contains("KE")){
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKE);
+            }else if(publishlist.getProductLineName().toUpperCase().contains("KC")){
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKC);
+            }else{
+                throw new RuntimeException("产品线名称错误！");
+            }
+
+            releaseInfoList.add(releaseInfo);
+        }
+        releaseInfoService.saveBatch(releaseInfoList);
+    }
+
+    @Transactional
+    public void updateReleaseInfo(String publishlistId, List<Issue> totalIssueList){
+        Publishlist publishlist = publishlistService.getById(publishlistId);
+        if(!publishlistDomainService.isPublished(publishlistId)){
+            throw new RuntimeException("发布状态错误！");
+        }
+
+        List<ReleaseInfo> releaseInfoList = new ArrayList<>();
+
+        //1、删除之前生成的release info信息
+        Map<String,Object> map = new HashMap<>();
+        map.put("publishlist_id",publishlistId);
+        releaseInfoService.removeByMap(map);
+
+
+        //2、生成release info信息
+        for(Issue issue: totalIssueList){
+            //如果不需要生成发布信息，则跳过
+            if(issue.getIssueName().contains(Config.IssuePublishFilterString)){
+                continue;
+            }
+
+            ReleaseInfo releaseInfo;
+            if(publishlist.getProductLineName().toUpperCase().contains("KE")){
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKE);
+            }else if(publishlist.getProductLineName().toUpperCase().contains("KC")){
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKC);
+            }else{
+                throw new RuntimeException("产品线名称错误！");
+            }
+
+            releaseInfoList.add(releaseInfo);
+        }
+        releaseInfoService.saveBatch(releaseInfoList);
     }
 }

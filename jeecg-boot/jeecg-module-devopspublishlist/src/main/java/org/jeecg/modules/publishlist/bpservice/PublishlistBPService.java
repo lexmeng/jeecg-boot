@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PublishlistBPService {
@@ -44,6 +46,10 @@ public class PublishlistBPService {
 
     @Autowired
     private IReleaseInfoService releaseInfoService;
+
+    @Autowired
+    private ReleaseInfoBPService releaseInfoBPService;
+
     //新建发布单
     public void createPublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList){
         //生成publishlist存储的Id
@@ -60,6 +66,9 @@ public class PublishlistBPService {
 
         //根据输入信息，生成发布单
         savePublishlist(totalIssueList, publishlist, publishlistProjectList);
+
+        //更新releaseInfo信息
+        releaseInfoBPService.updateReleaseInfo(publishlistId);
 
     }
 
@@ -85,6 +94,11 @@ public class PublishlistBPService {
         if(!publishlistDomainService.isPublished(publishlistId)){
             throw new RuntimeException("发布状态错误！");
         }
+
+        //删除之前生成的release info信息
+        Map<String,Object> map = new HashMap<>();
+        map.put("publishlist_id",publishlistId);
+        releaseInfoService.removeByMap(map);
 
         List<ReleaseInfo> releaseInfoList = new ArrayList<>();
         for(Issue issue: totalIssueList){

@@ -55,6 +55,9 @@ public class PublishlistController {
 
 	@Autowired
 	private PublishlistBPService publishlistBPService;
+
+	@Autowired
+	private ReleaseInfoBPService releaseInfoBPService;
 	
 	/**
 	 * 分页列表查询
@@ -157,8 +160,16 @@ public class PublishlistController {
 			return Result.error("未找到对应数据");
 		}
 		return Result.OK(publishlist);
-
 	}
+
+	 @AutoLog(value = "发布单-发布")
+	 @ApiOperation(value="发布单-发布", notes="发布单-发布")
+	 @RequestMapping(value = "/publish", method = {RequestMethod.PUT,RequestMethod.POST})
+	 public Result<String> publish(@RequestParam(name="publishlistId",required=true) String publishlistId) {
+		 publishlistBPService.publish(publishlistId);
+		 return Result.OK("发布成功！");
+	 }
+
 	
 	/**
 	 * 通过id查询

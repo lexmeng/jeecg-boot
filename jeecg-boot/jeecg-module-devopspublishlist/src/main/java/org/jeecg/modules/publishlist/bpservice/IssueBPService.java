@@ -27,6 +27,9 @@ public class IssueBPService {
     @Autowired
     private IIssueDomainService issueDomainService;
 
+    @Autowired
+    private ReleaseInfoBPService releaseInfoBPService;
+
 
     //更新issue列表的业务流程
     public void updateIssueList(String publishlistId){
@@ -44,5 +47,8 @@ public class IssueBPService {
 
         //2、删除旧的issue列表，非首次，issue列表里必然是有的。然后插入新的issue列表
         issueDomainService.updateIssueList(publishlistId, totalIssueList);
+
+        //3、更新releaseInfo
+        releaseInfoBPService.updateReleaseInfo(publishlistId, totalIssueList);
     }
 }
