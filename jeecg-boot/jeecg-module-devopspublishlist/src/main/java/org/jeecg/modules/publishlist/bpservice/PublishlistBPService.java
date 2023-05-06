@@ -55,11 +55,11 @@ public class PublishlistBPService {
             totalIssueList.addAll(issueList);
         }
 
-        //根据输入信息，生成发布单
-        saveIssueListAndPublishlist(totalIssueList, publishlist, publishlistProjectList);
-
         //保存issue信息
         issueDomainService.saveIssueListFirstTime(publishlistId, totalIssueList);
+
+        //根据输入信息，生成发布单
+        savePublishlist(totalIssueList, publishlist, publishlistProjectList);
 
     }
 
@@ -111,8 +111,8 @@ public class PublishlistBPService {
 
 
     @Transactional
-    private void saveIssueListAndPublishlist(List<Issue> issueList, Publishlist publishlist, List<PublishlistProject> publishlistProjectList){
-        issueService.saveBatch(issueList);
+    private void savePublishlist(List<Issue> issueList, Publishlist publishlist, List<PublishlistProject> publishlistProjectList){
+        //issueService.saveBatch(issueList);
 
         publishlistService.saveMain(publishlist, publishlistProjectList);
     }

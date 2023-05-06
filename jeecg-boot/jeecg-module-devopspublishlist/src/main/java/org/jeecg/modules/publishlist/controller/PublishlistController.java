@@ -1,15 +1,13 @@
 package org.jeecg.modules.publishlist.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jeecg.modules.publishlist.bpservice.PublishlistBPService;
+import org.jeecg.modules.publishlist.bpservice.ReleaseInfoBPService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -255,5 +253,70 @@ public class PublishlistController {
       }
       return Result.OK("文件导入失败！");
     }
+
+	 /**
+	  * 生成ReleaseNote
+	  * @param
+	  * @return
+	  */
+	 @ApiOperation(value="生成ReleaseNote", notes="生成ReleaseNote")
+	 @GetMapping(value = "/generateReleaseNoteContent")
+	 public Result<String> generateReleaseNoteContent(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
+
+         Map<String, String> placeholderContentMap = new HashMap<>();
+		 String releaseNoteContent = releaseInfoBPService.generateReleaseNoteContent(id, placeholderContentMap);
+
+		 return Result.OK(releaseNoteContent);
+	 }
+
+	 @ApiOperation(value="生成ReleaseMailContent", notes="生成ReleaseMailContent")
+	 @GetMapping(value = "/generateReleaseMailContent")
+	 public Result<String> generateReleaseMailContent(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
+
+		 Map<String, String> placeholderContentMap = new HashMap<>();
+		 String releaseMailContent = releaseInfoBPService.generateReleaseMailContent(id, placeholderContentMap);
+
+		 return Result.OK(releaseMailContent);
+	 }
+
+	 @ApiOperation(value="生成ProductHandbookPRContent", notes="生成ProductHandbookPRContent")
+	 @GetMapping(value = "/generateProductHandbookPRContent")
+	 public Result<String> generateProductHandbookPRContent(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
+
+		 Map<String, String> placeholderContentMap = new HashMap<>();
+		 String productHandbookPRContent = releaseInfoBPService.generateProductHandbookPRContent(id, placeholderContentMap);
+
+		 return Result.OK(productHandbookPRContent);
+	 }
+
+	 @ApiOperation(value="生成ProductPackagePRContent", notes="生成ProductPackagePRContent")
+	 @GetMapping(value = "/generateProductPackagePRContent")
+	 public Result<String> generateProductPackagePRContent(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
+		 
+		 Map<String, String> placeholderContentMap = new HashMap<>();
+		 String productPackagePRContent = releaseInfoBPService.generateProductPackagePRContent(id, placeholderContentMap);
+
+		 return Result.OK(productPackagePRContent);
+	 }
+
+
+
+
 
 }

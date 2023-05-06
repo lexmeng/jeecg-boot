@@ -219,6 +219,7 @@ public class JiraClientUtils {
             issue.setId(tempObject.getString("id"));
             String key = tempObject.getString("key");
             issue.setIssueNum(key);
+            issue.setIssueName(tempObject.getJSONObject("fields").getString("summary"));
             issue.setIssueType(tempObject.getJSONObject("fields").getJSONObject("issuetype").getString("name"));
             issue.setIssueLink(String.format("https://olapio.atlassian.net/browse/%s", key));
             issue.setProjectId(tempObject.getJSONObject("fields").getJSONObject("project").getString("name"));
@@ -237,10 +238,10 @@ public class JiraClientUtils {
         JiraClientUtils utils = new JiraClientUtils();
         try{
             //utils.searchJira("Kyligence Enterprise","KE 4.6.6.0-GA 03/09");
-            //utils.initJiraRestClient();
-            //utils.searchIssueByProjectAndFixVersions("KE","KE 4.5.19.11-GA");
-            IssueSearchResult result =utils.restSearchIssueByProjectAndFixVersions("KE","KE 4.5.19.11-GA");
-            System.out.println(result);
+            utils.initJiraRestClient();
+            utils.searchIssueByProjectAndFixVersions("KE","KE 4.5.19.11-GA");
+            //IssueSearchResult result =utils.restSearchIssueByProjectAndFixVersions("KE","KE 4.5.19.11-GA");
+            //System.out.println(result);
         }
         finally{
             utils.closeJiraRestClient();
