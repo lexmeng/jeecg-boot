@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.jeecg.common.aspect.annotation.Dict;
@@ -20,9 +22,11 @@ import io.swagger.annotations.ApiModelProperty;
  * @Date:   2023-04-17
  * @Version: V1.0
  */
-@ApiModel(value="publishlist对象", description="发布单")
 @Data
 @TableName("publishlist")
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(value="publishlist对象", description="发布单")
 public class Publishlist implements Serializable {
     private static final long serialVersionUID = 1L;
 

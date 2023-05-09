@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import java.util.Date;
@@ -19,9 +21,11 @@ import java.io.UnsupportedEncodingException;
  * @Date:   2023-05-06
  * @Version: V1.0
  */
-@ApiModel(value="dependent_component对象", description="依赖组件")
 @Data
 @TableName("dependent_component")
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(value="dependent_component对象", description="依赖组件")
 public class DependentComponent implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -42,6 +46,7 @@ public class DependentComponent implements Serializable {
     @ApiModelProperty(value = "组件版本")
     private java.lang.String version;
 	/**发布单id*/
+	@Excel(name = "发布单id", width = 15)
     @ApiModelProperty(value = "发布单id")
     private java.lang.String publishlistId;
 	/**创建人*/

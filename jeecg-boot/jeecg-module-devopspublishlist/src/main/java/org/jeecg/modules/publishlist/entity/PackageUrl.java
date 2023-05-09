@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import java.util.Date;
@@ -19,9 +21,11 @@ import java.io.UnsupportedEncodingException;
  * @Date:   2023-05-06
  * @Version: V1.0
  */
-@ApiModel(value="package_url对象", description="产品包的下载地址")
 @Data
 @TableName("package_url")
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(value="package_url对象", description="产品包的下载地址")
 public class PackageUrl implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +42,7 @@ public class PackageUrl implements Serializable {
     @ApiModelProperty(value = "包url")
     private java.lang.String packageUrl;
 	/**发布单id*/
+	@Excel(name = "发布单id", width = 15)
     @ApiModelProperty(value = "发布单id")
     private java.lang.String publishlistId;
 	/**创建人*/

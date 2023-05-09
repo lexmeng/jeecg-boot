@@ -6,6 +6,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.modules.publishlist.bpservice.PublishlistBPService;
 import org.jeecg.modules.publishlist.bpservice.ReleaseInfoBPService;
 import org.jeecg.modules.publishlist.entity.DependentComponent;
@@ -52,7 +53,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 @RestController
 @RequestMapping("/release")
 @Slf4j
-public class PublishlistController {
+public class PublishlistController extends JeecgController<Publishlist, IPublishlistService> {
 	@Autowired
 	private IPublishlistService publishlistService;
 	@Autowired
@@ -230,40 +231,7 @@ public class PublishlistController {
     */
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, Publishlist publishlist) {
-      // Step.1 组装查询条件查询数据
-      QueryWrapper<Publishlist> queryWrapper = QueryGenerator.initQueryWrapper(publishlist, request.getParameterMap());
-      LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-
-      //配置选中数据查询条件
-      String selections = request.getParameter("selections");
-      if(oConvertUtils.isNotEmpty(selections)) {
-         List<String> selectionList = Arrays.asList(selections.split(","));
-         queryWrapper.in("id",selectionList);
-      }
-      //Step.2 获取导出数据
-      List<Publishlist> publishlistList = publishlistService.list(queryWrapper);
-
-      // Step.3 组装pageList
-      List<PublishlistPage> pageList = new ArrayList<PublishlistPage>();
-      for (Publishlist main : publishlistList) {
-          PublishlistPage vo = new PublishlistPage();
-          BeanUtils.copyProperties(main, vo);
-          List<PublishlistProject> publishlistProjectList = publishlistProjectService.selectByMainId(main.getId());
-          vo.setPublishlistProjectList(publishlistProjectList);
-          List<DependentComponent> dependentComponentList = dependentComponentService.selectByMainId(main.getId());
-          vo.setDependentComponentList(dependentComponentList);
-          List<PackageUrl> packageUrlList = packageUrlService.selectByMainId(main.getId());
-          vo.setPackageUrlList(packageUrlList);
-          pageList.add(vo);
-      }
-
-      // Step.4 AutoPoi 导出Excel
-      ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-      mv.addObject(NormalExcelConstants.FILE_NAME, "发布单列表");
-      mv.addObject(NormalExcelConstants.CLASS, PublishlistPage.class);
-      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("发布单数据", "导出人:"+sysUser.getRealname(), "发布单"));
-      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-      return mv;
+        return super.exportXls(request, publishlist, Publishlist.class, "发布单");
     }
 
     /**
@@ -275,35 +243,7 @@ public class PublishlistController {
     */
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-      MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-      Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-      for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-          // 获取上传文件对象
-          MultipartFile file = entity.getValue();
-          ImportParams params = new ImportParams();
-          params.setTitleRows(2);
-          params.setHeadRows(1);
-          params.setNeedSave(true);
-          try {
-              List<PublishlistPage> list = ExcelImportUtil.importExcel(file.getInputStream(), PublishlistPage.class, params);
-              for (PublishlistPage page : list) {
-                  Publishlist po = new Publishlist();
-                  BeanUtils.copyProperties(page, po);
-                  publishlistService.saveMain(po, page.getPublishlistProjectList(),page.getDependentComponentList(),page.getPackageUrlList());
-              }
-              return Result.OK("文件导入成功！数据行数:" + list.size());
-          } catch (Exception e) {
-              log.error(e.getMessage(),e);
-              return Result.error("文件导入失败:"+e.getMessage());
-          } finally {
-              try {
-                  file.getInputStream().close();
-              } catch (IOException e) {
-                  e.printStackTrace();
-              }
-          }
-      }
-      return Result.OK("文件导入失败！");
+        return super.importExcel(request, response, Publishlist.class);
     }
 
 	 /**
