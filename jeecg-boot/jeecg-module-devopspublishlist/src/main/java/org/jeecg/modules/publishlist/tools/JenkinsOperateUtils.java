@@ -3,11 +3,13 @@ package org.jeecg.modules.publishlist.tools;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.JobWithDetails;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class JenkinsOperateUtils {
 
     // Jenkins 对象
@@ -16,10 +18,11 @@ public class JenkinsOperateUtils {
     private JenkinsHttpClient jenkinsHttpClient;
 
     JenkinsOperateUtils(){
+        JenkinsUtils utils = new JenkinsUtils();
         // 连接 Jenkins
-        jenkinsServer = JenkinsUtils.connection();
+        jenkinsServer = utils.connection();
         // 设置客户端连接 Jenkins
-        jenkinsHttpClient = JenkinsUtils.getClient();
+        jenkinsHttpClient = utils.getClient();
 
 
     }

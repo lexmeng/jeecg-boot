@@ -5,6 +5,7 @@ import org.jeecg.modules.publishlist.domainservice.IReleaseInfoDomainService;
 import org.jeecg.modules.publishlist.entity.Issue;
 import org.jeecg.modules.publishlist.entity.ReleaseInfo;
 import org.jeecg.modules.publishlist.entity.Template;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.service.IReleaseInfoService;
 import org.jeecg.modules.publishlist.service.ITemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,14 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
     public ReleaseInfo convertReleaseInfoFromIssue(Issue issue, String seperatorString){
 
         String[] splitStringList = issue.getIssueName().split(seperatorString);
+        if(!issue.getIssueName().contains(seperatorString)){
+            throw new BussinessException("issue名称不包含分隔符："+seperatorString+"。请修改！issue名称："+issue.getIssueName());
+        }
         if(splitStringList[0] == null || splitStringList[0].equals("")){
-            throw new RuntimeException("issue分隔错误："+issue.getId());
+            throw new BussinessException("issue分隔错误："+issue.getId());
         }
         if(splitStringList[1] == null || splitStringList[1].equals("")){
-            throw new RuntimeException("issue分隔错误："+issue.getId());
+            throw new BussinessException("issue分隔错误："+issue.getId());
         }
 
         ReleaseInfo releaseInfo = new ReleaseInfo();
@@ -57,15 +61,15 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
     private void verifyTemplate(Template template){
         String type = template.getType();
         if(type==null || type.equals("")){
-            throw new RuntimeException("模板类型为空！id："+template.getId());
+            throw new BussinessException("模板类型为空！id："+template.getId());
         }
 
-        if(type.equals(Config.ReleaseInfoTypeReleaseNote) || type.equals(Config.ReleaseInfoTypeReleaseMail)
-                || type.equals(Config.ReleaseInfoTypeHandBookPR) || type.equals(Config.ReleaseInfoTypeProductPackagePR)
-                || type.equals(Config.ReleaseInfoTypeCompanyWebsite)){
+        if(type.equals(Config.RELEASE_INFO_TYPE_RELEASE_NOTE) || type.equals(Config.RELEASE_INFO_TYPE_RELEASE_MAIL)
+                || type.equals(Config.RELEASE_INFO_TYPE_HANDBOOK_PR) || type.equals(Config.RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR)
+                || type.equals(Config.RELEASE_INFO_TYPE_COMPANY_WEBSITE)){
             //pass
         }else{
-            throw new RuntimeException("模板类型错误！id："+template.getId());
+            throw new BussinessException("模板类型错误！id："+template.getId());
         }
 
     }
@@ -79,7 +83,7 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
         }else if(productLineName.toUpperCase().contains("KC")){
             placeholderStrList = Config.KC_PLACEHODLER_MAP.get(template.getType());
         }else{
-            throw new RuntimeException("模板产品线名错误");
+            throw new BussinessException("模板产品线名错误");
         }
 
         //抓取所有placeholder
@@ -133,7 +137,7 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
         }else if(productLineName.toUpperCase().contains("KC")){
             placeholderAllList = Config.KC_PLACEHODLER_MAP.get(type);
         }else{
-            throw new RuntimeException("产品线名称错误！");
+            throw new BussinessException("产品线名称错误！");
         }
 
         if(placeholderAllList.containsAll(placeholderList)){
@@ -146,13 +150,13 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
 
     private Boolean validateProductLineName(String productLineName){
         if(productLineName == null || productLineName.equals("")){
-            throw new RuntimeException("产品线名称为空");
+            throw new BussinessException("产品线名称为空");
         }
         if(productLineName.toUpperCase().contains("KE")||productLineName.toUpperCase().contains("KC")){
             //pass
         }
         else{
-            throw new RuntimeException("产品线名称错误！");
+            throw new BussinessException("产品线名称错误！");
         }
 
         return true;
@@ -173,6 +177,27 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
         }
 
         return content;
+    }
+
+
+    /**
+     * 判断是否需要生成releaseInfo
+     * @param content
+     * @param productLineName
+     * @return
+     */
+    public Boolean isNeedToGenerateReleaseInfo(String content, String productLineName){
+        if(content.contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
+            return false;
+        }
+
+        if(productLineName.toUpperCase().contains("KE")){
+            if(!content.contains(Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE)){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 

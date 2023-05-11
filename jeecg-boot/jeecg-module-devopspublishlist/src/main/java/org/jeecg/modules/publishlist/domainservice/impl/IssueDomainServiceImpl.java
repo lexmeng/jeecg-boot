@@ -9,6 +9,7 @@ import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.entity.Issue;
 import org.jeecg.modules.publishlist.entity.IssueHistory;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.service.IIssueHistoryService;
 import org.jeecg.modules.publishlist.service.IIssueService;
 import org.jeecg.modules.publishlist.tools.IssueSearchResult;
@@ -64,7 +65,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
 
         List<Issue> listIssueList = issueService.listByMap(map);
         if(listIssueList.isEmpty()){
-            throw new RuntimeException("发布单对应issue列表为空！");
+            throw new BussinessException("发布单对应issue列表为空！");
         }
 
         issueService.removeByMap(map);
@@ -84,7 +85,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         //SearchResult searchResult = jiraClientUtils.searchIssueByProjectAndFixVersions(projectName, jiraVersionName);
         IssueSearchResult restSearchResult = jiraClientUtils.restSearchIssueByProjectAndFixVersions(projectName, jiraVersionName);
         if(restSearchResult.getTotal()==0){
-            throw new RuntimeException("拉取的jira issue数为空，请先新建jira issue！");
+            throw new BussinessException("拉取的jira issue数为空，请先新建jira issue！");
         }
 
         /*for(com.atlassian.jira.rest.client.api.domain.Issue issue: searchResult.getIssues()){
@@ -147,7 +148,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
 
         List<Issue> resultIssueList = new ArrayList<>();
         for(Issue issue : issueList){
-            if(!issue.getIssueName().contains(Config.IssuePublishFilterString)){
+            if(!issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
                 resultIssueList.add(issue);
             }
         }
@@ -162,7 +163,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
 
         List<Issue> resultIssueList = new ArrayList<>();
         for(Issue issue : issueList){
-            if(!issue.getIssueName().contains(Config.IssuePublishFilterString) && issue.getIssueType().equals(Config.IssueTypeStory)){
+            if(!issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING) && issue.getIssueType().equals(Config.ISSUE_TYPE_STORY)){
                 resultIssueList.add(issue);
             }
         }
@@ -176,7 +177,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
 
         List<Issue> resultIssueList = new ArrayList<>();
         for(Issue issue : issueList){
-            if(!issue.getIssueName().contains(Config.IssuePublishFilterString) && issue.getIssueType().equals(Config.IssueTypeBug)){
+            if(!issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING) && (issue.getIssueType().equals(Config.ISSUE_TYPE_BUG) || issue.getIssueType().equals(Config.ISSUE_TYPE_BUG_CN))){
                 resultIssueList.add(issue);
             }
         }
@@ -195,27 +196,28 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         List<Issue> oldIssueList = issueService.list(wrapper);
 
         if(!oldIssueList.isEmpty()){
-            throw new RuntimeException("首次拉取issue时，系统issue列表非空！");
+            throw new BussinessException("首次拉取issue时，系统issue列表非空！");
         }
 
-        QueryWrapper<IssueHistory> wrapperForHistoru = new QueryWrapper<>();
-        List<IssueHistory> oldIssueHistoryList = issueHistoryService.list(wrapperForHistoru);
+        QueryWrapper<IssueHistory> wrapperForHistory = new QueryWrapper<>();
+        wrapperForHistory.eq("publishlist_id", publishlistId);
+        List<IssueHistory> oldIssueHistoryList = issueHistoryService.list(wrapperForHistory);
 
         if(!oldIssueHistoryList.isEmpty()){
-            throw new RuntimeException("首次拉取issue时，系统issue历史列表非空！");
+            throw new BussinessException("首次拉取issue时，系统issue历史列表非空！");
         }
 
-        //2、存入history中
+        //2、存入issue中
+        issueService.saveBatch(issueList);
+
+        //3、存入history中
         List<IssueHistory> issueHistoryList = new ArrayList<>();
-        for(Issue issue : oldIssueList){
+        for(Issue issue : issueList){
             IssueHistory issueHistory = convertIssueToHistoryIssue(issue);
             issueHistoryList.add(issueHistory);
         }
 
         issueHistoryService.saveBatch(issueHistoryList);
-
-        //、存入issue中
-        issueService.saveBatch(issueList);
 
     }
 

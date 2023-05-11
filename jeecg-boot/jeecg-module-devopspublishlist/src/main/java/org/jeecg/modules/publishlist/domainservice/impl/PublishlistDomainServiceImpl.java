@@ -5,6 +5,7 @@ import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
 import org.jeecg.modules.publishlist.entity.Publishlist;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.entity.ReleaseInfo;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.mapper.PublishlistMapper;
 import org.jeecg.modules.publishlist.mapper.PublishlistProjectMapper;
 import org.jeecg.modules.publishlist.tools.IdTool;
@@ -55,13 +56,13 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
     private void validate(Publishlist publishlist, List<PublishlistProject> projectList){
         String productLineName = publishlist.getProductLineName().toUpperCase();
         if(productLineName == null || productLineName.equals("")){
-            throw new RuntimeException("产品线名称为空");
+            throw new BussinessException("产品线名称为空");
         }
         if(productLineName.contains("KE")||productLineName.contains("KC")){
             //pass
         }
         else{
-            throw new RuntimeException("产品线名称错误！");
+            throw new BussinessException("产品线名称错误！");
         }
 
         String productName = publishlist.getProductName().toUpperCase();
@@ -69,17 +70,17 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
             //pass
         }
         else{
-            throw new RuntimeException("产品名称错误！");
+            throw new BussinessException("产品名称错误！");
         }
 
         String versionType = publishlist.getVersionType().toUpperCase();
         if(versionType == null || versionType.equals("")){
-            throw new RuntimeException("发布单版本为空");
+            throw new BussinessException("发布单版本为空");
         }
         if(versionType.equals("GA")||versionType.equals("SP")||versionType.equals("HOTFIX")){
             //pass
         }else{
-            throw new RuntimeException("发布单版本类型错误！");
+            throw new BussinessException("发布单版本类型错误！");
         }
 
 

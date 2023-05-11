@@ -345,3 +345,6 @@ jira:
   account-name: name_here
   sign: sign_here
 
+jenkins:
+  account: account_here
+  password: password_here

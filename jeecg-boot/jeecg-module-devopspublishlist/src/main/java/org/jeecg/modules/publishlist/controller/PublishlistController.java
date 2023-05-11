@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.modules.publishlist.bpservice.JenkinsBPService;
 import org.jeecg.modules.publishlist.bpservice.PublishlistBPService;
 import org.jeecg.modules.publishlist.bpservice.ReleaseInfoBPService;
 import org.jeecg.modules.publishlist.entity.DependentComponent;
@@ -70,6 +71,9 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	
 	@Autowired
 	private IPackageUrlService packageUrlService;
+
+	@Autowired
+	private JenkinsBPService jenkinsBPService;
 	
 	/**
 	 * 分页列表查询
@@ -105,7 +109,9 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	public Result<String> add(@RequestBody PublishlistPage publishlistPage) {
 		Publishlist publishlist = new Publishlist();
 		BeanUtils.copyProperties(publishlistPage, publishlist);
-		publishlistService.saveMain(publishlist, publishlistPage.getPublishlistProjectList(),publishlistPage.getDependentComponentList(),publishlistPage.getPackageUrlList());
+
+		publishlistBPService.savePublishlist(publishlist, publishlistPage.getPublishlistProjectList(),publishlistPage.getDependentComponentList(),publishlistPage.getPackageUrlList());
+
 		return Result.OK("添加成功！");
 	}
 	
@@ -307,7 +313,31 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		 return Result.OK(productPackagePRContent);
 	 }
 
+	 @ApiOperation(value="调用jenkins提交ProductPackagePR", notes="调用jenkins提交ProductPackagePR")
+	 @GetMapping(value = "/jenkinsCommitProductPackagePR")
+	 public Result<String> jenkinsCommitProductPackagePR(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
 
+		 jenkinsBPService.jenkinsCommitProductPackagePR();
+
+		 return Result.OK("提交成功！");
+	 }
+
+	 @ApiOperation(value="调用jenkins提交ProductHandbookPR", notes="调用jenkins提交ProductHandbookPR")
+	 @GetMapping(value = "/jenkinsCommitProductHandbookPR")
+	 public Result<String> jenkinsCommitProductHandbookPR(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
+
+		 jenkinsBPService.jenkinsCommitProductHandbookPR();
+
+		 return Result.OK("提交成功！");
+	 }
 
 
 

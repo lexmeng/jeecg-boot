@@ -7,6 +7,7 @@ import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
 import org.jeecg.modules.publishlist.domainservice.IReleaseInfoDomainService;
 import org.jeecg.modules.publishlist.entity.*;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.service.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,14 +60,14 @@ public class ReleaseInfoBPService {
             String group = matcher.group(0);
             Integer index = matcher.end();
 
-            if(!group.equals(Config.HistoryPlaceholderDocumentVersion)){
-                throw new RuntimeException("非法的占位符："+group);
+            if(!group.equals(Config.HISTORY_PLACEHOLDER_DOCUMENT_VERSION)){
+                throw new BussinessException("非法的占位符："+group);
             }
 
             String versionContent = getNextBracketAfterIteratePlaceholder(content, index);
             String resultContent= replacePlaceholderInHistory(historyVersionPublishlist, historyVersionIssueList, versionContent);
 
-            content = content.replace(Config.HistoryPlaceholderDocumentVersion+versionContent, resultContent);
+            content = content.replace(Config.HISTORY_PLACEHOLDER_DOCUMENT_VERSION+versionContent, resultContent);
 
             matcher = historyIteratePattern.matcher(content);
         }
@@ -91,34 +92,34 @@ public class ReleaseInfoBPService {
         while(matcher.find()){
             String group = matcher.group(0);
             Integer index = matcher.end();
-            if (group.equals(Config.IteratePlaceholderIssue)){
+            if (group.equals(Config.ITERATE_PLACEHOLDER_ISSUE)){
                 String issueContent = getNextBracketAfterIteratePlaceholder(content, index);
                 String resultContent= replacePlaceholderInIterate(issueList, issueContent);
-                content = content.replace(Config.IteratePlaceholderIssue+issueContent, resultContent);
+                content = content.replace(Config.ITERATE_PLACEHOLDER_ISSUE+issueContent, resultContent);
 
-            }else if(group.equals(Config.IteratePlaceholderIssueStory)){
+            }else if(group.equals(Config.ITERATE_PLACEHOLDER_ISSUE_STORY)){
                 List<Issue> storyIssueList = new ArrayList<>();
                 for(Issue issue: issueList){
-                    if(issue.getIssueType().equals(Config.IssueTypeStory)){
+                    if(issue.getIssueType().equals(Config.ISSUE_TYPE_STORY)){
                         storyIssueList.add(issue);
                     }
                 }
                 String issueContent = getNextBracketAfterIteratePlaceholder(content, index);
                 String resultContent= replacePlaceholderInIterate(storyIssueList, issueContent);
-                content = content.replace(Config.IteratePlaceholderIssueStory+issueContent, resultContent);
-            }else if(group.equals(Config.IteratePlaceholderIssueBug)){
+                content = content.replace(Config.ITERATE_PLACEHOLDER_ISSUE_STORY+issueContent, resultContent);
+            }else if(group.equals(Config.ITERATE_PLACEHOLDER_ISSUE_BUG)){
                 List<Issue> bugIssueList = new ArrayList<>();
                 for(Issue issue: issueList){
-                    if(issue.getIssueType().equals(Config.IssueTypeBug)){
+                    if(Config.ISSUE_TYPE_BUG.equals(issue.getIssueType()) || Config.ISSUE_TYPE_BUG_CN.equals(issue.getIssueType()) ){
                         bugIssueList.add(issue);
                     }
                 }
 
                 String issueContent = getNextBracketAfterIteratePlaceholder(content, index);
                 String resultContent= replacePlaceholderInIterate(bugIssueList, issueContent);
-                content = content.replace(Config.IteratePlaceholderIssueBug+issueContent, resultContent);
+                content = content.replace(Config.ITERATE_PLACEHOLDER_ISSUE_BUG+issueContent, resultContent);
             }else{
-                throw new RuntimeException("循环占位符错误！");
+                throw new BussinessException("循环占位符错误！");
             }
             matcher = iteratePattern.matcher(content);
         }
@@ -193,7 +194,7 @@ public class ReleaseInfoBPService {
             index++;
         }
 
-        throw new RuntimeException("循环占位符不匹配！");
+        throw new BussinessException("循环占位符不匹配！");
     }
 
     private String getIssuePlaceholderContent(String placeholder, Issue issue, ReleaseInfo releaseInfo){
@@ -215,16 +216,16 @@ public class ReleaseInfoBPService {
         }else if(placeholder.equals("${issueChName}")){
             result = releaseInfo.getIssueChName();
         }else{
-            throw new RuntimeException("issue占位符错误！");
+            throw new BussinessException("issue占位符错误！");
         }
 
         return result.toString();
     }
 
-    private String generateTemplateContent(String publishlistId, String templateType, Map<String, String> placeholderContentMap) throws RuntimeException{
+    private String generateTemplateContent(String publishlistId, String templateType, Map<String, String> placeholderContentMap) throws BussinessException{
         //一、判断状态是否是已发布
         if(!publishlistDomainService.isPublished(publishlistId)){
-            throw new RuntimeException("发布单状态还未发布！发布单id："+publishlistId);
+            throw new BussinessException("发布单状态还未发布！发布单id："+publishlistId);
         }
 
         //二、拿到Template
@@ -237,13 +238,13 @@ public class ReleaseInfoBPService {
         selectMap.put("type", templateType);
         List<Template> templateList = templateService.listByMap(selectMap);
         if(templateList.size() != 1){
-            throw new RuntimeException("模板数量错误！数量："+templateList.size());
+            throw new BussinessException("模板数量错误！数量："+templateList.size());
         }
         Template template = templateList.get(0);
 
         //三、校验所有占位符
         if(!releaseInfoDomainService.verifyPlaceholder(template)){
-            throw new RuntimeException("有非法占位符！");
+            throw new BussinessException("有非法占位符！");
         }
 
         //四、读取模板内容
@@ -285,23 +286,23 @@ public class ReleaseInfoBPService {
      * 生成ReleaseNote内容
      * @return
      */
-    public String generateReleaseNoteContent(String publishlistId, Map<String, String> placeholderContentMap) throws RuntimeException{
-        return generateTemplateContent(publishlistId, Config.ReleaseInfoTypeReleaseNote, placeholderContentMap);
+    public String generateReleaseNoteContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
+        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_RELEASE_NOTE, placeholderContentMap);
     }
 
     /**
      * 生成发布邮件的内容
      */
-    public String generateReleaseMailContent(String publishlistId, Map<String, String> placeholderContentMap) throws RuntimeException{
-        return generateTemplateContent(publishlistId, Config.ReleaseInfoTypeReleaseMail, placeholderContentMap);
+    public String generateReleaseMailContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
+        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_RELEASE_MAIL, placeholderContentMap);
     }
 
     /**
      * 生成产品手册PR内容
      * @return
      */
-    public String generateProductHandbookPRContent(String publishlistId, Map<String, String> placeholderContentMap) throws RuntimeException{
-        return generateTemplateContent(publishlistId, Config.ReleaseInfoTypeHandBookPR, placeholderContentMap);
+    public String generateProductHandbookPRContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
+        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_HANDBOOK_PR, placeholderContentMap);
 
     }
 
@@ -309,16 +310,16 @@ public class ReleaseInfoBPService {
      * 生成产品包PR内容
      * @return
      */
-    public String generateProductPackagePRContent(String publishlistId, Map<String, String> placeholderContentMap) throws RuntimeException{
-        return generateTemplateContent(publishlistId, Config.ReleaseInfoTypeProductPackagePR, placeholderContentMap);
+    public String generateProductPackagePRContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
+        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, placeholderContentMap);
     }
 
     /**
      * 生成官网修改内容
      * @return
      */
-    public String generateCompanyWebsiteContent(String publishlistId, Map<String, String> placeholderContentMap) throws RuntimeException{
-        return generateTemplateContent(publishlistId, Config.ReleaseInfoTypeCompanyWebsite, placeholderContentMap);
+    public String generateCompanyWebsiteContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
+        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_COMPANY_WEBSITE, placeholderContentMap);
     }
 
     /**
@@ -327,9 +328,11 @@ public class ReleaseInfoBPService {
     @Transactional
     public void updateReleaseInfo(String publishlistId){
         Publishlist publishlist = publishlistService.getById(publishlistId);
+        /*
         if(!publishlistDomainService.isPublished(publishlistId)){
-            throw new RuntimeException("发布状态错误！");
+            throw new BussinessException("发布状态错误！");
         }
+        */
 
         List<ReleaseInfo> releaseInfoList = new ArrayList<>();
 
@@ -352,17 +355,22 @@ public class ReleaseInfoBPService {
         //3、生成release info信息
         for(Issue issue: totalIssueList){
             //如果不需要生成发布信息，则跳过
-            if(issue.getIssueName().contains(Config.IssuePublishFilterString)){
+            if(!releaseInfoDomainService.isNeedToGenerateReleaseInfo(issue.getIssueName(), publishlist.getProductLineName())){
                 continue;
             }
+            /*
+            if(issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
+                continue;
+            }
+            */
 
             ReleaseInfo releaseInfo;
             if(publishlist.getProductLineName().toUpperCase().contains("KE")){
-                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKE);
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE);
             }else if(publishlist.getProductLineName().toUpperCase().contains("KC")){
-                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKC);
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KC);
             }else{
-                throw new RuntimeException("产品线名称错误！");
+                throw new BussinessException("产品线名称错误！");
             }
 
             releaseInfoList.add(releaseInfo);
@@ -373,10 +381,11 @@ public class ReleaseInfoBPService {
     @Transactional
     public void updateReleaseInfo(String publishlistId, List<Issue> totalIssueList){
         Publishlist publishlist = publishlistService.getById(publishlistId);
+        /*
         if(!publishlistDomainService.isPublished(publishlistId)){
-            throw new RuntimeException("发布状态错误！");
+            throw new BussinessException("发布状态错误！");
         }
-
+        */
         List<ReleaseInfo> releaseInfoList = new ArrayList<>();
 
         //1、删除之前生成的release info信息
@@ -388,17 +397,21 @@ public class ReleaseInfoBPService {
         //2、生成release info信息
         for(Issue issue: totalIssueList){
             //如果不需要生成发布信息，则跳过
-            if(issue.getIssueName().contains(Config.IssuePublishFilterString)){
+            if(!releaseInfoDomainService.isNeedToGenerateReleaseInfo(issue.getIssueName(), publishlist.getProductLineName())){
                 continue;
             }
-
+            /*
+            if(issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
+                continue;
+            }
+            */
             ReleaseInfo releaseInfo;
             if(publishlist.getProductLineName().toUpperCase().contains("KE")){
-                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKE);
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE);
             }else if(publishlist.getProductLineName().toUpperCase().contains("KC")){
-                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.IssueEnAndChSeparatorInKC);
+                releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KC);
             }else{
-                throw new RuntimeException("产品线名称错误！");
+                throw new BussinessException("产品线名称错误！");
             }
 
             releaseInfoList.add(releaseInfo);

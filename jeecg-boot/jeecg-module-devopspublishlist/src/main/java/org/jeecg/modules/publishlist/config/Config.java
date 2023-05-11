@@ -11,32 +11,34 @@ import java.util.Map;
 
 @Component
 public class Config {
-    public static String IssuePublishFilterString = "（不写发布声明）";
+    public final static String ISSUE_PUBLISH_FILTER_STRING = "（不写发布声明）";
 
-    public static String IssueEnAndChSeparatorInKE = "/";
+    public final static String ISSUE_EN_AND_CH_SEPARATOR_IN_KE = "/";
 
-    public static String IssueEnAndChSeparatorInKC = "||";
+    public final static String ISSUE_EN_AND_CH_SEPARATOR_IN_KC = "||";
 
-    public static String IssueTypeStory = "story";//同jira系统保持一致
+    public final static String ISSUE_TYPE_STORY = "story";//同jira系统保持一致
 
-    public static String IssueTypeBug = "bug";//同jira系统保持一致
 
-    public static String IteratePlaceholderPrefix = "$$Iterate";
+    public final static String ISSUE_TYPE_BUG = "bug";//同jira系统保持一致
+    public final static String ISSUE_TYPE_BUG_CN = "缺陷";
 
-    public static String IteratePlaceholderIssue = "$$Iterate(issue)";
+    public final static String ITERATE_PLACEHOLDER_PREFIX = "$$Iterate";
 
-    public static String IteratePlaceholderIssueBug = "$$Iterate(issue-bug)";
+    public final static String ITERATE_PLACEHOLDER_ISSUE = "$$Iterate(issue)";
 
-    public static String IteratePlaceholderIssueStory = "$$Iterate(issue-story)";
+    public final static String ITERATE_PLACEHOLDER_ISSUE_BUG = "$$Iterate(issue-bug)";
 
-    public static String HistoryPlaceholderPrefix = "$$History";
+    public final static String ITERATE_PLACEHOLDER_ISSUE_STORY = "$$Iterate(issue-story)";
 
-    public static String HistoryPlaceholderDocumentVersion = "$$History(document-version)";
-    public static String ReleaseInfoTypeReleaseNote = "ReleaseNote";
-    public static String ReleaseInfoTypeReleaseMail = "ReleaseMail";
-    public static String ReleaseInfoTypeHandBookPR = "HandBookPRContent";
-    public static String ReleaseInfoTypeProductPackagePR = "ProductPackagePRContent";
-    public static String ReleaseInfoTypeCompanyWebsite = "CompanyWebsite";
+    public final static String HISTORY_PLACEHOLDER_PREFIX = "$$History";
+
+    public final static String HISTORY_PLACEHOLDER_DOCUMENT_VERSION = "$$History(document-version)";
+    public final static String RELEASE_INFO_TYPE_RELEASE_NOTE = "ReleaseNote";
+    public final static String RELEASE_INFO_TYPE_RELEASE_MAIL = "ReleaseMail";
+    public final static String RELEASE_INFO_TYPE_HANDBOOK_PR = "HandBookPRContent";
+    public final static String RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR = "ProductPackagePRContent";
+    public final static String RELEASE_INFO_TYPE_COMPANY_WEBSITE = "CompanyWebsite";
 
     public static Map<String, List<String>> KE_PLACEHODLER_MAP= new HashMap<>();
     public static Map<String, List<String>> KE_ITERATE_PLACEHODLER_MAP = new HashMap<>();
@@ -57,16 +59,16 @@ public class Config {
 
         releaseNotePlaceholderList.add("${productBehaviorChangeUrl}");//from 前端输入
 
-        releaseNotePlaceholderList.add(IteratePlaceholderIssue);//循环占位符
-        releaseNotePlaceholderList.add(IteratePlaceholderIssueStory);//循环占位符
-        releaseNotePlaceholderList.add(IteratePlaceholderIssueBug);//循环占位符
+        releaseNotePlaceholderList.add(ITERATE_PLACEHOLDER_ISSUE);//循环占位符
+        releaseNotePlaceholderList.add(ITERATE_PLACEHOLDER_ISSUE_STORY);//循环占位符
+        releaseNotePlaceholderList.add(ITERATE_PLACEHOLDER_ISSUE_BUG);//循环占位符
 
         releaseNoteIteratePlacerholderList.add("${issueName}");
         releaseNoteIteratePlacerholderList.add("${issueChName}");
         releaseNoteIteratePlacerholderList.add("${issueEnName}");
 
-        KE_PLACEHODLER_MAP.put(ReleaseInfoTypeReleaseNote, releaseNotePlaceholderList);
-        KE_ITERATE_PLACEHODLER_MAP.put(ReleaseInfoTypeReleaseNote, releaseNoteIteratePlacerholderList);
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, releaseNotePlaceholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, releaseNoteIteratePlacerholderList);
 
         List<String> releaseMailPlaceholderList = new ArrayList<>();
 
