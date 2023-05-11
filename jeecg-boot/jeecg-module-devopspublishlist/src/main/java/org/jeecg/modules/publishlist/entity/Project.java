@@ -24,10 +24,10 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("project")
+@TableName("pub_project")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="project对象", description="项目表")
+@ApiModel(value="pub_project对象", description="项目表")
 public class Project implements Serializable {
     private static final long serialVersionUID = 1L;
 

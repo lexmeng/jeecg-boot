@@ -69,7 +69,7 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 	 */
 	@AutoLog(value = "issue本地记录-添加")
 	@ApiOperation(value="issue本地记录-添加", notes="issue本地记录-添加")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue:add")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Issue issue) {
 		issueService.save(issue);
@@ -84,7 +84,7 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 	 */
 	@AutoLog(value = "issue本地记录-编辑")
 	@ApiOperation(value="issue本地记录-编辑", notes="issue本地记录-编辑")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue:edit")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Issue issue) {
 		issueService.updateById(issue);
@@ -99,7 +99,7 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 	 */
 	@AutoLog(value = "issue本地记录-通过id删除")
 	@ApiOperation(value="issue本地记录-通过id删除", notes="issue本地记录-通过id删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue:delete")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		issueService.removeById(id);
@@ -114,7 +114,7 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 	 */
 	@AutoLog(value = "issue本地记录-批量删除")
 	@ApiOperation(value="issue本地记录-批量删除", notes="issue本地记录-批量删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue:deleteBatch")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.issueService.removeByIds(Arrays.asList(ids.split(",")));
@@ -156,7 +156,7 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
     * @param request
     * @param issue
     */
-    //@RequiresPermissions("org.jeecg.modules.demo:issue:exportXls")
+    //@RequiresPermissions("org.jeecg.modules.demo:pub_issue:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, Issue issue) {
         return super.exportXls(request, issue, Issue.class, "issue本地记录");
@@ -169,7 +169,7 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
     * @param response
     * @return
     */
-    //@RequiresPermissions("issue:importExcel")
+    //@RequiresPermissions("pub_issue:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, Issue.class);

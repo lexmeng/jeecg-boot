@@ -24,10 +24,10 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("template")
+@TableName("pub_template")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="template对象", description="模板")
+@ApiModel(value="pub_template对象", description="模板")
 public class Template implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -79,7 +79,5 @@ public class Template implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
     private Date updateTime;
-	/**所属部门*/
-    @ApiModelProperty(value = "所属部门")
-    private String sysOrgCode;
+
 }

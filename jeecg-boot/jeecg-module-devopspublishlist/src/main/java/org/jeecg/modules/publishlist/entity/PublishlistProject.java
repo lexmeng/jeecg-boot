@@ -22,10 +22,10 @@ import java.io.UnsupportedEncodingException;
  * @Version: V1.0
  */
 @Data
-@TableName("publishlist_project")
+@TableName("pub_publishlist_project")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="publishlist_project对象", description="发布单项目表")
+@ApiModel(value="pub_publishlist_project对象", description="发布单项目表")
 public class PublishlistProject implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -34,6 +34,7 @@ public class PublishlistProject implements Serializable {
     @ApiModelProperty(value = "主键")
     private String id;
 	/**publishlist的id*/
+	@Excel(name = "publishlist的id", width = 15)
     @ApiModelProperty(value = "publishlist的id")
     private String publishlistId;
 	/**项目id*/

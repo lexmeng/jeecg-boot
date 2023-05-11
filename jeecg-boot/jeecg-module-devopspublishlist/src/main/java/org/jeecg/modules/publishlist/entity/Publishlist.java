@@ -23,10 +23,10 @@ import io.swagger.annotations.ApiModelProperty;
  * @Version: V1.0
  */
 @Data
-@TableName("publishlist")
+@TableName("pub_publishlist")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="publishlist对象", description="发布单")
+@ApiModel(value="pub_publishlist对象", description="发布单")
 public class Publishlist implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -95,8 +95,8 @@ public class Publishlist implements Serializable {
     @ApiModelProperty(value = "产品经理名")
     private String pmName;
 	/**commid id*/
-	@Excel(name = "commid id", width = 15)
-    @ApiModelProperty(value = "commid id")
+	@Excel(name = "commit_id", width = 15)
+    @ApiModelProperty(value = "commit_id")
     private java.lang.String commitId;
 	/**页内链接ID*/
 	@Excel(name = "页内链接ID", width = 15)

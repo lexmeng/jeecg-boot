@@ -81,7 +81,7 @@ public class DependentComponentController extends JeecgController<DependentCompo
 	 */
 	@AutoLog(value = "依赖组件-添加")
 	@ApiOperation(value="依赖组件-添加", notes="依赖组件-添加")
-	//@RequiresPermissions("org.jeecg.modules.demo:dependent_component:add")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_dependent_component:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody DependentComponent dependentComponent) {
 		dependentComponentService.save(dependentComponent);
@@ -111,7 +111,7 @@ public class DependentComponentController extends JeecgController<DependentCompo
 	 */
 	@AutoLog(value = "依赖组件-通过id删除")
 	@ApiOperation(value="依赖组件-通过id删除", notes="依赖组件-通过id删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:dependent_component:delete")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_dependent_component:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		dependentComponentService.removeById(id);
@@ -126,7 +126,7 @@ public class DependentComponentController extends JeecgController<DependentCompo
 	 */
 	@AutoLog(value = "依赖组件-批量删除")
 	@ApiOperation(value="依赖组件-批量删除", notes="依赖组件-批量删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:dependent_component:deleteBatch")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_dependent_component:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.dependentComponentService.removeByIds(Arrays.asList(ids.split(",")));
@@ -156,7 +156,7 @@ public class DependentComponentController extends JeecgController<DependentCompo
     * @param request
     * @param dependentComponent
     */
-    //@RequiresPermissions("org.jeecg.modules.demo:dependent_component:exportXls")
+    //@RequiresPermissions("org.jeecg.modules.demo:pub_dependent_component:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, DependentComponent dependentComponent) {
         return super.exportXls(request, dependentComponent, DependentComponent.class, "依赖组件");
@@ -169,7 +169,7 @@ public class DependentComponentController extends JeecgController<DependentCompo
     * @param response
     * @return
     */
-    //@RequiresPermissions("dependent_component:importExcel")
+    //@RequiresPermissions("pub_dependent_component:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, DependentComponent.class);

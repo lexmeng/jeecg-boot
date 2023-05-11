@@ -235,6 +235,7 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
     * @param request
     * @param publishlist
     */
+    //@RequiresPermissions("org.jeecg.modules.demo:pub_publishlist:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, Publishlist publishlist) {
         return super.exportXls(request, publishlist, Publishlist.class, "发布单");
@@ -247,6 +248,7 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
     * @param response
     * @return
     */
+    //@RequiresPermissions("pub_publishlist:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, Publishlist.class);

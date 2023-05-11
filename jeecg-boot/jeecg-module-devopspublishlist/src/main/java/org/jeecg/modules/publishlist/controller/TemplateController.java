@@ -66,7 +66,7 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	 */
 	@AutoLog(value = "模板-添加")
 	@ApiOperation(value="模板-添加", notes="模板-添加")
-	//@RequiresPermissions("org.jeecg.modules.demo:template:add")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_template:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Template template) {
 		template.setId(IdTool.generalId());
@@ -82,7 +82,7 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	 */
 	@AutoLog(value = "模板-编辑")
 	@ApiOperation(value="模板-编辑", notes="模板-编辑")
-	//@RequiresPermissions("org.jeecg.modules.demo:template:edit")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_template:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Template template) {
 		templateService.updateById(template);
@@ -97,7 +97,7 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	 */
 	@AutoLog(value = "模板-通过id删除")
 	@ApiOperation(value="模板-通过id删除", notes="模板-通过id删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:template:delete")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_template:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		templateService.removeById(id);
@@ -112,7 +112,7 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	 */
 	@AutoLog(value = "模板-批量删除")
 	@ApiOperation(value="模板-批量删除", notes="模板-批量删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:template:deleteBatch")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_template:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.templateService.removeByIds(Arrays.asList(ids.split(",")));
@@ -142,7 +142,7 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
     * @param request
     * @param template
     */
-    //@RequiresPermissions("org.jeecg.modules.demo:template:exportXls")
+    //@RequiresPermissions("org.jeecg.modules.demo:pub_template:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, Template template) {
         return super.exportXls(request, template, Template.class, "模板");
@@ -155,7 +155,7 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
     * @param response
     * @return
     */
-    //@RequiresPermissions("template:importExcel")
+    //@RequiresPermissions("pub_template:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, Template.class);

@@ -78,9 +78,12 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
         String productLineName = template.getProductLineName();
         List<String> placeholderStrList;
 
-        if(productLineName.toUpperCase().contains("KE")){
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
+        if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)){
             placeholderStrList = Config.KE_PLACEHODLER_MAP.get(template.getType());
-        }else if(productLineName.toUpperCase().contains("KC")){
+        }else if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KC)){
             placeholderStrList = Config.KC_PLACEHODLER_MAP.get(template.getType());
         }else{
             throw new BussinessException("模板产品线名错误");
@@ -131,10 +134,13 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
     private Boolean validatePlaceholder(String type, String productLineName, List<String> placeholderList){
         validateProductLineName(productLineName);
 
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
         List<String> placeholderAllList;
-        if (productLineName.toUpperCase().contains("KE")){
+        if (productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)){
             placeholderAllList = Config.KE_PLACEHODLER_MAP.get(type);
-        }else if(productLineName.toUpperCase().contains("KC")){
+        }else if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KC)){
             placeholderAllList = Config.KC_PLACEHODLER_MAP.get(type);
         }else{
             throw new BussinessException("产品线名称错误！");

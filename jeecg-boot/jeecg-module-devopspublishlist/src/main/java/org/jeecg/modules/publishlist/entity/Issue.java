@@ -24,10 +24,10 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("issue")
+@TableName("pub_issue")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="issue对象", description="issue本地记录")
+@ApiModel(value="pub_issue对象", description="issue本地记录")
 public class Issue implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,6 +43,18 @@ public class Issue implements Serializable {
 	@Excel(name = "jira的issue名", width = 15)
     @ApiModelProperty(value = "jira的issue名")
     private String issueName;
+	/**issue英文名*/
+	@Excel(name = "issue英文名", width = 15)
+    @ApiModelProperty(value = "issue英文名")
+    private String issueEnName;
+	/**issue中文名*/
+	@Excel(name = "issue中文名", width = 15)
+    @ApiModelProperty(value = "issue中文名")
+    private String issueChName;
+	/**issue内容*/
+	@Excel(name = "issue内容", width = 15)
+    @ApiModelProperty(value = "issue内容")
+    private java.lang.String issueContent;
 	/**jira的issue类型*/
 	@Excel(name = "jira的issue类型", width = 15)
     @ApiModelProperty(value = "jira的issue类型")

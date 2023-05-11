@@ -24,10 +24,10 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("issue_history")
+@TableName("pub_issue_history")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="issue_history对象", description="issue历史表")
+@ApiModel(value="pub_issue_history对象", description="issue历史表")
 public class IssueHistory implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,6 +43,18 @@ public class IssueHistory implements Serializable {
 	@Excel(name = "jira的issue名", width = 15)
     @ApiModelProperty(value = "jira的issue名")
     private String issueName;
+	/**issue英文名*/
+	@Excel(name = "issue英文名", width = 15)
+    @ApiModelProperty(value = "issue英文名")
+    private String issueEnName;
+	/**issue中文名*/
+	@Excel(name = "issue中文名", width = 15)
+    @ApiModelProperty(value = "issue中文名")
+    private String issueChName;
+	/**issue内容*/
+	@Excel(name = "issue内容", width = 15)
+    @ApiModelProperty(value = "issue内容")
+    private String issueContent;
 	/**jira的issue类型*/
 	@Excel(name = "jira的issue类型", width = 15)
     @ApiModelProperty(value = "jira的issue类型")
@@ -55,9 +67,9 @@ public class IssueHistory implements Serializable {
 	@Excel(name = "发布单号", width = 15)
     @ApiModelProperty(value = "发布单号")
     private String publishlistId;
-	/**项目名*/
-	@Excel(name = "项目名", width = 15)
-    @ApiModelProperty(value = "项目名")
+	/**项目id*/
+	@Excel(name = "项目id", width = 15)
+    @ApiModelProperty(value = "项目id")
     private String projectId;
 	/**jira版本名*/
 	@Excel(name = "jira版本名", width = 15)

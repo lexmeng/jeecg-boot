@@ -31,6 +31,10 @@ public class Config {
 
     public final static String ITERATE_PLACEHOLDER_ISSUE_STORY = "$$Iterate(issue-story)";
 
+    public final static String ITERATE_PLACEHOLDER_DEPENDENT_COMPONENT = "$$Iterate(dependent-component)";
+
+    public final static String ITERATE_PLACEHOLDER_PACKAGE_URL = "$$Iterate(package-url)";
+
     public final static String HISTORY_PLACEHOLDER_PREFIX = "$$History";
 
     public final static String HISTORY_PLACEHOLDER_DOCUMENT_VERSION = "$$History(document-version)";
@@ -42,40 +46,103 @@ public class Config {
 
     public static Map<String, List<String>> KE_PLACEHODLER_MAP= new HashMap<>();
     public static Map<String, List<String>> KE_ITERATE_PLACEHODLER_MAP = new HashMap<>();
+
+    public static Map<String, List<String>> KC_PLACEHODLER_MAP= new HashMap<>();
+
+    public static Map<String, List<String>> KC_ITERATE_PLACEHODLER_MAP = new HashMap<>();
+
+    public static List<String> PRODUCT_LINE_NAME_LIST = new ArrayList<>();
+
+    public final static String PRODUCT_LINE_NAME_KE = "KE";
+
+    public final static String PRODUCT_LINE_NAME_KC = "KC";
+
+
     @PostConstruct
     public void initPlaceholderMap(){
-        List<String> releaseNotePlaceholderList = new ArrayList<>();
-        List<String> releaseNoteIteratePlacerholderList = new ArrayList<>();
+        PRODUCT_LINE_NAME_LIST.add(PRODUCT_LINE_NAME_KE);
+        PRODUCT_LINE_NAME_LIST.add(PRODUCT_LINE_NAME_KC);
 
-        releaseNotePlaceholderList.add("${pmName}");//from publishlist字段
-        releaseNotePlaceholderList.add("${commitId}");//from 前端输入
-        releaseNotePlaceholderList.add("${productName}");//from publishlist字段，例如：Kyligence Enterprise
-        releaseNotePlaceholderList.add("${versionName}");//from publishlist字段，例如：4.6.7.0
-        releaseNotePlaceholderList.add("${versionType}");//from publishlist字段，例如：GA
+        List<String> placeholderList = new ArrayList<>();
+        List<String> iteratePlacerholderList = new ArrayList<>();
 
-        releaseNotePlaceholderList.add("${issueNum}");//from issue字段，例如：AL-7095
-        releaseNotePlaceholderList.add("${issueEnName}");//from releaseInfo字段
-        releaseNotePlaceholderList.add("${issueChName}");//from releaseInfo字段
 
-        releaseNotePlaceholderList.add("${productBehaviorChangeUrl}");//from 前端输入
+        placeholderList.add("${product_line_name}");
+        placeholderList.add("${productName}");//from publishlist字段，例如：Kyligence Enterprise
+        placeholderList.add("${versionName}");//from publishlist字段，例如：4.6.7.0
+        placeholderList.add("${versionType}");//from publishlist字段，例如：GA
 
-        releaseNotePlaceholderList.add(ITERATE_PLACEHOLDER_ISSUE);//循环占位符
-        releaseNotePlaceholderList.add(ITERATE_PLACEHOLDER_ISSUE_STORY);//循环占位符
-        releaseNotePlaceholderList.add(ITERATE_PLACEHOLDER_ISSUE_BUG);//循环占位符
+        placeholderList.add("${jiraVersionName}");
+        placeholderList.add("${scrumNum}");
+        placeholderList.add("${scrumStage}");
 
-        releaseNoteIteratePlacerholderList.add("${issueName}");
-        releaseNoteIteratePlacerholderList.add("${issueChName}");
-        releaseNoteIteratePlacerholderList.add("${issueEnName}");
+        placeholderList.add("${pmId}");
+        placeholderList.add("${pmName}");
 
-        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, releaseNotePlaceholderList);
-        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, releaseNoteIteratePlacerholderList);
+        placeholderList.add("${documentVersion}");
+        placeholderList.add("${commitId}");//
+        placeholderList.add("${documentUrlId}");//
 
-        List<String> releaseMailPlaceholderList = new ArrayList<>();
+        placeholderList.add("${userManualChLink}");
+        placeholderList.add("${userManualEnLink}");
+
+        //placeholderList.add("${productBehaviorChangeUrl}");//
+
+        iteratePlacerholderList.add(ITERATE_PLACEHOLDER_ISSUE);//循环占位符
+        iteratePlacerholderList.add(ITERATE_PLACEHOLDER_ISSUE_STORY);//循环占位符
+        iteratePlacerholderList.add(ITERATE_PLACEHOLDER_ISSUE_BUG);//循环占位符
+        iteratePlacerholderList.add(ITERATE_PLACEHOLDER_DEPENDENT_COMPONENT);
+        iteratePlacerholderList.add(ITERATE_PLACEHOLDER_PACKAGE_URL);
+
+        placeholderList.add("${issueNum}");//from issue字段，例如：AL-7095
+        placeholderList.add("${issueName}");
+        placeholderList.add("${issueChName}");//from releaseInfo字段
+        placeholderList.add("${issueEnName}");//from releaseInfo字段
+        placeholderList.add("${issueType}");
+        placeholderList.add("${issueLink}");
+
+        placeholderList.add("${componentCnName}");
+        placeholderList.add("${componentEnName}");
+
+        placeholderList.add("${storageType}");
+        placeholderList.add("${packageUrl}");
+
+        //简化一下，不再每个类型单独设置占位符检查了
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, placeholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, iteratePlacerholderList);
+
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, placeholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, iteratePlacerholderList);
+
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, placeholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, iteratePlacerholderList);
+
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, placeholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, iteratePlacerholderList);
+
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, placeholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, iteratePlacerholderList);
+
+        //简化一下，KE和KC以及别的产品线不再单独设置占位符检查了
+        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, placeholderList);
+        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, iteratePlacerholderList);
+
+        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, placeholderList);
+        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, iteratePlacerholderList);
+
+        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, placeholderList);
+        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, iteratePlacerholderList);
+
+        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, placeholderList);
+        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, iteratePlacerholderList);
+
+        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, placeholderList);
+        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, iteratePlacerholderList);
 
 
     }
 
-    public static Map<String, List<String>> KC_PLACEHODLER_MAP= new HashMap<>();
+
 
 
 }

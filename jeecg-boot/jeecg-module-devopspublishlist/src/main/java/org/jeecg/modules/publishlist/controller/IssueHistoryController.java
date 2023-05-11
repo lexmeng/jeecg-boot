@@ -65,7 +65,7 @@ public class IssueHistoryController extends JeecgController<IssueHistory, IIssue
 	 */
 	@AutoLog(value = "issue历史表-添加")
 	@ApiOperation(value="issue历史表-添加", notes="issue历史表-添加")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue_history:add")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue_history:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody IssueHistory issueHistory) {
 		issueHistoryService.save(issueHistory);
@@ -80,7 +80,7 @@ public class IssueHistoryController extends JeecgController<IssueHistory, IIssue
 	 */
 	@AutoLog(value = "issue历史表-编辑")
 	@ApiOperation(value="issue历史表-编辑", notes="issue历史表-编辑")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue_history:edit")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue_history:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody IssueHistory issueHistory) {
 		issueHistoryService.updateById(issueHistory);
@@ -95,7 +95,7 @@ public class IssueHistoryController extends JeecgController<IssueHistory, IIssue
 	 */
 	@AutoLog(value = "issue历史表-通过id删除")
 	@ApiOperation(value="issue历史表-通过id删除", notes="issue历史表-通过id删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue_history:delete")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue_history:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		issueHistoryService.removeById(id);
@@ -110,7 +110,7 @@ public class IssueHistoryController extends JeecgController<IssueHistory, IIssue
 	 */
 	@AutoLog(value = "issue历史表-批量删除")
 	@ApiOperation(value="issue历史表-批量删除", notes="issue历史表-批量删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:issue_history:deleteBatch")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_issue_history:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.issueHistoryService.removeByIds(Arrays.asList(ids.split(",")));
@@ -140,7 +140,7 @@ public class IssueHistoryController extends JeecgController<IssueHistory, IIssue
     * @param request
     * @param issueHistory
     */
-    //@RequiresPermissions("org.jeecg.modules.demo:issue_history:exportXls")
+    //@RequiresPermissions("org.jeecg.modules.demo:pub_issue_history:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, IssueHistory issueHistory) {
         return super.exportXls(request, issueHistory, IssueHistory.class, "issue历史表");
@@ -153,7 +153,7 @@ public class IssueHistoryController extends JeecgController<IssueHistory, IIssue
     * @param response
     * @return
     */
-    //@RequiresPermissions("issue_history:importExcel")
+    //@RequiresPermissions("pub_issue_history:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, IssueHistory.class);

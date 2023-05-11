@@ -22,10 +22,10 @@ import java.io.UnsupportedEncodingException;
  * @Version: V1.0
  */
 @Data
-@TableName("package_url")
+@TableName("pub_package_url")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="package_url对象", description="产品包的下载地址")
+@ApiModel(value="pub_package_url对象", description="产品包的下载地址")
 public class PackageUrl implements Serializable {
     private static final long serialVersionUID = 1L;
 

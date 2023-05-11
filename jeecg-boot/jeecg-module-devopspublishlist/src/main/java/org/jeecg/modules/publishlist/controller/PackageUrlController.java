@@ -81,7 +81,7 @@ public class PackageUrlController extends JeecgController<PackageUrl, IPackageUr
 	 */
 	@AutoLog(value = "产品包的下载地址-添加")
 	@ApiOperation(value="产品包的下载地址-添加", notes="产品包的下载地址-添加")
-	//@RequiresPermissions("org.jeecg.modules.demo:package_url:add")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_package_url:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody PackageUrl packageUrl) {
 		packageUrlService.save(packageUrl);
@@ -96,7 +96,7 @@ public class PackageUrlController extends JeecgController<PackageUrl, IPackageUr
 	 */
 	@AutoLog(value = "产品包的下载地址-编辑")
 	@ApiOperation(value="产品包的下载地址-编辑", notes="产品包的下载地址-编辑")
-	//@RequiresPermissions("org.jeecg.modules.demo:package_url:edit")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_package_url:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody PackageUrl packageUrl) {
 		packageUrlService.updateById(packageUrl);
@@ -111,7 +111,7 @@ public class PackageUrlController extends JeecgController<PackageUrl, IPackageUr
 	 */
 	@AutoLog(value = "产品包的下载地址-通过id删除")
 	@ApiOperation(value="产品包的下载地址-通过id删除", notes="产品包的下载地址-通过id删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:package_url:delete")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_package_url:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		packageUrlService.removeById(id);
@@ -126,7 +126,7 @@ public class PackageUrlController extends JeecgController<PackageUrl, IPackageUr
 	 */
 	@AutoLog(value = "产品包的下载地址-批量删除")
 	@ApiOperation(value="产品包的下载地址-批量删除", notes="产品包的下载地址-批量删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:package_url:deleteBatch")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_package_url:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.packageUrlService.removeByIds(Arrays.asList(ids.split(",")));
@@ -156,7 +156,7 @@ public class PackageUrlController extends JeecgController<PackageUrl, IPackageUr
     * @param request
     * @param packageUrl
     */
-    //@RequiresPermissions("org.jeecg.modules.demo:package_url:exportXls")
+    //@RequiresPermissions("org.jeecg.modules.demo:pub_package_url:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, PackageUrl packageUrl) {
         return super.exportXls(request, packageUrl, PackageUrl.class, "产品包的下载地址");
@@ -169,7 +169,7 @@ public class PackageUrlController extends JeecgController<PackageUrl, IPackageUr
     * @param response
     * @return
     */
-    //@RequiresPermissions("package_url:importExcel")
+    //@RequiresPermissions("pub_package_url:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, PackageUrl.class);

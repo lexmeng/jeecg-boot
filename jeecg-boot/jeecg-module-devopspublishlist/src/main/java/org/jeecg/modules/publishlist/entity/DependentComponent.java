@@ -18,14 +18,14 @@ import java.io.UnsupportedEncodingException;
 /**
  * @Description: 依赖组件
  * @Author: jeecg-boot
- * @Date:   2023-05-06
+ * @Date:   2023-05-11
  * @Version: V1.0
  */
 @Data
-@TableName("dependent_component")
+@TableName("pub_dependent_component")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="dependent_component对象", description="依赖组件")
+@ApiModel(value="pub_dependent_component对象", description="依赖组件")
 public class DependentComponent implements Serializable {
     private static final long serialVersionUID = 1L;
 

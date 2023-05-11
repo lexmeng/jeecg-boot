@@ -81,7 +81,7 @@ public class PublishlistProjectController extends JeecgController<PublishlistPro
 	 */
 	@AutoLog(value = "发布单项目表-添加")
 	@ApiOperation(value="发布单项目表-添加", notes="发布单项目表-添加")
-	//@RequiresPermissions("org.jeecg.modules.demo:publishlist_project:add")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_publishlist_project:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody PublishlistProject publishlistProject) {
 		publishlistProjectService.save(publishlistProject);
@@ -96,7 +96,7 @@ public class PublishlistProjectController extends JeecgController<PublishlistPro
 	 */
 	@AutoLog(value = "发布单项目表-编辑")
 	@ApiOperation(value="发布单项目表-编辑", notes="发布单项目表-编辑")
-	//@RequiresPermissions("org.jeecg.modules.demo:publishlist_project:edit")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_publishlist_project:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody PublishlistProject publishlistProject) {
 		publishlistProjectService.updateById(publishlistProject);
@@ -111,7 +111,7 @@ public class PublishlistProjectController extends JeecgController<PublishlistPro
 	 */
 	@AutoLog(value = "发布单项目表-通过id删除")
 	@ApiOperation(value="发布单项目表-通过id删除", notes="发布单项目表-通过id删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:publishlist_project:delete")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_publishlist_project:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		publishlistProjectService.removeById(id);
@@ -126,7 +126,7 @@ public class PublishlistProjectController extends JeecgController<PublishlistPro
 	 */
 	@AutoLog(value = "发布单项目表-批量删除")
 	@ApiOperation(value="发布单项目表-批量删除", notes="发布单项目表-批量删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:publishlist_project:deleteBatch")
+	//@RequiresPermissions("org.jeecg.modules.demo:pub_publishlist_project:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.publishlistProjectService.removeByIds(Arrays.asList(ids.split(",")));
@@ -156,7 +156,7 @@ public class PublishlistProjectController extends JeecgController<PublishlistPro
     * @param request
     * @param publishlistProject
     */
-    //@RequiresPermissions("org.jeecg.modules.demo:publishlist_project:exportXls")
+    //@RequiresPermissions("org.jeecg.modules.demo:pub_publishlist_project:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, PublishlistProject publishlistProject) {
         return super.exportXls(request, publishlistProject, PublishlistProject.class, "发布单项目表");
@@ -169,7 +169,7 @@ public class PublishlistProjectController extends JeecgController<PublishlistPro
     * @param response
     * @return
     */
-    //@RequiresPermissions("publishlist_project:importExcel")
+    //@RequiresPermissions("pub_publishlist_project:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, PublishlistProject.class);
