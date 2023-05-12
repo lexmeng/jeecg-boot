@@ -38,18 +38,12 @@ public class Publishlist implements Serializable {
 	@Excel(name = "发布单名", width = 15)
     @ApiModelProperty(value = "发布单名")
     private String name;
-	/**产品线id*/
-	@Excel(name = "产品线id", width = 15)
-    @ApiModelProperty(value = "产品线id")
-    private String productLineId;
+
 	/**产品线名*/
 	@Excel(name = "产品线名", width = 15)
     @ApiModelProperty(value = "产品线名")
     private String productLineName;
-	/**产品id*/
-	@Excel(name = "产品id", width = 15)
-    @ApiModelProperty(value = "产品id")
-    private String productId;
+
 	/**产品名*/
 	@Excel(name = "产品名", width = 15)
     @ApiModelProperty(value = "产品名")

@@ -6,7 +6,6 @@ import org.jeecg.modules.publishlist.entity.Issue;
 import org.jeecg.modules.publishlist.entity.ReleaseInfo;
 import org.jeecg.modules.publishlist.entity.Template;
 import org.jeecg.modules.publishlist.exception.BussinessException;
-import org.jeecg.modules.publishlist.service.IReleaseInfoService;
 import org.jeecg.modules.publishlist.service.ITemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,9 @@ import java.util.regex.Pattern;
 public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
 
     @Autowired
-    private IReleaseInfoService releaseInfoService;
-
-    @Autowired
     private ITemplateService templateService;
 
+    /*
     @Override
     public ReleaseInfo convertReleaseInfoFromIssue(Issue issue, String seperatorString){
 
@@ -51,6 +48,23 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
 
         return releaseInfo;
 
+    }
+    */
+
+
+    public String[] splitNameInfoFromIssue(Issue issue, String seperatorString){
+        String[] splitStringList = issue.getIssueName().split(seperatorString);
+        if(!issue.getIssueName().contains(seperatorString)){
+            throw new BussinessException("issue名称不包含分隔符："+seperatorString+"。请修改！issue名称："+issue.getIssueName());
+        }
+        if(splitStringList[0] == null || splitStringList[0].equals("")){
+            throw new BussinessException("issue分隔错误："+issue.getId());
+        }
+        if(splitStringList[1] == null || splitStringList[1].equals("")){
+            throw new BussinessException("issue分隔错误："+issue.getId());
+        }
+
+        return splitStringList;
     }
 
     public void createTemplate(Template template){
@@ -186,12 +200,15 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
     }
 
 
+
     /**
      * 判断是否需要生成releaseInfo
+     * 废弃掉，通用逻辑移到logic包中
      * @param content
      * @param productLineName
      * @return
      */
+    /*
     public Boolean isNeedToGenerateReleaseInfo(String content, String productLineName){
         if(content.contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
             return false;
@@ -205,6 +222,8 @@ public class ReleaseInfoDomainServiceImpl implements IReleaseInfoDomainService{
 
         return true;
     }
+    */
+
 
 
     public static void main(String[] args){

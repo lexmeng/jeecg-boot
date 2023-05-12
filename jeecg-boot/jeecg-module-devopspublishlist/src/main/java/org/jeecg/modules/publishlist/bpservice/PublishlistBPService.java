@@ -39,14 +39,15 @@ public class PublishlistBPService {
     @Autowired
     private IReleaseInfoDomainService releaseInfoDomainService;
 
-    @Autowired
-    private IReleaseInfoService releaseInfoService;
 
     @Autowired
     private ReleaseInfoBPService releaseInfoBPService;
 
     @Autowired
     private IProjectService projectService;
+
+    @Autowired
+    private IssueBPService issueBPService;
 
     //新建发布单
     public void createPublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
@@ -67,7 +68,8 @@ public class PublishlistBPService {
         savePublishlist(totalIssueList, publishlist, publishlistProjectList, dependentComponentList, packageUrlList);
 
         //更新releaseInfo信息
-        releaseInfoBPService.updateReleaseInfo(publishlistId);
+        //releaseInfoBPService.updateReleaseInfo(publishlistId);
+        issueBPService.generateEnAndChNameAndSave(publishlistId);
 
     }
 
@@ -95,7 +97,8 @@ public class PublishlistBPService {
         issueDomainService.saveIssueListFirstTime(publishlist.getId(), totalIssueList);
 
         //更新releaseInfo信息
-        releaseInfoBPService.updateReleaseInfo(publishlist.getId());
+        //releaseInfoBPService.updateReleaseInfo(publishlist.getId());
+        issueBPService.generateEnAndChNameAndSave(publishlist.getId());
     }
 
     public void publish(String publishlistId){
@@ -122,7 +125,11 @@ public class PublishlistBPService {
             throw new BussinessException("发布状态错误！");
         }
 
+        //更新issue中英文名
+        issueBPService.generateEnAndChNameAndSave(publishlistId);
+
         //删除之前生成的release info信息
+        /*
         Map<String,Object> map = new HashMap<>();
         map.put("publishlist_id",publishlistId);
         releaseInfoService.removeByMap(map);
@@ -133,11 +140,11 @@ public class PublishlistBPService {
             if(!releaseInfoDomainService.isNeedToGenerateReleaseInfo(issue.getIssueName(), publishlist.getProductLineName())){
                 continue;
             }
-            /*
-            if(issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
-                continue;
-            }
-            */
+
+            //if(issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
+            //    continue;
+            //}
+
             ReleaseInfo releaseInfo;
             if(publishlist.getProductLineName().toUpperCase().contains("KE")){
                 releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE);
@@ -150,6 +157,7 @@ public class PublishlistBPService {
             releaseInfoList.add(releaseInfo);
         }
         releaseInfoService.saveBatch(releaseInfoList);
+        */
 
         return;
     }

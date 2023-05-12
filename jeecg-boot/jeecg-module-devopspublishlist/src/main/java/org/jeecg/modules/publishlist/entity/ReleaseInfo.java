@@ -24,10 +24,10 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("release_info")
+//@TableName("release_info")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="release_info对象", description="release信息表")
+//@ApiModel(value="release_info对象", description="release信息表")
 public class ReleaseInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 

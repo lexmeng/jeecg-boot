@@ -140,49 +140,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         return issueHistory;
     }
 
-    @Override
-    public List<Issue> getIssueListForRelease(String publishlistId){
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("publishlist_id",publishlistId);
-        List<Issue> issueList = issueService.list(queryWrapper);
 
-        List<Issue> resultIssueList = new ArrayList<>();
-        for(Issue issue : issueList){
-            if(!issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
-                resultIssueList.add(issue);
-            }
-        }
-        return resultIssueList;
-    }
-
-
-    public List<Issue> getStoryIssueListForRelease(String publishlistId){
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("publishlist_id",publishlistId);
-        List<Issue> issueList = issueService.list(queryWrapper);
-
-        List<Issue> resultIssueList = new ArrayList<>();
-        for(Issue issue : issueList){
-            if(!issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING) && issue.getIssueType().equals(Config.ISSUE_TYPE_STORY)){
-                resultIssueList.add(issue);
-            }
-        }
-        return resultIssueList;
-    }
-
-    public List<Issue> getBugIssueListForRelease(String publishlistId){
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("publishlist_id",publishlistId);
-        List<Issue> issueList = issueService.list(queryWrapper);
-
-        List<Issue> resultIssueList = new ArrayList<>();
-        for(Issue issue : issueList){
-            if(!issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING) && (issue.getIssueType().equals(Config.ISSUE_TYPE_BUG) || issue.getIssueType().equals(Config.ISSUE_TYPE_BUG_CN))){
-                resultIssueList.add(issue);
-            }
-        }
-        return resultIssueList;
-    }
 
 
 

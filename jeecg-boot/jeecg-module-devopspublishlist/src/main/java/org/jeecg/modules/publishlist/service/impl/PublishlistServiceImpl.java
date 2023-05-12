@@ -10,13 +10,16 @@ import org.jeecg.modules.publishlist.mapper.PublishlistProjectMapper;
 import org.jeecg.modules.publishlist.mapper.PublishlistMapper;
 import org.jeecg.modules.publishlist.service.IPublishlistService;
 import org.jeecg.modules.publishlist.domainservice.impl.PublishlistStatusMachine;
+import org.jeecg.modules.publishlist.vo.PublishlistQueryResult;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -100,6 +103,26 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 				packageUrlMapper.insert(entity);
 			}
 		}
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public PublishlistQueryResult queryByMainId(String id){
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("publishlist_id",id);
+
+		Publishlist publishlist = publishlistMapper.selectById(id);
+		List<PackageUrl> packageUrlList = packageUrlMapper.selectByMap(queryMap);
+		List<DependentComponent> dependentComponentList = dependentComponentMapper.selectByMap(queryMap);
+		List<PublishlistProject> publishlistProjectList = publishlistProjectMapper.selectByMap(queryMap);
+
+		PublishlistQueryResult result = new PublishlistQueryResult();
+		result.setPublishlist(publishlist);
+		result.setPackageUrlList(packageUrlList);
+		result.setDependentComponentList(dependentComponentList);
+		result.setPublishlistProjectList(publishlistProjectList);
+
+        return result;
 	}
 
 	@Override

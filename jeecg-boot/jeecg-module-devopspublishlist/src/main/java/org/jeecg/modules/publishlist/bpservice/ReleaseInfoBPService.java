@@ -28,9 +28,6 @@ public class ReleaseInfoBPService {
     private IReleaseInfoDomainService releaseInfoDomainService;
 
     @Autowired
-    private IReleaseInfoService releaseInfoService;
-
-    @Autowired
     private IPublishlistDomainService publishlistDomainService;
 
     @Autowired
@@ -50,6 +47,9 @@ public class ReleaseInfoBPService {
 
     @Autowired
     private IProjectService projectService;
+
+    @Autowired
+    private IssueBPService issueBPService;
 
 
     public String replaceHistoryIteratePlaceholder(String content, List<Issue> issueList, LinkedMap<String, Publishlist> historyVersionPublishlist, LinkedMap<String, List<Issue>> historyVersionIssueList){
@@ -149,7 +149,7 @@ public class ReleaseInfoBPService {
         List<String> strList = new ArrayList<>();
 
         for(Issue issue: issueList){
-            ReleaseInfo releaseInfo = releaseInfoService.getById(issue.getId());
+            //ReleaseInfo releaseInfo = releaseInfoService.getById(issue.getId());
 
             Pattern issuePattern = Pattern.compile("\\$\\{.+?\\}");
             Matcher issueMatcher = issuePattern.matcher(issueContent);
@@ -158,7 +158,8 @@ public class ReleaseInfoBPService {
             while(issueMatcher.find()){
                 //issueMatcher.replaceFirst();
                 String issueGroup = issueMatcher.group(0);
-                tempIssueContent = issueMatcher.replaceFirst(getIssuePlaceholderContent(issueGroup, issue, releaseInfo));
+                tempIssueContent = issueMatcher.replaceFirst(getIssuePlaceholderContent(issueGroup, issue));
+                //tempIssueContent = issueMatcher.replaceFirst(getIssuePlaceholderContent(issueGroup, issue, releaseInfo));
                 issueMatcher = issuePattern.matcher(tempIssueContent);
             }
             strList.add(tempIssueContent);
@@ -197,7 +198,7 @@ public class ReleaseInfoBPService {
         throw new BussinessException("循环占位符不匹配！");
     }
 
-    private String getIssuePlaceholderContent(String placeholder, Issue issue, ReleaseInfo releaseInfo){
+    private String getIssuePlaceholderContent(String placeholder, Issue issue){
         Object result;
         if(placeholder.equals("${issueId}")){
             result = issue.getId();
@@ -212,9 +213,9 @@ public class ReleaseInfoBPService {
         }else if(placeholder.equals("${issueJiraVersionName}")){
             result = issue.getJiraVersionName();
         }else if(placeholder.equals("${issueEnName}")){
-            result = releaseInfo.getIssueEnName();
+            result = issue.getIssueEnName();
         }else if(placeholder.equals("${issueChName}")){
-            result = releaseInfo.getIssueChName();
+            result = issue.getIssueChName();
         }else{
             throw new BussinessException("issue占位符错误！");
         }
@@ -255,14 +256,14 @@ public class ReleaseInfoBPService {
         wrapper.eq("document_version", publishlist.getDocumentVersion()).orderByDesc("document_version");
         List<Publishlist> publishlistsList= publishlistService.list(wrapper);
 
-        List<Issue> issueList = issueDomainService.getIssueListForRelease(publishlistId);
+        List<Issue> issueList = issueBPService.getIssueListForRelease(publishlistId);
 
         LinkedMap<String, Publishlist> historyVersionPublishlist = new LinkedMap<>();
         LinkedMap<String, List<Issue>> historyVersionIssueList = new LinkedMap<>();
         for(Publishlist historyPublishlist : publishlistsList){
             historyVersionPublishlist.put(historyPublishlist.getVersionName(), historyPublishlist);
 
-            List<Issue> tempIssueList = issueDomainService.getIssueListForRelease(historyPublishlist.getId());
+            List<Issue> tempIssueList = issueBPService.getIssueListForRelease(historyPublishlist.getId());
             historyVersionIssueList.put(historyPublishlist.getVersionName(), tempIssueList);
         }
 
@@ -325,14 +326,10 @@ public class ReleaseInfoBPService {
     /**
      * 更新releaseInfo信息，调用时机：首次拉取issue后，更新issue后，发布单发布前更新issue后
      */
+    /*
     @Transactional
     public void updateReleaseInfo(String publishlistId){
         Publishlist publishlist = publishlistService.getById(publishlistId);
-        /*
-        if(!publishlistDomainService.isPublished(publishlistId)){
-            throw new BussinessException("发布状态错误！");
-        }
-        */
 
         List<ReleaseInfo> releaseInfoList = new ArrayList<>();
 
@@ -358,11 +355,6 @@ public class ReleaseInfoBPService {
             if(!releaseInfoDomainService.isNeedToGenerateReleaseInfo(issue.getIssueName(), publishlist.getProductLineName())){
                 continue;
             }
-            /*
-            if(issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
-                continue;
-            }
-            */
 
             ReleaseInfo releaseInfo;
             if(publishlist.getProductLineName().toUpperCase().contains("KE")){
@@ -377,15 +369,15 @@ public class ReleaseInfoBPService {
         }
         releaseInfoService.saveBatch(releaseInfoList);
     }
+    */
 
+
+
+    /*
     @Transactional
     public void updateReleaseInfo(String publishlistId, List<Issue> totalIssueList){
         Publishlist publishlist = publishlistService.getById(publishlistId);
-        /*
-        if(!publishlistDomainService.isPublished(publishlistId)){
-            throw new BussinessException("发布状态错误！");
-        }
-        */
+
         List<ReleaseInfo> releaseInfoList = new ArrayList<>();
 
         //1、删除之前生成的release info信息
@@ -400,11 +392,7 @@ public class ReleaseInfoBPService {
             if(!releaseInfoDomainService.isNeedToGenerateReleaseInfo(issue.getIssueName(), publishlist.getProductLineName())){
                 continue;
             }
-            /*
-            if(issue.getIssueName().contains(Config.ISSUE_PUBLISH_FILTER_STRING)){
-                continue;
-            }
-            */
+
             ReleaseInfo releaseInfo;
             if(publishlist.getProductLineName().toUpperCase().contains("KE")){
                 releaseInfo = releaseInfoDomainService.convertReleaseInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE);
@@ -418,4 +406,6 @@ public class ReleaseInfoBPService {
         }
         releaseInfoService.saveBatch(releaseInfoList);
     }
+    */
+
 }

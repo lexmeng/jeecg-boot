@@ -14,6 +14,7 @@ import org.jeecg.modules.publishlist.entity.DependentComponent;
 import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.service.IDependentComponentService;
 import org.jeecg.modules.publishlist.service.IPackageUrlService;
+import org.jeecg.modules.publishlist.vo.PublishlistQueryResult;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -172,12 +173,13 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	//@AutoLog(value = "发布单-通过id查询")
 	@ApiOperation(value="发布单-通过id查询", notes="发布单-通过id查询")
 	@GetMapping(value = "/queryById")
-	public Result<Publishlist> queryById(@RequestParam(name="id",required=true) String id) {
-		Publishlist publishlist = publishlistService.getById(id);
-		if(publishlist==null) {
+	public Result<PublishlistQueryResult> queryById(@RequestParam(name="id",required=true) String id) {
+		PublishlistQueryResult publishlistQueryResult = publishlistService.queryByMainId(id);
+
+		if(publishlistQueryResult==null) {
 			return Result.error("未找到对应数据");
 		}
-		return Result.OK(publishlist);
+		return Result.OK(publishlistQueryResult);
 	}
 
 	 @AutoLog(value = "发布单-发布")
