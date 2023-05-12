@@ -14,7 +14,7 @@ public interface IReleaseInfoDomainService {
 
     public Boolean verifyPlaceholder(Template template);
 
-    public String replacePlaceholder(String content, Map<String, String> placeholderMap);
+    //public String replacePlaceholder(String content, Map<String, String> placeholderMap);
 
     //public Boolean isNeedToGenerateReleaseInfo(String content, String productlineName);
 }

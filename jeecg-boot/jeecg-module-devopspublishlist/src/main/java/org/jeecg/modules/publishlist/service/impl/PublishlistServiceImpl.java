@@ -1,5 +1,6 @@
 package org.jeecg.modules.publishlist.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import org.jeecg.modules.publishlist.entity.DependentComponent;
 import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.entity.Publishlist;
@@ -16,10 +17,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -123,6 +121,31 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 		result.setPublishlistProjectList(publishlistProjectList);
 
         return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public List<PublishlistQueryResult> listByMainMap(Map<String, Object> columnMap){
+        List<Publishlist> publishlistList = publishlistMapper.selectByMap(columnMap);
+
+		List<PublishlistQueryResult> result = new ArrayList<>();
+		for(Publishlist publishlist : publishlistList){
+			PublishlistQueryResult publishlistQueryResult = queryByMainId(publishlist.getId());
+			result.add(publishlistQueryResult);
+		}
+		return result;
+	}
+
+	@Override
+	public List<PublishlistQueryResult> ListByMainWrapper(Wrapper queryWrapper){
+		List<Publishlist> publishlistList = list(queryWrapper);
+
+		List<PublishlistQueryResult> result = new ArrayList<>();
+		for(Publishlist publishlist : publishlistList){
+			PublishlistQueryResult publishlistQueryResult = queryByMainId(publishlist.getId());
+			result.add(publishlistQueryResult);
+		}
+		return result;
 	}
 
 	@Override

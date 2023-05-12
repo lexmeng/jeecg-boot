@@ -99,7 +99,7 @@ public class Publishlist implements Serializable {
 	/**用户手册中文链接*/
 	@Excel(name = "用户手册中文链接", width = 15)
     @ApiModelProperty(value = "用户手册中文链接")
-    private java.lang.String urerManualEnLink;
+    private java.lang.String userManualEnLink;
 	/**用户手册英文链接*/
 	@Excel(name = "用户手册英文链接", width = 15)
     @ApiModelProperty(value = "用户手册英文链接")

@@ -37,10 +37,6 @@ public class PublishlistBPService {
     private IPublishlistService publishlistService;
 
     @Autowired
-    private IReleaseInfoDomainService releaseInfoDomainService;
-
-
-    @Autowired
     private ReleaseInfoBPService releaseInfoBPService;
 
     @Autowired

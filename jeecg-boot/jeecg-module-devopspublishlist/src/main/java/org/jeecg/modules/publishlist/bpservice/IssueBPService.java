@@ -40,9 +40,6 @@ public class IssueBPService {
     private IIssueDomainService issueDomainService;
 
     @Autowired
-    private IReleaseInfoDomainService releaseInfoDomainService;
-
-    @Autowired
     private IIssueService issueService;
 
     @Autowired
@@ -100,9 +97,9 @@ public class IssueBPService {
             }
 
             if(publishlist.getProductLineName().toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)){
-                splitResult = releaseInfoDomainService.splitNameInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE);
+                splitResult = ReleaseInfoLogic.splitNameInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE);
             }else if(publishlist.getProductLineName().toUpperCase().contains(Config.PRODUCT_LINE_NAME_KC)){
-                splitResult = releaseInfoDomainService.splitNameInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KC);
+                splitResult = ReleaseInfoLogic.splitNameInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KC);
             }else{
                 throw new BussinessException("产品线名称错误！");
             }

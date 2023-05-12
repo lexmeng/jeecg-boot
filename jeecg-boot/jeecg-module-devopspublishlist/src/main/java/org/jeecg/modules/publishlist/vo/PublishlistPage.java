@@ -93,7 +93,7 @@ public class PublishlistPage {
 	/**用户手册中文链接*/
 	@Excel(name = "用户手册中文链接", width = 15)
 	@ApiModelProperty(value = "用户手册中文链接")
-    private String urerManualEnLink;
+    private String userManualEnLink;
 	/**用户手册英文链接*/
 	@Excel(name = "用户手册英文链接", width = 15)
 	@ApiModelProperty(value = "用户手册英文链接")
