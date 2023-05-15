@@ -6,10 +6,7 @@ import com.offbytwo.jenkins.model.JobWithDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.HttpURLConnection;
+import java.net.*;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,13 +16,13 @@ public class JenkinsUtils {
 
     // 连接 Jenkins 需要设置的信息
     //"http://192.168.2.11:8080/jenkins/"
-    private String JENKINS_URL="https://cicd-ofs.kyligence.com/job/DevOps";
+    private String JENKINS_URL;
 
     @Value("${jenkins.account}")
-    private String JENKINS_USERNAME="lianfei.qu";
+    private String JENKINS_USERNAME;
 
     @Value("${jenkins.password}")
-    private String JENKINS_API_TOKEN="11a93a5156fb112346ecf8749fb4fdd9f8";
+    private String JENKINS_API_TOKEN;
 
     /**
      * Http 客户端工具
@@ -71,13 +68,30 @@ public class JenkinsUtils {
         return uri.resolve("?" + query.substring(0, query.length() - 1));
     }
 
+    public String build(String baseUrl, Map<String, String> params) {
+        StringBuilder sb = new StringBuilder(baseUrl);
+        sb.append("?");
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            sb.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue())).append("&");
+        }
+
+        sb.deleteCharAt(sb.length() - 1);
+
+        return sb.toString();
+    }
+
+    /**
+     * 通过restful接口访问jenkins任务
+     * 注：不适合参数长的情况，因为参数会放在url上，而url的长度是很有限的。
+     * @param jobName
+     * @param paramMap
+     */
     public void connectionUseRestful(String jobName, Map<String, String> paramMap)
     {
         try{
-
-            URI uri = new URI(JENKINS_URL + "/job/" + jobName + "/buildWithParameters");
-            uri = addParameters(uri, paramMap);
-            URL url = uri.toURL();
+            String urlStr = build(JENKINS_URL + "/job/" + jobName + "/buildWithParameters", paramMap);
+            URL url = new URL(urlStr);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");

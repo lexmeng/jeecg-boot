@@ -48,6 +48,7 @@ public class JenkinsOperateUtils {
 
     /**
      * 执行带参数 Job build
+     * 注：不能带长参数，因为入参会编辑进请求url中，而url的长度是有限的。
      */
     public void buildParamJob(String jobName, Map<String,String> param){
         try {
@@ -63,15 +64,6 @@ public class JenkinsOperateUtils {
             jenkinsServer.getJob(jobName).build(param);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-
-    public void runPramJobUseRestful(String jobName, Map<String,String> param){
-        try{
-
-        }catch (Exception e){
-
         }
     }
 
