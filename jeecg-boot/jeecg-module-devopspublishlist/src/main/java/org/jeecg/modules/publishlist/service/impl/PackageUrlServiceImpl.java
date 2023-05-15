@@ -5,7 +5,11 @@ import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.mapper.PackageUrlMapper;
 import org.jeecg.modules.publishlist.service.IPackageUrlService;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +27,9 @@ public class PackageUrlServiceImpl extends ServiceImpl<PackageUrlMapper, Package
 	
 	@Override
 	public List<PackageUrl> selectByMainId(String mainId) {
-		return packageUrlMapper.selectByMainId(mainId);
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("publishlist_id",mainId);
+		return packageUrlMapper.selectByMap(queryMap);
+		//return packageUrlMapper.selectByMainId(mainId);
 	}
 }

@@ -4,7 +4,11 @@ import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.mapper.PublishlistProjectMapper;
 import org.jeecg.modules.publishlist.service.IPublishlistProjectService;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +26,9 @@ public class PublishlistProjectServiceImpl extends ServiceImpl<PublishlistProjec
 	
 	@Override
 	public List<PublishlistProject> selectByMainId(String mainId) {
-		return publishlistProjectMapper.selectByMainId(mainId);
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("publishlist_id",mainId);
+		return publishlistProjectMapper.selectByMap(queryMap);
+		//return publishlistProjectMapper.selectByMainId(mainId);
 	}
 }

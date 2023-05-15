@@ -96,6 +96,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
         for(Issue issue : restSearchResult.getIssues()){
             issue.setPublishlistId(publishlistId);
+            issue.setJiraVersionName(jiraVersionName);
             issue.setCreateBy(sysUser.getId());
             issue.setCreateTime(new Date());
         }
@@ -130,6 +131,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
     private IssueHistory convertIssueToHistoryIssue(Issue issue){
         IssueHistory issueHistory = new IssueHistory();
         issueHistory.setId(issue.getId());
+        issueHistory.setPublishlistId(issue.getPublishlistId());
         issueHistory.setIssueNum(issue.getIssueNum());
         issueHistory.setIssueName(issue.getIssueName());
         issueHistory.setIssueType(issue.getIssueType());

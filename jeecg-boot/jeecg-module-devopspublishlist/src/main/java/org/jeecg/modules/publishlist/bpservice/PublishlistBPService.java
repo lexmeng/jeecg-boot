@@ -70,7 +70,6 @@ public class PublishlistBPService {
     }
 
 
-    @Transactional
     public void savePublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
         publishlistService.saveMain(publishlist, publishlistProjectList,dependentComponentList,packageUrlList);
 

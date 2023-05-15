@@ -5,7 +5,11 @@ import org.jeecg.modules.publishlist.entity.DependentComponent;
 import org.jeecg.modules.publishlist.mapper.DependentComponentMapper;
 import org.jeecg.modules.publishlist.service.IDependentComponentService;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +27,9 @@ public class DependentComponentServiceImpl extends ServiceImpl<DependentComponen
 	
 	@Override
 	public List<DependentComponent> selectByMainId(String mainId) {
-		return dependentComponentMapper.selectByMainId(mainId);
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("publishlist_id",mainId);
+		return dependentComponentMapper.selectByMap(queryMap);
+		//return dependentComponentMapper.selectByMainId(mainId);
 	}
 }
