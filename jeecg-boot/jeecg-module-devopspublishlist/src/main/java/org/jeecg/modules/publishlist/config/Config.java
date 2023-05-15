@@ -40,7 +40,8 @@ public class Config {
     public final static String HISTORY_PLACEHOLDER_DOCUMENT_VERSION = "$$History(document-version)";
     public final static String RELEASE_INFO_TYPE_RELEASE_NOTE = "ReleaseNote";
     public final static String RELEASE_INFO_TYPE_RELEASE_MAIL = "ReleaseMail";
-    public final static String RELEASE_INFO_TYPE_HANDBOOK_PR = "HandBookPRContent";
+    public final static String RELEASE_INFO_TYPE_HANDBOOK_PR_EN = "HandBookPREnContent";
+    public final static String RELEASE_INFO_TYPE_HANDBOOK_PR_CH = "HandBookPRChContent";
     public final static String RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR = "ProductPackagePRContent";
     public final static String RELEASE_INFO_TYPE_COMPANY_WEBSITE = "CompanyWebsite";
 
@@ -53,9 +54,9 @@ public class Config {
 
     public static List<String> PRODUCT_LINE_NAME_LIST = new ArrayList<>();
 
-    public final static String PRODUCT_LINE_NAME_KE = "KE";
+    public final static String PRODUCT_LINE_NAME_KE = "Kyligence Enterprise";
 
-    public final static String PRODUCT_LINE_NAME_KC = "KC";
+    public final static String PRODUCT_LINE_NAME_KC = "Kyligence Cloud";
 
 
     @PostConstruct
@@ -67,8 +68,8 @@ public class Config {
         List<String> iteratePlacerholderList = new ArrayList<>();
 
 
-        placeholderList.add("${product_line_name}");
-        placeholderList.add("${productName}");//from publishlist字段，例如：Kyligence Enterprise
+        placeholderList.add("${productLineName}");//from publishlist字段，例如：Kyligence Enterprise
+        placeholderList.add("${productName}");
         placeholderList.add("${versionName}");//from publishlist字段，例如：4.6.7.0
         placeholderList.add("${versionType}");//from publishlist字段，例如：GA
 
@@ -114,8 +115,11 @@ public class Config {
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, iteratePlacerholderList);
 
-        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, placeholderList);
-        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, iteratePlacerholderList);
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, placeholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, iteratePlacerholderList);
+
+        KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, placeholderList);
+        KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, iteratePlacerholderList);
 
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, iteratePlacerholderList);
@@ -130,8 +134,11 @@ public class Config {
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, iteratePlacerholderList);
 
-        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, placeholderList);
-        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR, iteratePlacerholderList);
+        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, placeholderList);
+        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, iteratePlacerholderList);
+
+        KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, placeholderList);
+        KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, iteratePlacerholderList);
 
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, iteratePlacerholderList);

@@ -54,7 +54,7 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
     }*/
 
     private void validate(Publishlist publishlist, List<PublishlistProject> projectList){
-        String productLineName = publishlist.getProductLineName().toUpperCase();
+        String productLineName = publishlist.getProductLineName();
         if(productLineName == null || productLineName.equals("")){
             throw new BussinessException("产品线名称为空");
         }
@@ -65,7 +65,7 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
             throw new BussinessException("产品线名称错误！");
         }
 
-        String productName = publishlist.getProductName().toUpperCase();
+        String productName = publishlist.getProductName();
         if(productLineName.contains("KE")||productLineName.contains("KC")){
             //pass
         }
@@ -73,7 +73,7 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
             throw new BussinessException("产品名称错误！");
         }
 
-        String versionType = publishlist.getVersionType().toUpperCase();
+        String versionType = publishlist.getVersionType();
         if(versionType == null || versionType.equals("")){
             throw new BussinessException("发布单版本为空");
         }

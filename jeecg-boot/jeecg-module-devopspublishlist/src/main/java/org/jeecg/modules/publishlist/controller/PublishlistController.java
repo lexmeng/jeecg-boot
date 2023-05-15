@@ -289,16 +289,30 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		 return Result.OK(releaseMailContent);
 	 }
 
-	 @ApiOperation(value="生成ProductHandbookPRContent", notes="生成ProductHandbookPRContent")
-	 @GetMapping(value = "/generateProductHandbookPRContent")
-	 public Result<String> generateProductHandbookPRContent(@RequestParam(name="id",required=true) String id) {
+	 @ApiOperation(value="生成ProductHandbookPREnContent", notes="生成ProductHandbookPREnContent")
+	 @GetMapping(value = "/generateProductHandbookPREnContent")
+	 public Result<String> generateProductHandbookPREnContent(@RequestParam(name="id",required=true) String id) {
 		 Publishlist publishlist = publishlistService.getById(id);
 		 if(publishlist==null) {
 			 return Result.error("未找到对应数据");
 		 }
 
 		 Map<String, String> placeholderContentMap = new HashMap<>();
-		 String productHandbookPRContent = releaseInfoBPService.generateProductHandbookPRContent(id, placeholderContentMap);
+		 String productHandbookPRContent = releaseInfoBPService.generateProductHandbookPREnContent(id, placeholderContentMap);
+
+		 return Result.OK(productHandbookPRContent);
+	 }
+
+	 @ApiOperation(value="生成ProductHandbookPRChContent", notes="生成ProductHandbookPRChContent")
+	 @GetMapping(value = "/generateProductHandbookPRChContent")
+	 public Result<String> generateProductHandbookPRChContent(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
+
+		 Map<String, String> placeholderContentMap = new HashMap<>();
+		 String productHandbookPRContent = releaseInfoBPService.generateProductHandbookPRChContent(id, placeholderContentMap);
 
 		 return Result.OK(productHandbookPRContent);
 	 }
@@ -325,7 +339,10 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 			 return Result.error("未找到对应数据");
 		 }
 
-		 jenkinsBPService.jenkinsCommitProductPackagePR();
+		 Map<String, String> placeholderContentMap = new HashMap<>();
+		 String productPackagePRContent = releaseInfoBPService.generateProductPackagePRContent(id, placeholderContentMap);
+
+		 jenkinsBPService.jenkinsCommitProductPackagePR(publishlist.getVersionName(), productPackagePRContent, publishlist.getDocumentVersion());
 
 		 return Result.OK("提交成功！");
 	 }
@@ -338,7 +355,11 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 			 return Result.error("未找到对应数据");
 		 }
 
-		 jenkinsBPService.jenkinsCommitProductHandbookPR();
+		 Map<String, String> placeholderContentMap = new HashMap<>();
+		 String productHandbookPREnContent = releaseInfoBPService.generateProductHandbookPREnContent(id, placeholderContentMap);
+		 String productHandbookPRChContent = releaseInfoBPService.generateProductHandbookPRChContent(id, placeholderContentMap);
+
+		 jenkinsBPService.jenkinsCommitProductHandbookPR(publishlist.getVersionName(), productHandbookPRChContent, productHandbookPREnContent, publishlist.getDocumentVersion());
 
 		 return Result.OK("提交成功！");
 	 }

@@ -27,7 +27,7 @@ public class ReleaseInfoLogic {
             return false;
         }
 
-        if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)){
+        if(productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
             if(!issueName.contains(Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE)){
                 return false;
             }

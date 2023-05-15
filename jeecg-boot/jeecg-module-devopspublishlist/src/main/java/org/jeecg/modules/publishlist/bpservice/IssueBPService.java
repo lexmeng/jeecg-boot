@@ -96,9 +96,9 @@ public class IssueBPService {
                 continue;
             }
 
-            if(publishlist.getProductLineName().toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)){
+            if(publishlist.getProductLineName().contains(Config.PRODUCT_LINE_NAME_KE)){
                 splitResult = ReleaseInfoLogic.splitNameInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE);
-            }else if(publishlist.getProductLineName().toUpperCase().contains(Config.PRODUCT_LINE_NAME_KC)){
+            }else if(publishlist.getProductLineName().contains(Config.PRODUCT_LINE_NAME_KC)){
                 splitResult = ReleaseInfoLogic.splitNameInfoFromIssue(issue, Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KC);
             }else{
                 throw new BussinessException("产品线名称错误！");

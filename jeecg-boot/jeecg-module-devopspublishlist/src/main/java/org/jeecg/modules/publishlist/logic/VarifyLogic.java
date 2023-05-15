@@ -17,7 +17,7 @@ public class VarifyLogic {
         }
 
         if(type.equals(Config.RELEASE_INFO_TYPE_RELEASE_NOTE) || type.equals(Config.RELEASE_INFO_TYPE_RELEASE_MAIL)
-                || type.equals(Config.RELEASE_INFO_TYPE_HANDBOOK_PR) || type.equals(Config.RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR)
+                || type.equals(Config.RELEASE_INFO_TYPE_HANDBOOK_PR_EN) || type.equals(Config.RELEASE_INFO_TYPE_HANDBOOK_PR_CH) || type.equals(Config.RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR)
                 || type.equals(Config.RELEASE_INFO_TYPE_COMPANY_WEBSITE)){
             //pass
         }else{
@@ -59,9 +59,9 @@ public class VarifyLogic {
         if(productLineName.isEmpty()){
             throw new BussinessException("产品线为空");
         }
-        if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)){
+        if(productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
             placeholderStrList = Config.KE_PLACEHODLER_MAP.get(template.getType());
-        }else if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KC)){
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
             placeholderStrList = Config.KC_PLACEHODLER_MAP.get(template.getType());
         }else{
             throw new BussinessException("模板产品线名错误");
@@ -90,9 +90,9 @@ public class VarifyLogic {
             throw new BussinessException("产品线为空");
         }
         List<String> placeholderAllList;
-        if (productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)){
+        if (productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
             placeholderAllList = Config.KE_PLACEHODLER_MAP.get(type);
-        }else if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KC)){
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
             placeholderAllList = Config.KC_PLACEHODLER_MAP.get(type);
         }else{
             throw new BussinessException("产品线名称错误！");
@@ -110,7 +110,7 @@ public class VarifyLogic {
         if(productLineName == null || productLineName.equals("")){
             throw new BussinessException("产品线名称为空");
         }
-        if(productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KE)||productLineName.toUpperCase().contains(Config.PRODUCT_LINE_NAME_KC)){
+        if(productLineName.contains(Config.PRODUCT_LINE_NAME_KE)||productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
             //pass
         }
         else{

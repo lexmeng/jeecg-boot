@@ -54,9 +54,11 @@ public class ReleaseInfoBPService {
 
     private String generateTemplateContent(String publishlistId, String templateType, Map<String, String> placeholderContentMap) throws BussinessException{
         //一、判断状态是否是已发布
+        /*
         if(!publishlistDomainService.isPublished(publishlistId)){
             throw new BussinessException("发布单状态还未发布！发布单id："+publishlistId);
         }
+        */
 
         //二、拿到Template
         PublishlistQueryResult publishlistQueryResult = publishlistService.queryByMainId(publishlistId);
@@ -131,11 +133,20 @@ public class ReleaseInfoBPService {
     }
 
     /**
-     * 生成产品手册PR内容
+     * 生成产品手册PR EN内容
      * @return
      */
-    public String generateProductHandbookPRContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
-        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_HANDBOOK_PR, placeholderContentMap);
+    public String generateProductHandbookPREnContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
+        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_HANDBOOK_PR_EN, placeholderContentMap);
+
+    }
+
+    /**
+     * 生成产品手册PR CH内容
+     * @return
+     */
+    public String generateProductHandbookPRChContent(String publishlistId, Map<String, String> placeholderContentMap) throws BussinessException{
+        return generateTemplateContent(publishlistId, Config.RELEASE_INFO_TYPE_HANDBOOK_PR_CH, placeholderContentMap);
 
     }
 

@@ -49,20 +49,42 @@ public class JenkinsOperateUtils {
     /**
      * 执行带参数 Job build
      */
-    public void buildParamJob(){
+    public void buildParamJob(String jobName, Map<String,String> param){
         try {
             /**
              * 例如，现有一个job，拥有一个字符参数"key"
              * 现在对这个值进行设置，然后执行一个输出这个值的脚本
              */
             // 设置参数值
-            Map<String,String> param = new HashMap<>();
-            param.put("key","hello world!");
+            /*Map<String,String> param = new HashMap<>();
+            param.put("key","hello world!");*/
             // 执行 build 任务
-            jenkinsServer.getJob("devops_web_pr").build(param);
+            //jenkinsServer.getJob("devops_manual-pr").build(param);
+            jenkinsServer.getJob(jobName).build(param);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void runPramJobUseRestful(String jobName, Map<String,String> param){
+        try{
+
+        }catch (Exception e){
+
+        }
+    }
+
+    public static void main(String[] args){
+        JenkinsOperateUtils utils = new JenkinsOperateUtils();
+
+        Map<String, String> map = new HashMap<>();
+        map.put("version", "4.5.1");
+        map.put("cn_content", "fdasasfsdaf");
+        map.put("en_content", "abcdefs");
+        map.put("document_version", "4.5");
+
+        utils.buildParamJob("devopsweb-manual-pr",map);
     }
 
 
