@@ -16,7 +16,7 @@ public class JenkinsUtils {
 
     // 连接 Jenkins 需要设置的信息
     //"http://192.168.2.11:8080/jenkins/"
-    private String JENKINS_URL;
+    private String JENKINS_URL="https://cicd-ofs.kyligence.com/job/DevOps";
 
     @Value("${jenkins.account}")
     private String JENKINS_USERNAME;
