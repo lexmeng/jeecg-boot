@@ -24,7 +24,7 @@ VALUES ('2023041805128720096', '2023041805128710090', '导入excel_发布单', N
 
 -- 模板模块
 INSERT INTO sys_permission(id, parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, status, del_flag, rule_flag, create_by, create_time, update_by, update_time, internal_or_external)
-VALUES ('2023041805123410570', NULL, '模板', '/release/templateList', 'release/TemplateList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-18 17:12:57', NULL, NULL, 0);
+VALUES ('2023041805123410570', '2023041805128710090', '模板', '/release/templateList', 'release/TemplateList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-18 17:12:57', NULL, NULL, 0);
 
 -- 权限控制sql
 -- 新增
@@ -51,7 +51,7 @@ VALUES ('2023041805123410576', '2023041805123410570', '导入excel_模板', NULL
 
 
 INSERT INTO sys_permission(id, parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, status, del_flag, rule_flag, create_by, create_time, update_by, update_time, internal_or_external)
-VALUES ('2023042805518440070', NULL, 'issue本地记录', '/release/issueList', 'release/IssueList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-28 17:51:07', NULL, NULL, 0);
+VALUES ('2023042805518440070', '2023041805128710090', 'issue本地记录', '/release/issueList', 'release/IssueList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-28 17:51:07', NULL, NULL, 0);
 
 -- 权限控制sql
 -- 新增
@@ -78,7 +78,7 @@ VALUES ('2023042805518450076', '2023042805518440070', '导入excel_issue本地�
 
 
 INSERT INTO sys_permission(id, parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, status, del_flag, rule_flag, create_by, create_time, update_by, update_time, internal_or_external)
-VALUES ('2023042805503860540', NULL, 'issue历史表', '/release/issueHistoryList', 'release/IssueHistoryList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-28 17:50:54', NULL, NULL, 0);
+VALUES ('2023042805503860540', '2023041805128710090', 'issue历史表', '/release/issueHistoryList', 'release/IssueHistoryList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-28 17:50:54', NULL, NULL, 0);
 
 -- 权限控制sql
 -- 新增
@@ -105,7 +105,7 @@ VALUES ('2023042805503870546', '2023042805503860540', '导入excel_issue历史�
 
 
 INSERT INTO sys_permission(id, parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, status, del_flag, rule_flag, create_by, create_time, update_by, update_time, internal_or_external)
-VALUES ('2023042805494750490', NULL, 'release信息表', '/release/releaseInfoList', 'release/ReleaseInfoList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-28 17:49:49', NULL, NULL, 0);
+VALUES ('2023042805494750490', '2023041805128710090', 'release信息表', '/release/releaseInfoList', 'release/ReleaseInfoList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-04-28 17:49:49', NULL, NULL, 0);
 
 -- 权限控制sql
 -- 新增
@@ -128,3 +128,55 @@ INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, compon
 VALUES ('2023042805494870496', '2023042805494750490', '导入excel_release信息表', NULL, NULL, 0, NULL, NULL, 2, ':release_info:importExcel', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-04-28 17:49:49', NULL, NULL, 0, 0, '1', 0);
 
 
+-- 注意：该页面对应的前台目录为views/release文件夹下
+-- 如果你想更改到其他目录，请修改sql中component字段对应的值
+
+
+INSERT INTO sys_permission(id, parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, status, del_flag, rule_flag, create_by, create_time, update_by, update_time, internal_or_external)
+VALUES ('2023050606118020180', '2023041805128710090', '项目表', '/release/projectList', 'release/ProjectList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0);
+
+-- 权限控制sql
+-- 新增
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020181', '2023050606118020180', '添加项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:add', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 编辑
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020182', '2023050606118020180', '编辑项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:edit', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 删除
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020183', '2023050606118020180', '删除项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:delete', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 批量删除
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020184', '2023050606118020180', '批量删除项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:deleteBatch', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 导出excel
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020185', '2023050606118020180', '导出excel_项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:exportXls', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 导入excel
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020186', '2023050606118020180', '导入excel_项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:importExcel', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 注意：该页面对应的前台目录为views/release文件夹下
+-- 如果你想更改到其他目录，请修改sql中component字段对应的值
+
+
+INSERT INTO sys_permission(id, parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, status, del_flag, rule_flag, create_by, create_time, update_by, update_time, internal_or_external)
+VALUES ('2023050606118020180', '2023041805128710090', '项目表', '/release/projectList', 'release/ProjectList', NULL, NULL, 0, NULL, '1', 1.00, 0, NULL, 1, 1, 0, 0, 0, NULL, '1', 0, 0, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0);
+
+-- 权限控制sql
+-- 新增
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020181', '2023050606118020180', '添加项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:add', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 编辑
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020182', '2023050606118020180', '编辑项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:edit', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 删除
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020183', '2023050606118020180', '删除项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:delete', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 批量删除
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020184', '2023050606118020180', '批量删除项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:deleteBatch', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 导出excel
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020185', '2023050606118020180', '导出excel_项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:exportXls', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);
+-- 导入excel
+INSERT INTO sys_permission(id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+VALUES ('2023050606118020186', '2023050606118020180', '导入excel_项目表', NULL, NULL, 0, NULL, NULL, 2, ':project:importExcel', '1', NULL, 0, NULL, 1, 0, 0, 0, NULL, 'admin', '2023-05-06 18:11:18', NULL, NULL, 0, 0, '1', 0);

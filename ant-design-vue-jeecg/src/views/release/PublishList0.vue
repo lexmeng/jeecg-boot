@@ -36,15 +36,15 @@
       <a-table
         ref="table"
         size="middle"
-        :scroll="{x:true}"
         bordered
         rowKey="id"
+        class="j-table-force-nowrap"
+        :scroll="{x:true}"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-        class="j-table-force-nowrap"
         @change="handleTableChange">
 
         <template slot="htmlSlot" slot-scope="text">
@@ -81,7 +81,7 @@
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                <a @click="handleIssuesHistory(record)">变更历史</a>
+                <a @click="handleIssues(record)">变更历史</a>
               </a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -97,25 +97,21 @@
 
     <publishlist-modal ref="modalForm" @ok="modalFormOk"/>
     <issue-list-drawer ref="issueList" @ok="issueListOk" />
-    <issue-history-list-drawer ref="issueHistory" @ok="issueListOk" />
   </a-card>
 </template>
 
 <script>
 
-  import '@/assets/less/TableExpand.less'
-  import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import {initDictOptions, filterDictText} from '@/components/dict/JDictSelectUtil'
   import PublishlistModal from './modules/PublishlistModal'
-  import IssueListDrawer from './modules/IssueListDrawer'
-  import IssueHistoryListDrawer from './modules/IssueHistoryListDrawer'
+  import IssueListDrawer from '@views/release/modules/IssueListDrawer'
+  import {initDictOptions, filterDictText} from '@/components/dict/JDictSelectUtil'
+  import '@/assets/less/TableExpand.less'
 
   export default {
-    name: 'PublishlistList',
-    mixins:[JeecgListMixin, mixinDevice],
+    name: "PublishList",
+    mixins:[JeecgListMixin],
     components: {
-      IssueHistoryListDrawer,
       PublishlistModal,
       IssueListDrawer
     },
@@ -135,19 +131,27 @@
             }
           },
           {
-            title:'发布单',
+            title:'发布单名',
             align:"center",
             dataIndex: 'name'
           },
           {
             title:'产品线',
             align:"center",
-            dataIndex: 'productLineName_dictText'
+            dataIndex: 'bu_dictText',
+            customRender: (text, record, index) => {
+              //字典值替换通用方法
+              return filterDictText(this.buDictOptions, text);
+            }
           },
           {
             title:'产品名',
             align:"center",
-            dataIndex: 'productName_dictText'
+            dataIndex: 'product_dictText',
+            customRender: (text, record, index) => {
+              //字典值替换通用方法
+              return filterDictText(this.productDictOptions, text);
+            }
           },
           {
             title:'版本号',
@@ -157,17 +161,12 @@
           {
             title:'版本类型',
             align:"center",
-            dataIndex: 'versionType_dictText'
+            dataIndex: 'versionType'
           },
           {
             title:'jira版本名',
             align:"center",
             dataIndex: 'jiraVersionName'
-          },
-          {
-            title:'文档版本',
-            align:"center",
-            dataIndex: 'documentVersion'
           },
           {
             title:'迭代冲刺号',
@@ -177,43 +176,28 @@
           {
             title:'迭代阶段',
             align:"center",
-            dataIndex: 'scrumStage_dictText'
+            dataIndex: 'scrumStage'
           },
           {
             title:'发布单状态',
             align:"center",
-            dataIndex: 'publishlistStage_dictText'
+            dataIndex: 'publishlistStage'
           },
-          // {
-          //   title:'实际发布时间',
-          //   align:"center",
-          //   dataIndex: 'publishDatetime'
-          // },
           {
-            title:'产品经理',
+            title:'实际发布时间',
             align:"center",
-            dataIndex: 'pmId_dictText'
+            dataIndex: 'publishDatetime'
           },
-          // {
-          //   title:'产品经理名',
-          //   align:"center",
-          //   dataIndex: 'pmName'
-          // },
-          // {
-          //   title:'commid id',
-          //   align:"center",
-          //   dataIndex: 'commitId'
-          // },
-          // {
-          //   title:'用户手册中文链接',
-          //   align:"center",
-          //   dataIndex: 'urerManualEnLink'
-          // },
-          // {
-          //   title:'用户手册英文链接',
-          //   align:"center",
-          //   dataIndex: 'userManualChLink'
-          // },
+          {
+            title:'产品经理id',
+            align:"center",
+            dataIndex: 'pmId'
+          },
+          {
+            title:'产品经理名',
+            align:"center",
+            dataIndex: 'pmName'
+          },
           {
             title: '操作',
             dataIndex: 'action',
@@ -242,7 +226,7 @@
     computed: {
       importExcelUrl: function(){
         return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-      },
+      }
     },
     methods: {
       initDictConfig(){
@@ -261,20 +245,19 @@
       isPublished: function(record){
         return record.publishlistStage && record.publishlistStage === 'done'
       },
+      handleDetail: function (record) {
+        this.$router.push({ path: '/release/publish', query: {record:record} })
+      },
       handleDeploy(record){
-        this.$router.push({ path: '/release/publish', query: {id:record.id,record:record} })
+        console.log("handleDeploy: ", record)
+        // this.$router.push({ path: '/release/publish', query: {record:record} })
       },
       handleIssues(record){
         // console.log("handleIssues: ", record)
         // this.$router.push({ path: '/release/issueList', query: {pid:record.id} })
-        this.$refs.issueList.list(record.id)
-        this.$refs.issueList.title = "发布单【" + record.name + "】- Jira Issues"
-        this.$refs.issueList.disableSubmit = true
-      },
-      handleIssuesHistory(record){
-        this.$refs.issueHistory.list(record.id)
-        this.$refs.issueHistory.title = "发布单【" + record.name + "】- Jira Issues 变更历史"
-        this.$refs.issueHistory.disableSubmit = true
+        this.$refs.issueList.list(record)
+        this.$refs.issueList.title = "发布单【" + record.name + "】 Issues"
+        this.$refs.modalForm.disableSubmit = true
       },
       issueListOk(){
 
@@ -282,21 +265,20 @@
       getSuperFieldList(){
         let fieldList=[];
         fieldList.push({type:'string',value:'name',text:'发布单名',dictCode:''})
-        fieldList.push({type:'string',value:'productLineName',text:'产品线',dictCode:'dict_bu'})
-        fieldList.push({type:'string',value:'productName',text:'产品',dictCode:'product'})
-        fieldList.push({type:'string',value:'versionName',text:'版本号',dictCode:''})
-        fieldList.push({type:'string',value:'versionType',text:'版本类型',dictCode:'version_type'})
+        fieldList.push({type:'string',value:'productLineId',text:'产品线id',dictCode:''})
+        fieldList.push({type:'string',value:'productLineName',text:'产品线名',dictCode:''})
+        fieldList.push({type:'string',value:'productId',text:'产品id',dictCode:''})
+        fieldList.push({type:'string',value:'productName',text:'产品名',dictCode:''})
+        fieldList.push({type:'string',value:'versionName',text:'版本名',dictCode:''})
+        fieldList.push({type:'string',value:'versionType',text:'版本类型',dictCode:''})
         fieldList.push({type:'string',value:'jiraVersionName',text:'jira版本名',dictCode:''})
         fieldList.push({type:'string',value:'documentVersion',text:'文档版本',dictCode:''})
         fieldList.push({type:'string',value:'scrumNum',text:'迭代冲刺号',dictCode:''})
-        fieldList.push({type:'string',value:'scrumStage',text:'迭代阶段',dictCode:'sprint_stage'})
-        fieldList.push({type:'string',value:'publishlistStage',text:'发布单状态',dictCode:'release_form_state'})
+        fieldList.push({type:'string',value:'scrumStage',text:'迭代阶段',dictCode:''})
+        fieldList.push({type:'string',value:'publishlistStage',text:'发布单状态',dictCode:''})
         fieldList.push({type:'string',value:'publishDatetime',text:'发布时间',dictCode:''})
-        fieldList.push({type:'string',value:'pmId',text:'产品经理id',dictCode:'username,realname,sys_user'})
+        fieldList.push({type:'string',value:'pmId',text:'产品经理id',dictCode:''})
         fieldList.push({type:'string',value:'pmName',text:'产品经理名',dictCode:''})
-        fieldList.push({type:'string',value:'commitId',text:'commid id',dictCode:''})
-        fieldList.push({type:'string',value:'urerManualEnLink',text:'用户手册中文链接',dictCode:''})
-        fieldList.push({type:'string',value:'userManualChLink',text:'用户手册英文链接',dictCode:''})
         this.superFieldList = fieldList
       }
     }

@@ -1,8 +1,8 @@
 <template>
   <page-layout :title="'发布单：' + publishForm.name" logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
-    <detail-list slot="headerContent" size="small" :col="2" class="detail-layout">
+    <detail-list slot="headerContent" size="small" :col="3" class="detail-layout">
       <detail-list-item term="创建人">{{ publishForm.createBy }}</detail-list-item>
-      <detail-list-item term="产品线">{{ publishForm.productLineId + '/' +  publishForm.productLineName }}</detail-list-item>
+      <detail-list-item term="产品线">{{ publishForm.productLineId_distText }}</detail-list-item>
       <detail-list-item term="创建时间">{{ publishForm.createTime }}</detail-list-item>
       <detail-list-item term="产品">{{ publishForm.productName }}</detail-list-item>
       <detail-list-item term="迭代冲刺号">{{publishForm.scrumNum}}</detail-list-item>
@@ -28,7 +28,7 @@
         <a-button>PR 文本</a-button>
         <a-button>手册 PR 文本</a-button>
       </a-button-group>
-      <a-button type="primary">发布单详情</a-button>
+      <a-button type="primary" @click="reloadData">刷新</a-button>
     </template>
 
     <a-card :bordered="false" title="Sprint 迭代进度">
@@ -49,6 +49,7 @@ import DetailList from '@comp/tools/DetailList'
 import { mixinDevice } from '@/utils/mixin'
 import PublishlistForm from './modules/PublishlistForm'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+import { getAction } from '@api/manage'
 
 const DetailListItem = DetailList.Item
 
@@ -72,11 +73,16 @@ export default {
       txtContent: '',
       publishForm: {},
       publishStats: {},
-      sprintStages: {}
+      sprintStages: {},
+      url: {
+        queryById: '/release/queryById'
+      }
     }
   },
   created() {
+    this.publishId = this.$route.query.id
     this.publishForm = this.$route.query.record
+    this.reloadData()
     this.initDictConfig()
   },
   computed: {
@@ -102,6 +108,14 @@ export default {
           console.log('sprintStages', this.sprintStages)
         }
       });
+    },
+    reloadData(pid) {
+      this.queryParam = {publishlistId: pid || this.publishlistId}
+      getAction(this.url.queryById, this.queryParam).then((res) => {
+        if(res.success){
+          console.log(res.result)
+        }
+      })
     },
     add() {
       this.visible = true

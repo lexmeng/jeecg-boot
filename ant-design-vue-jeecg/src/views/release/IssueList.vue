@@ -13,7 +13,7 @@
     <div class="table-operator">
 <!--      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>-->
       <a-button @click="handleRefresh" type="primary" icon="retweet">更新Issue信息</a-button>
-      <a-button @click="handleHistory" type="primary" icon="inbox">历史变更记录</a-button>
+<!--      <a-button @click="handleHistory" type="primary" icon="inbox">历史变更记录</a-button>-->
       <a-button type="primary" icon="download" @click="handleExportXls('issue本地记录')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
@@ -101,7 +101,7 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import IssueModal from './modules/IssueModal'
-  import { getAction } from '@api/manage'
+  import { getAction, postAction } from '@api/manage'
 
   export default {
     name: 'IssueList',
@@ -131,8 +131,16 @@
           },
           {
             title:'issue名',
-            align:"center",
-            dataIndex: 'issueName'
+            align:"left",
+            dataIndex: 'issueName',
+            width: 220,
+            customRender: (text, record, index) => {
+              if(text.length > 50) {
+                return text.slice(0,50) + '...'
+              }else{
+                return text
+              }
+            }
           },
           {
             title:'issue类型',
@@ -173,17 +181,19 @@
           delete: "/release/issue/delete",
           deleteBatch: "/release/issue/deleteBatch",
           exportXlsUrl: "/release/issue/exportXls",
-          importExcelUrl: "release/issue/importExcel",
+          importExcelUrl: "/release/issue/importExcel",
+          updateIssuesUrl: "/release/issue/updateIssueList",
           historyList: "/release/issueHistory/list"
         },
         dictOptions:{},
         superFieldList:[],
+        publishlistId: ''
       }
     },
     created() {
       this.getSuperFieldList();
-      let pid = this.$route.query.pid
-      this.initData(pid)
+      this.publishlistId = this.$route.query.pid
+      this.reloadData()
     },
     computed: {
       importExcelUrl: function(){
@@ -193,12 +203,19 @@
     methods: {
       initDictConfig(){
       },
-      initData(pid){
-        this.queryParam = {publishlistId: pid}
+      reloadData(pid){
+        this.queryParam = {publishlistId: pid || this.publishlistId}
         this.loadData()
       },
       handleRefresh(){
-        // TODO: 更新 Issue 信息
+        postAction(this.url.updateIssuesUrl, {'publishlistId': this.publishlistId}).then((res) => {
+          if(res.success) {
+            console.log(res)
+            this.reloadData()
+          }else{
+            this.$message.error(res.message)
+          }
+        })
       },
       handleHistory(){
         var params = this.getQueryParams();//查询条件

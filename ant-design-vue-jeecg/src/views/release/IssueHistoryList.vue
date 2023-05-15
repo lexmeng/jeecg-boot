@@ -122,22 +122,22 @@
             }
           },
           {
-            title:'jira的issue号',
+            title:'issue号',
             align:"center",
             dataIndex: 'issueNum'
           },
           {
-            title:'jira的issue名',
+            title:'issue名',
             align:"center",
             dataIndex: 'issueName'
           },
           {
-            title:'jira的issue类型',
+            title:'issue类型',
             align:"center",
             dataIndex: 'issueType'
           },
           {
-            title:'jira的issue链接',
+            title:'issue链接',
             align:"center",
             dataIndex: 'issueLink'
           },
@@ -180,10 +180,13 @@
         },
         dictOptions:{},
         superFieldList:[],
+        publishlistId: ''
       }
     },
     created() {
-    this.getSuperFieldList();
+      this.getSuperFieldList();
+      this.publishlistId = this.$route.query.pid
+      this.reLoadData()
     },
     computed: {
       importExcelUrl: function(){
@@ -193,12 +196,16 @@
     methods: {
       initDictConfig(){
       },
+      reloadData(pid){
+        this.queryParam = {publishlistId: pid || this.publishlistId}
+        this.loadData()
+      },
       getSuperFieldList(){
         let fieldList=[];
-        fieldList.push({type:'string',value:'issueNum',text:'jira的issue号',dictCode:''})
-        fieldList.push({type:'string',value:'issueName',text:'jira的issue名',dictCode:''})
-        fieldList.push({type:'string',value:'issueType',text:'jira的issue类型',dictCode:''})
-        fieldList.push({type:'string',value:'issueLink',text:'jira的issue链接',dictCode:''})
+        fieldList.push({type:'string',value:'issueNum',text:'issue号',dictCode:''})
+        fieldList.push({type:'string',value:'issueName',text:'issue名',dictCode:''})
+        fieldList.push({type:'string',value:'issueType',text:'issue类型',dictCode:''})
+        fieldList.push({type:'string',value:'issueLink',text:'issue链接',dictCode:''})
         fieldList.push({type:'string',value:'publishlistId',text:'发布单号',dictCode:''})
         fieldList.push({type:'string',value:'projectId',text:'项目名',dictCode:''})
         fieldList.push({type:'string',value:'jiraVersionName',text:'jira版本名',dictCode:''})

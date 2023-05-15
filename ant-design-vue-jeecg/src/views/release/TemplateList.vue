@@ -129,19 +129,9 @@
             dataIndex: 'type'
           },
           {
-            title:'产品线id',
-            align:"center",
-            dataIndex: 'productLineId'
-          },
-          {
             title:'产品线名',
             align:"center",
             dataIndex: 'productLineName'
-          },
-          {
-            title:'产品id',
-            align:"center",
-            dataIndex: 'productId'
           },
           {
             title:'产品名',
