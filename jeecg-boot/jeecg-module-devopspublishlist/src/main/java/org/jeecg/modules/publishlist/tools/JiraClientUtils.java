@@ -135,8 +135,12 @@ public class JiraClientUtils {
         System.out.println(response.getBody());
     }
 
+    private String delTab(String str){
+        str = str.replace("\n", "").replace("\t", "");
+        return str;
+    }
     public IssueSearchResult restSearchIssueByProjectAndFixVersions(String projectName, String fixVersions) {
-        String searchString = String.format("project = \"%s\" AND fixVersion in (\"%s\")", projectName, fixVersions);
+        String searchString = String.format("project = \"%s\" AND fixVersion in (\"%s\")", delTab(projectName), delTab(fixVersions));
 
         JsonNodeFactory factory = JsonNodeFactory.instance;
         ObjectNode payload = factory.objectNode();
@@ -216,7 +220,7 @@ public class JiraClientUtils {
         for(Object object : jsonArray){
             JSONObject tempObject = (JSONObject) object;
             Issue issue = new Issue();
-            issue.setId(tempObject.getString("id"));
+            issue.setIssueId(tempObject.getString("id"));
             String key = tempObject.getString("key");
             issue.setIssueNum(key);
             issue.setIssueName(tempObject.getJSONObject("fields").getString("summary"));

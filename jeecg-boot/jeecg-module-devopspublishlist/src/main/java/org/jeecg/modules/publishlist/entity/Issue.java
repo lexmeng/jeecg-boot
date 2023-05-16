@@ -34,7 +34,11 @@ public class Issue implements Serializable {
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
-    private String id;
+    private java.lang.String id;
+	/**jira的issue id号*/
+	@Excel(name = "jira的issue id号", width = 15)
+    @ApiModelProperty(value = "jira的issue id号")
+    private String issueId;
 	/**jira的issue号*/
 	@Excel(name = "jira的issue号", width = 15)
     @ApiModelProperty(value = "jira的issue号")

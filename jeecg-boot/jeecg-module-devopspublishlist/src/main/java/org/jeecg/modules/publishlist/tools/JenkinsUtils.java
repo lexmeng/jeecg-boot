@@ -6,6 +6,8 @@ import com.offbytwo.jenkins.model.JobWithDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
 import java.util.Base64;
 import java.util.HashMap;
@@ -87,7 +89,7 @@ public class JenkinsUtils {
      * @param jobName
      * @param paramMap
      */
-    public void connectionUseRestful(String jobName, Map<String, String> paramMap)
+    public void buildWithParametersUseRestful(String jobName, Map<String, String> paramMap)
     {
         try{
             String urlStr = build(JENKINS_URL + "/job/" + jobName + "/buildWithParameters", paramMap);
@@ -111,6 +113,57 @@ public class JenkinsUtils {
         }
     }
 
+    private String generateFormData(Map<String, String> paramMap){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String str : paramMap.keySet()){
+            if(!stringBuilder.toString().isEmpty()){
+                stringBuilder.append("&");
+            }
+            stringBuilder.append(str);
+            stringBuilder.append("=");
+            stringBuilder.append(paramMap.get(str));
+        }
+        return stringBuilder.toString();
+    }
+
+    public void buildWithParametersUseRestfulPost(String jobName, Map<String, String> paramMap){
+        try{
+            URL url = new URL(JENKINS_URL + "/job/" + jobName + "/buildWithParameters");
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+
+            // set the authentication header
+            String userCredentials = JENKINS_USERNAME + ":" + JENKINS_API_TOKEN;
+            String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
+            connection.setRequestProperty("Authorization", basicAuth);
+
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            String data = generateFormData(paramMap);
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(data.getBytes("UTF-8"));
+            outputStream.flush();
+            outputStream.close();
+
+            int responseCode = connection.getResponseCode();
+            System.out.println("Response Code : " + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStream inputStream = connection.getInputStream();
+                System.out.println(inputStream.toString());
+                // 处理服务器返回的数据
+            }else{
+                InputStream errorStream = connection.getErrorStream();
+                System.out.println(errorStream.toString());
+                // 处理错误信息
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     public static void main(String[] args){
         JenkinsUtils utils = new JenkinsUtils();
@@ -121,7 +174,7 @@ public class JenkinsUtils {
         map.put("en_content", "abcdefs");
         map.put("document_version", "4.5");
 
-        utils.connectionUseRestful("devopsweb-manual-pr", map);
+        utils.buildWithParametersUseRestfulPost("devopsweb-manual-pr", map);
     }
 
 }

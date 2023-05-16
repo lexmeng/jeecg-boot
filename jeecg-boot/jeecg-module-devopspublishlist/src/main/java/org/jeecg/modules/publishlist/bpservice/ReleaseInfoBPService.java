@@ -107,12 +107,15 @@ public class ReleaseInfoBPService {
         content = ReleaseInfoLogic.replaceIteratePlaceholder(content,issueList, publishlistQueryResult.getDependentComponentList(), publishlistQueryResult.getPackageUrlList());
 
         //七、根据前端内容和发布单字段值，替代相应占位符
+        /*
         placeholderContentMap.put("${pmName}", publishlist.getPmName());
         placeholderContentMap.put("${productName}", publishlist.getProductName());
         placeholderContentMap.put("${versionName}", publishlist.getVersionName());
         placeholderContentMap.put("${versionType}", publishlist.getVersionType());
 
         content = ReleaseInfoLogic.replacePlaceholder(content, placeholderContentMap);
+        */
+        content = ReleaseInfoLogic.replacePublishlistPlaceholder(content, publishlist);
 
         return content;
     }

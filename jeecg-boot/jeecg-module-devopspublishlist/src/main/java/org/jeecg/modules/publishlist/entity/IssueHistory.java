@@ -35,6 +35,10 @@ public class IssueHistory implements Serializable {
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
     private String id;
+    /**jira的issue id*/
+	@Excel(name = "jira的issue id", width = 15)
+    @ApiModelProperty(value = "jira的issue id")
+    private java.lang.String issueId;
 	/**jira的issue号*/
 	@Excel(name = "jira的issue号", width = 15)
     @ApiModelProperty(value = "jira的issue号")

@@ -12,6 +12,7 @@ import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.service.IIssueHistoryService;
 import org.jeecg.modules.publishlist.service.IIssueService;
+import org.jeecg.modules.publishlist.tools.IdTool;
 import org.jeecg.modules.publishlist.tools.IssueSearchResult;
 import org.jeecg.modules.publishlist.tools.JiraClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +96,7 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
 
         LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
         for(Issue issue : restSearchResult.getIssues()){
+            issue.setId(IdTool.generalId());
             issue.setPublishlistId(publishlistId);
             issue.setJiraVersionName(jiraVersionName);
             issue.setCreateBy(sysUser.getId());
@@ -130,7 +132,8 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
 
     private IssueHistory convertIssueToHistoryIssue(Issue issue){
         IssueHistory issueHistory = new IssueHistory();
-        issueHistory.setId(issue.getId());
+        issueHistory.setId(IdTool.generalId());
+        issueHistory.setIssueId(issue.getIssueId());
         issueHistory.setPublishlistId(issue.getPublishlistId());
         issueHistory.setIssueNum(issue.getIssueNum());
         issueHistory.setIssueName(issue.getIssueName());
