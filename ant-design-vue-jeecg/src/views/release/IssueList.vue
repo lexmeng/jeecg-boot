@@ -1,18 +1,18 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchQuery">
-        <a-row :gutter="24">
-        </a-row>
-      </a-form>
-    </div>
+<!--    <div class="table-page-search-wrapper">-->
+<!--      <a-form layout="inline" @keyup.enter.native="searchQuery">-->
+<!--        <a-row :gutter="24">-->
+<!--        </a-row>-->
+<!--      </a-form>-->
+<!--    </div>-->
     <!-- 查询区域-END -->
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
 <!--      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>-->
-      <a-button @click="handleRefresh" type="primary" icon="retweet">更新Issue信息</a-button>
+      <a-button @click="handleUpdateList" type="primary" icon="retweet">更新Issue信息</a-button>
 <!--      <a-button @click="handleHistory" type="primary" icon="inbox">历史变更记录</a-button>-->
       <a-button type="primary" icon="download" @click="handleExportXls('issue本地记录')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
@@ -101,13 +101,20 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import IssueModal from './modules/IssueModal'
-  import { getAction, postAction } from '@api/manage'
+  import { getAction, putAction, postAction } from '@api/manage'
 
   export default {
     name: 'IssueList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
       IssueModal
+    },
+    props: {
+      pid:{
+        type: String,
+        default: '',
+        required: true
+      },
     },
     data () {
       return {
@@ -190,10 +197,14 @@
         publishlistId: ''
       }
     },
+    beforeCreate() {
+      console.log('beforeCreate->',this.dataSource)
+      this.dataSource = []
+    },
     created() {
       this.getSuperFieldList();
-      this.publishlistId = this.$route.query.pid
-      this.reloadData()
+      this.publishlistId = this.$route.query.pid || this.pid
+      console.log('issueList created->', this.$route.query.pid, this.pid, this.queryParam)
     },
     computed: {
       importExcelUrl: function(){
@@ -203,36 +214,46 @@
     methods: {
       initDictConfig(){
       },
-      reloadData(pid){
-        this.queryParam = {publishlistId: pid || this.publishlistId}
-        this.loadData()
-      },
-      handleRefresh(){
-        postAction(this.url.updateIssuesUrl, {'publishlistId': this.publishlistId}).then((res) => {
-          if(res.success) {
-            console.log(res)
-            this.reloadData()
-          }else{
-            this.$message.error(res.message)
-          }
-        })
-      },
-      handleHistory(){
+      loadData(arg) {
+        if(!this.url.list){
+          this.$message.error("请设置url.list属性!")
+          return
+        }
+        //加载数据 若传入参数1则加载第一页的内容
+        if (arg === 1) {
+          this.ipagination.current = 1;
+        }
         var params = this.getQueryParams();//查询条件
-        console.log('params', params)
+        params.publishlistId = this.pid
+        console.log("params", params)
         this.loading = true;
-        getAction(this.url.historyList, params).then((res) => {
-          if(res.success) {
+        getAction(this.url.list, params).then((res) => {
+          if (res.success) {
+            //update-begin---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
             this.dataSource = res.result.records||res.result;
-            if(res.result.total)
-            {
+            if(res.result.total) {
               this.ipagination.total = res.result.total;
             }else{
               this.ipagination.total = 0;
             }
+            //update-end---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
+          }else{
+            this.$message.warning(res.message)
           }
         }).finally(() => {
           this.loading = false
+        })
+      },
+      handleUpdateList() {
+        let params = {}
+        params.publishlistId = this.publishlistId
+        postAction(this.url.updateIssuesUrl, params).then((res) => {
+          if(res.success) {
+            console.log(res)
+            this.loadData()
+          }else{
+            this.$message.error(res.message)
+          }
         })
       },
       getSuperFieldList(){

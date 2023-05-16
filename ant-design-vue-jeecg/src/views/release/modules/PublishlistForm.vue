@@ -172,7 +172,7 @@ export default {
           { required: true, message: '请输入版本类型!' }
         ],
         documentUrlId: [
-          { required: true, message: '请输入文档URL ID!' }
+          { required: true, message: '请输入文档UrlID!' }
         ],
         documentVersion: [
           { required: true, message: '请输入文档版本!' }
@@ -219,6 +219,7 @@ export default {
   },
   methods: {
     add () {
+      this.modelDefault.pmId = this.$store.state.user.username
       this.edit(this.modelDefault);
     },
     edit (record) {

@@ -2,7 +2,7 @@
   <page-layout :title="'发布单：' + publishForm.name" logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
     <detail-list slot="headerContent" size="small" :col="3" class="detail-layout">
       <detail-list-item term="创建人">{{ publishForm.createBy }}</detail-list-item>
-      <detail-list-item term="产品线">{{ publishForm.productLineId_distText }}</detail-list-item>
+      <detail-list-item term="产品线">{{ publishForm.productLineName }}</detail-list-item>
       <detail-list-item term="创建时间">{{ publishForm.createTime }}</detail-list-item>
       <detail-list-item term="产品">{{ publishForm.productName }}</detail-list-item>
       <detail-list-item term="迭代冲刺号">{{publishForm.scrumNum}}</detail-list-item>
@@ -22,24 +22,29 @@
     </a-row>
     <!-- actions -->
     <template slot="action">
-      <a-button-group style="margin-right: 4px;">
-        <a-button>ReleaseNote</a-button>
-        <a-button>ReleaseMail</a-button>
-        <a-button>PR 文本</a-button>
-        <a-button>手册 PR 文本</a-button>
+      <a-button type="primary" icon="cloud-upload" @click="reloadData">发布</a-button>
+      <a-button type="dashed" style="margin:0 4px" icon="reload" @click="reloadData">刷新</a-button>
+      <a-button-group>
+        <a-button @click="handleReleaseNote">ReleaseNote</a-button>
+        <a-button @click="handleReleaseMail">ReleaseMail</a-button>
+        <a-button @click="handlePackagePR">PR 文本</a-button>
+        <a-button @click="handleHandbookPR">手册 PR 文本</a-button>
+        <a-button @click="handleWebsite">官网文本</a-button>
       </a-button-group>
-      <a-button type="primary" @click="reloadData">刷新</a-button>
     </template>
 
     <a-card :bordered="false" title="Sprint 迭代进度">
       <a-steps :direction="isMobile() && 'vertical' || 'horizontal'" :current="sprintCurrent" progressDot>
-        <a-step v-for="item in sprintStages" :title="item.text"></a-step>
+        <a-step v-for="item in sprintStages" :key="item.key" :title="item.text"></a-step>
       </a-steps>
     </a-card>
 
-    <a-card class="card" style="margin-top: 24px" :title="txtTitle" :bordered="false">
-      <j-markdown-editor v-model="txtContent"></j-markdown-editor>
-    </a-card>
+    <gen-text-drawer ref="modalForm" @ok="modalFormOk"></gen-text-drawer>
+
+<!--    <a-card class="card" style="margin-top: 24px" :title="txtTitle" :bordered="false">-->
+<!--      <j-markdown-editor v-if="isMarkDown" v-model="txtContent"></j-markdown-editor>-->
+<!--      <j-editor v-else v-model="txtContent"></j-editor>-->
+<!--    </a-card>-->
   </page-layout>
 </template>
 <script>
@@ -50,12 +55,16 @@ import { mixinDevice } from '@/utils/mixin'
 import PublishlistForm from './modules/PublishlistForm'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 import { getAction } from '@api/manage'
+import GenTextDrawer from "@views/release/modules/GenTextDrawer.vue";
+import ProjectDrawer from "@views/release/modules/ProjectDrawer.vue";
 
 const DetailListItem = DetailList.Item
 
 export default {
   name: 'PublishDetail',
   components: {
+    ProjectDrawer,
+    GenTextDrawer,
     PageLayout,
     DetailList,
     DetailListItem,
@@ -74,15 +83,22 @@ export default {
       publishForm: {},
       publishStats: {},
       sprintStages: {},
+      publishlistId: '',
+      isMarkDown: true,
       url: {
-        queryById: '/release/queryById'
+        queryById: '/release/queryById',
+        genReleaseNote: '/release/generateReleaseNoteContent',
+        genReleaseEmail: '/release/generateReleaseMailContent',
+        genPackagePr: '/release/generateProductPackagePRContent',
+        genHandbookPr: '/release/generateProductHandbookPRContent',
+        genWebsite: '/release/generateWebsite'
       }
     }
   },
   created() {
-    this.publishId = this.$route.query.id
-    this.publishForm = this.$route.query.record
-    this.reloadData()
+    this.publishlistId = this.$route.query.id
+    // this.publishForm = this.$route.query.record
+    this.reloadData(this.publishlistId)
     this.initDictConfig()
   },
   computed: {
@@ -94,14 +110,7 @@ export default {
   },
   methods: {
     initDictConfig(){
-      //初始化字典 - 性别
-      initDictOptions('release_form_state').then((res) => {
-        if (res.success) {
-          this.publishStats = res.result;
-          console.log('publishStats', this.publishStats)
-        }
-      });
-      //初始化字典 - 性别
+      //初始化字典 - sprint 迭代阶段
       initDictOptions('sprint_stage').then((res) => {
         if (res.success) {
           this.sprintStages = res.result;
@@ -110,13 +119,103 @@ export default {
       });
     },
     reloadData(pid) {
-      this.queryParam = {publishlistId: pid || this.publishlistId}
+      this.queryParam = {id: pid || this.publishlistId}
       getAction(this.url.queryById, this.queryParam).then((res) => {
         if(res.success){
+          this.publishForm = res.result.publishlist
           console.log(res.result)
+        }else{
+          this.$message.error(res.message)
         }
       })
     },
+    handleReleaseNote() {
+      this.isMarkDown = true
+      const params = {id: this.publishlistId}
+      getAction(this.url.genReleaseNote, params).then((res) => {
+        if(res.success){
+          console.log(res.result)
+          this.txtContent = res.result
+          this.$refs.modalForm.view({
+            'title': 'ReleaseNote',
+            'content': res.result,
+            'isMarkDown': this.isMarkDown
+          })
+        }else{
+          this.$message.error(res.message)
+        }
+      })
+    },
+    handleReleaseMail() {
+      this.isMarkDown = false
+      const params = {id: this.publishlistId}
+      getAction(this.url.genReleaseEmail, params).then((res) => {
+        if(res.success){
+          console.log(res.result)
+          this.txtContent = res.result
+          this.$refs.modalForm.view({
+            'title': 'Release Email',
+            'content': res.result,
+            'isMarkDown': this.isMarkDown
+          })
+        }else{
+          this.$message.error(res.message)
+        }
+      })
+    },
+    handlePackagePR() {
+      this.isMarkDown = true
+      const params = {id: this.publishlistId}
+      getAction(this.url.genPackagePr, params).then((res) => {
+        if(res.success){
+          console.log(res.result)
+          this.txtContent = res.result
+          this.$refs.modalForm.view({
+            'title': '打包 PR 生成',
+            'content': res.result,
+            'isMarkDown': this.isMarkDown
+          })
+        }else{
+          this.$message.error(res.message)
+        }
+      })
+    },
+    handleHandbookPR() {
+      this.isMarkDown = true
+      const params = {id: this.publishlistId}
+      getAction(this.url.genHandbookPr, params).then((res) => {
+        if(res.success){
+          console.log(res.result)
+          this.txtContent = res.result
+          this.$refs.modalForm.view({
+            'title': '手册 PR 生成',
+            'content': res.result,
+            'isMarkDown': this.isMarkDown
+          })
+        }else{
+          this.$message.error(res.message)
+        }
+      })
+    },
+    handleWebsite() {
+      this.isMarkDown = true
+      const params = {id: this.publishlistId}
+      getAction(this.url.genWebsite, params).then((res) => {
+        if(res.success){
+          console.log(res.result)
+          this.txtContent = res.result
+          this.$refs.modalForm.view({
+            'title': '官网内容生成',
+            'content': res.result,
+            'isMarkDown': this.isMarkDown
+          })
+        }else{
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+    modalFormOk() {},
     add() {
       this.visible = true
       this.$nextTick(() => {

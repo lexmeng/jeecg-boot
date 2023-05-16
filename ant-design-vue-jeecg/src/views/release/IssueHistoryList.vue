@@ -1,17 +1,17 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchQuery">
-        <a-row :gutter="24">
-        </a-row>
-      </a-form>
-    </div>
+<!--    <div class="table-page-search-wrapper">-->
+<!--      <a-form layout="inline" @keyup.enter.native="searchQuery">-->
+<!--        <a-row :gutter="24">-->
+<!--        </a-row>-->
+<!--      </a-form>-->
+<!--    </div>-->
     <!-- 查询区域-END -->
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+<!--      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>-->
       <a-button type="primary" icon="download" @click="handleExportXls('issue历史表')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
@@ -106,6 +106,13 @@
     components: {
       IssueHistoryModal
     },
+    props: {
+      pid:{
+        type: String,
+        default: '',
+        required: true
+      },
+    },
     data () {
       return {
         description: 'issue历史表管理页面',
@@ -124,7 +131,10 @@
           {
             title:'issue号',
             align:"center",
-            dataIndex: 'issueNum'
+            dataIndex: 'issueNum',
+            customRender:function (t,r,index) {
+              return '<a href="+r.issueLink+">"+t+"</a>'
+            }
           },
           {
             title:'issue名',
@@ -136,26 +146,26 @@
             align:"center",
             dataIndex: 'issueType'
           },
-          {
-            title:'issue链接',
-            align:"center",
-            dataIndex: 'issueLink'
-          },
-          {
-            title:'发布单号',
-            align:"center",
-            dataIndex: 'publishlistId'
-          },
-          {
-            title:'项目名',
-            align:"center",
-            dataIndex: 'projectId'
-          },
-          {
-            title:'jira版本名',
-            align:"center",
-            dataIndex: 'jiraVersionName'
-          },
+          // {
+          //   title:'issue链接',
+          //   align:"center",
+          //   dataIndex: 'issueLink'
+          // },
+          // {
+          //   title:'发布单号',
+          //   align:"center",
+          //   dataIndex: 'publishlistId'
+          // },
+          // {
+          //   title:'项目名',
+          //   align:"center",
+          //   dataIndex: 'projectId'
+          // },
+          // {
+          //   title:'jira版本名',
+          //   align:"center",
+          //   dataIndex: 'jiraVersionName'
+          // },
           {
             title:'当初创建的日期时间',
             align:"center",

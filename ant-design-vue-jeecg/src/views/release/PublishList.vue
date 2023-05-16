@@ -96,7 +96,7 @@
     </div>
 
     <publishlist-modal ref="modalForm" @ok="modalFormOk"/>
-    <issue-list-drawer ref="issueList" @ok="issueListOk" />
+    <issue-list-drawer ref="issueList"  @ok="issueListOk" />
     <issue-history-list-drawer ref="issueHistory" @ok="issueListOk" />
   </a-card>
 </template>
@@ -238,6 +238,7 @@
     created() {
       this.getSuperFieldList();
       this.initDictConfig();
+      // console.log('user',this.$store.state.user.info.realname)
     },
     computed: {
       importExcelUrl: function(){
@@ -267,7 +268,7 @@
       handleIssues(record){
         // console.log("handleIssues: ", record)
         // this.$router.push({ path: '/release/issueList', query: {pid:record.id} })
-        this.$refs.issueList.list(record.id)
+        this.$refs.issueList.list(record)
         this.$refs.issueList.title = "发布单【" + record.name + "】- Jira Issues"
         this.$refs.issueList.disableSubmit = true
       },

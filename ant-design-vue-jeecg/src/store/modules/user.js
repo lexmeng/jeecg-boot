@@ -58,6 +58,7 @@ const user = {
           if(response.success){
             const result = response.result
             const userInfo = result.userInfo
+            console.log('ValidateLogin: ', result, userInfo)
             Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
             Vue.ls.set(USER_NAME, userInfo.username, 7 * 24 * 60 * 60 * 1000)
             Vue.ls.set(USER_INFO, userInfo, 7 * 24 * 60 * 60 * 1000)
@@ -81,6 +82,7 @@ const user = {
           if(response.code =='200'){
             const result = response.result
             const userInfo = result.userInfo
+            console.log('Login: ', result, userInfo)
             Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
             Vue.ls.set(USER_NAME, userInfo.username, 7 * 24 * 60 * 60 * 1000)
             Vue.ls.set(USER_INFO, userInfo, 7 * 24 * 60 * 60 * 1000)

@@ -33,10 +33,12 @@
       }
     },
     methods: {
-      list(p){
+      list(record){
         this.visible = true
+        this.publishlistId = record.id
         this.$nextTick(()=>{
-          this.$refs.realList.reloadData(p)
+          this.$refs.realList.pid = record.id
+          this.$refs.realList.loadData(1)
         })
       },
       close () {

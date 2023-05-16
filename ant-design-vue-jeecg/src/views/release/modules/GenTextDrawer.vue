@@ -2,12 +2,12 @@
   <a-drawer
     :title="title"
     :width="width"
-    placement="right"
+    placement="left"
     :closable="false"
     @close="close"
     destroyOnClose
     :visible="visible">
-    <issue-list ref="realList" :pid="publishlistId"></issue-list>
+    <gen-text-form ref="realForm" @ok="submitCallback" :disabled="disableSubmit" normal></gen-text-form>
     <div class="drawer-footer">
       <a-button @click="handleCancel" style="margin-bottom: 0;">关闭</a-button>
       <a-button v-if="!disableSubmit"  @click="handleOk" type="primary" style="margin-bottom: 0;">提交</a-button>
@@ -17,30 +17,27 @@
 
 <script>
 
-  import IssueList from '../IssueList'
+  import GenTextForm from './GenTextForm.vue'
 
   export default {
-    name: 'IssueListDrawer',
+    name: 'GenTextDrawer',
     components: {
-      IssueList
+      GenTextForm
     },
     data () {
       return {
         title:"操作",
-        width:1200,
+        width:1000,
         visible: false,
-        disableSubmit: false,
-        publishlistId: ''
+        disableSubmit: false
       }
     },
     methods: {
-      list(record){
-        this.visible = true
-        this.publishlistId = record.id
+      view (record) {
+        this.visible=true
         this.$nextTick(()=>{
-          this.$refs.realList.pid = record.id
-          this.$refs.realList.loadData(1)
-        })
+          this.$refs.realForm.view(record);
+        });
       },
       close () {
         this.$emit('close');
