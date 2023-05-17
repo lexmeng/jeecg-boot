@@ -21,7 +21,7 @@ spec:
   - name: "kaniko"
     command:
       - "cat"
-    image: "harbor-ofs.kyligence.com/kaniko-project/executor:latest"
+    image: "harbor-ofs.kyligence.com/library/kaniko-executor:latest"
     imagePullPolicy: "Always"
     resources:
       limits:
