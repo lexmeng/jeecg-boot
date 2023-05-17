@@ -5,6 +5,7 @@ import org.jeecg.modules.publishlist.entity.DependentComponent;
 import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.entity.Publishlist;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.mapper.DependentComponentMapper;
 import org.jeecg.modules.publishlist.mapper.PackageUrlMapper;
 import org.jeecg.modules.publishlist.mapper.PublishlistProjectMapper;
@@ -43,6 +44,17 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void saveMain(Publishlist publishlist, List<PublishlistProject> publishlistProjectList,List<DependentComponent> dependentComponentList,List<PackageUrl> packageUrlList) {
+		//如果产品线、产品、jira版本有相同的发布单，则返回
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("product_line_name",publishlist.getProductLineName());
+		queryMap.put("product_name",publishlist.getProductName());
+		queryMap.put("jira_version_name", publishlist.getJiraVersionName());
+		List<Publishlist> publishlistQueryResult = publishlistMapper.selectByMap(queryMap);
+
+		if(!publishlistQueryResult.isEmpty()){
+            throw new BussinessException("已经存在相同产品线名、产品名和jira版本名的发布单，请先删除再新建！");
+		}
+
 		publishlist.setPublishlistStage(publishlistStatusMachine.init());
 
 		publishlistMapper.insert(publishlist);

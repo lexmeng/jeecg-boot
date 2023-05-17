@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.modules.publishlist.aspect.AutoLogPublishlist;
 import org.jeecg.modules.publishlist.bpservice.JenkinsBPService;
 import org.jeecg.modules.publishlist.bpservice.PublishlistBPService;
 import org.jeecg.modules.publishlist.bpservice.ReleaseInfoBPService;
@@ -88,14 +89,27 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	//@AutoLog(value = "发布单-分页列表查询")
 	@ApiOperation(value="发布单-分页列表查询", notes="发布单-分页列表查询")
 	@GetMapping(value = "/list")
-	public Result<IPage<Publishlist>> queryPageList(Publishlist publishlist,
+	@AutoLogPublishlist("Enter PublishlistController queryPageList method")
+	public Result<IPage<PublishlistQueryResult>> queryPageList(Publishlist publishlist,
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
 		QueryWrapper<Publishlist> queryWrapper = QueryGenerator.initQueryWrapper(publishlist, req.getParameterMap());
 		Page<Publishlist> page = new Page<Publishlist>(pageNo, pageSize);
 		IPage<Publishlist> pageList = publishlistService.page(page, queryWrapper);
-		return Result.OK(pageList);
+
+		IPage<PublishlistQueryResult> resultList = new Page<PublishlistQueryResult>(pageNo, pageSize);
+		resultList.setTotal(pageList.getTotal());
+		resultList.setPages(pageList.getPages());
+
+		List<PublishlistQueryResult> queryList = new ArrayList<>();
+		for(Publishlist tempPublishlist : pageList.getRecords()){
+            PublishlistQueryResult queryResult = publishlistService.queryByMainId(tempPublishlist.getId());
+			queryList.add(queryResult);
+		}
+		resultList.setRecords(queryList);
+
+		return Result.OK(resultList);
 	}
 	
 	/**

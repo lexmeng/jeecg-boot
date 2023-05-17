@@ -3,6 +3,7 @@ package org.jeecg.modules.publishlist.tools;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.JobWithDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,9 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Component
+@Slf4j
 public class JenkinsUtils {
 
     // 连接 Jenkins 需要设置的信息
@@ -98,16 +101,14 @@ public class JenkinsUtils {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
-
             // set the authentication header
             String userCredentials = JENKINS_USERNAME + ":" + JENKINS_API_TOKEN;
             String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
             connection.setRequestProperty("Authorization", basicAuth);
 
-
             // send the HTTP request
             int responseCode = connection.getResponseCode();
-            System.out.println("Response Code : " + responseCode);
+            log.info("Response Code : " + responseCode);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -147,15 +148,15 @@ public class JenkinsUtils {
             outputStream.close();
 
             int responseCode = connection.getResponseCode();
-            System.out.println("Response Code : " + responseCode);
+            log.info("Response Code : " + responseCode);
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                System.out.println(inputStream.toString());
+                log.info(inputStream.toString());
                 // 处理服务器返回的数据
             }else{
                 InputStream errorStream = connection.getErrorStream();
-                System.out.println(errorStream.toString());
+                log.info(errorStream.toString());
                 // 处理错误信息
             }
 

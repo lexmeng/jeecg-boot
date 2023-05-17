@@ -1,5 +1,7 @@
 package org.jeecg.modules.publishlist.config;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -9,11 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Configuration
+@EnableAspectJAutoProxy
 public class Config {
     public final static String ISSUE_PUBLISH_FILTER_STRING = "（不写发布声明）";
 
-    public final static String ISSUE_EN_AND_CH_SEPARATOR_IN_KE = "/";
+    public final static String ISSUE_EN_AND_CH_SEPARATOR_IN_KE = "||";
 
     public final static String ISSUE_EN_AND_CH_SEPARATOR_IN_KC = "||";
 

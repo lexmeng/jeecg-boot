@@ -132,7 +132,7 @@ public class JiraClientUtils {
                 .queryString("jql", "project = KE")
                 .asJson();
 
-        System.out.println(response.getBody());
+        log.info(response.getBody().toString());
     }
 
     private String delTab(String str){
@@ -229,7 +229,7 @@ public class JiraClientUtils {
             issue.setProjectId(tempObject.getJSONObject("fields").getJSONObject("project").getString("name"));
 
             issueList.add(issue);
-            System.out.println(tempObject);
+            log.info(tempObject.toString());
         }
         //List<Issue> issueList = JSONArray.parseArray(jsonObject.getJSONArray("issues").toString(), Issue.class);
         issueSearchResult.setIssues(issueList);

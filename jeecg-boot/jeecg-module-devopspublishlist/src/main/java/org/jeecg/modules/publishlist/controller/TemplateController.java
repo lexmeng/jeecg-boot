@@ -1,11 +1,15 @@
 package org.jeecg.modules.publishlist.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.publishlist.entity.Template;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.service.ITemplateService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -69,6 +73,20 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	//@RequiresPermissions("org.jeecg.modules.demo:pub_template:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Template template) {
+		Map<String,Object> queryMap = new HashMap<>();
+
+		//一个产品线、产品、文档版本、类型下只能有一个模板
+		queryMap.put("product_line_name",template.getProductLineName());
+		queryMap.put("product_name",template.getProductName());
+		queryMap.put("document_version",template.getDocumentVersion());
+		queryMap.put("type",template.getType());
+
+		List<Template> templateList = templateService.listByMap(queryMap);
+
+		if(!templateList.isEmpty()){
+			throw new BussinessException("已经存在相同产品线、产品、文档版本、类型的模板，请更新原模板！");
+		}
+
 		template.setId(IdTool.generalId());
 		templateService.save(template);
 		return Result.OK("添加成功！");

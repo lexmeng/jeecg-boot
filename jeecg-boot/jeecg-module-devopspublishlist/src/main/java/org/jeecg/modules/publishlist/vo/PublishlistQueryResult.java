@@ -9,11 +9,12 @@ import org.jeecg.modules.publishlist.entity.Publishlist;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecgframework.poi.excel.annotation.ExcelCollection;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @ApiModel(value="publishlistQueryResult对象", description="发布单查询结果")
-public class PublishlistQueryResult {
+public class PublishlistQueryResult implements Serializable {
     @ExcelCollection(name="发布单")
     @ApiModelProperty(value = "发布单")
     private Publishlist publishlist;
