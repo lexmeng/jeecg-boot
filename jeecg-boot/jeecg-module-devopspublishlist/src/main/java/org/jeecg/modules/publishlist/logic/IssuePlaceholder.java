@@ -30,6 +30,7 @@ public class IssuePlaceholder implements PlaceholderAble<Issue>{
             throw new BussinessException("issue占位符错误！");
         }
 
+        if(result == null) result = "";
         return result.toString();
     }
 }

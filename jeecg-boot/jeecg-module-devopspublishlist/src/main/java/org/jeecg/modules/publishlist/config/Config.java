@@ -102,7 +102,7 @@ public class Config {
         iteratePlacerholderList.add(ITERATE_PLACEHOLDER_DEPENDENT_COMPONENT);
         iteratePlacerholderList.add(ITERATE_PLACEHOLDER_PACKAGE_URL);
 
-        historyPlaceholderList.add(HISTORY_PLACEHOLDER_PREFIX);
+        historyPlaceholderList.add(HISTORY_PLACEHOLDER_DOCUMENT_VERSION);
 
         placeholderList.add("${issueNum}");//from issue字段，例如：AL-7095
         placeholderList.add("${issueName}");

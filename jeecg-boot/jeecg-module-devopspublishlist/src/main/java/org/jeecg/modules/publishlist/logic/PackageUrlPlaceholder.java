@@ -15,6 +15,7 @@ public class PackageUrlPlaceholder implements PlaceholderAble<PackageUrl>{
             throw new BussinessException("产品包url的占位符错误！");
         }
 
+        if(result == null) result = "";
         return result;
     }
 

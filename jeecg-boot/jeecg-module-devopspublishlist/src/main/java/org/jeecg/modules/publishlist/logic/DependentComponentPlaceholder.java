@@ -15,6 +15,7 @@ public class DependentComponentPlaceholder implements PlaceholderAble<DependentC
             throw new BussinessException("依赖组件的占位符错误！");
         }
 
+        if(result == null) result = "";
         return result;
     }
 }

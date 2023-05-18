@@ -84,24 +84,29 @@ public class ReleaseInfoBPService {
         String content = template.getContent();
 
         //五、先替换history占位符中的内容
-        QueryWrapper<Publishlist> wrapper = new QueryWrapper<>();
-        wrapper.eq("document_version", publishlist.getDocumentVersion()).orderByDesc("document_version");
-        List<PublishlistQueryResult> publishlistsQueryResultList= publishlistService.ListByMainWrapper(wrapper);
-
         List<Issue> issueList = issueBPService.getIssueListForRelease(publishlistId);
 
-        LinkedMap<String, PublishlistQueryResult> historyVersionPublishlistQueryResult = new LinkedMap<>();
-        LinkedMap<String, List<Issue>> historyVersionIssueList = new LinkedMap<>();
-        for(PublishlistQueryResult historyPublishlistQueryResult : publishlistsQueryResultList){
-            Publishlist historyPublishlist = historyPublishlistQueryResult.getPublishlist();
-            historyVersionPublishlistQueryResult.put(historyPublishlist.getVersionName(), historyPublishlistQueryResult);
+        if(content.contains(Config.HISTORY_PLACEHOLDER_PREFIX)){
+            QueryWrapper<Publishlist> wrapper = new QueryWrapper<>();
+            wrapper.eq("document_version", publishlist.getDocumentVersion()).orderByDesc("document_version");
+            List<PublishlistQueryResult> publishlistsQueryResultList= publishlistService.ListByMainWrapper(wrapper);
 
-            List<Issue> tempIssueList = issueBPService.getIssueListForRelease(historyPublishlist.getId());
-            historyVersionIssueList.put(historyPublishlist.getVersionName(), tempIssueList);
+            LinkedMap<String, PublishlistQueryResult> historyVersionPublishlistQueryResult = new LinkedMap<>();
+            LinkedMap<String, List<Issue>> historyVersionIssueList = new LinkedMap<>();
+            for(PublishlistQueryResult historyPublishlistQueryResult : publishlistsQueryResultList){
+                Publishlist historyPublishlist = historyPublishlistQueryResult.getPublishlist();
+                historyVersionPublishlistQueryResult.put(historyPublishlist.getVersionName(), historyPublishlistQueryResult);
 
+                List<Issue> tempIssueList = issueBPService.getIssueListForRelease(historyPublishlist.getId());
+                if(historyVersionIssueList.keySet().contains(historyPublishlist.getVersionName())){
+                    throw new BussinessException("历史发布单中存在相同版本号的发布单，请先清理！");
+                }
+                historyVersionIssueList.put(historyPublishlist.getVersionName(), tempIssueList);
+
+            }
+
+            content = ReleaseInfoLogic.replaceHistoryIteratePlaceholder(content, issueList, historyVersionPublishlistQueryResult, historyVersionIssueList);
         }
-
-        content = ReleaseInfoLogic.replaceHistoryIteratePlaceholder(content, issueList, historyVersionPublishlistQueryResult, historyVersionIssueList);
 
         //六、替代历史占位符和循环占位符，包括issue相关和releaseInfo相关
         content = ReleaseInfoLogic.replaceIteratePlaceholder(content,issueList, publishlistQueryResult.getDependentComponentList(), publishlistQueryResult.getPackageUrlList());

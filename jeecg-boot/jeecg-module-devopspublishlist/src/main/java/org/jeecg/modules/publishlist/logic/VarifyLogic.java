@@ -93,7 +93,7 @@ public class VarifyLogic {
             return false;
         }
 
-        if(!validateHistoryPlaceholder(template.getType(), productLineName, iteratePlaceholderList)){
+        if(!validateHistoryPlaceholder(template.getType(), productLineName, historyPlaceholderList)){
             return false;
         }
 
