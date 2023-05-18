@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Component
@@ -152,11 +150,15 @@ public class JenkinsUtils {
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                log.info(inputStream.toString());
-                // 处理服务器返回的数据
+                if(inputStream != null){
+                    log.info(inputStream.toString());
+                    // 处理服务器返回的数据
+                }
             }else{
                 InputStream errorStream = connection.getErrorStream();
-                log.info(errorStream.toString());
+                if(errorStream != null){
+                    log.info(errorStream.toString());
+                }
                 // 处理错误信息
             }
 
@@ -170,12 +172,15 @@ public class JenkinsUtils {
         JenkinsUtils utils = new JenkinsUtils();
 
         Map<String, String> map = new HashMap<>();
+        String cnContent = "abdcdd";
+
         map.put("version", "4.5.1");
-        map.put("cn_content", "fdasasfsdaf");
+        map.put("cn_content", cnContent);
         map.put("en_content", "abcdefs");
         map.put("document_version", "4.5");
 
         utils.buildWithParametersUseRestfulPost("devopsweb-manual-pr", map);
     }
+
 
 }

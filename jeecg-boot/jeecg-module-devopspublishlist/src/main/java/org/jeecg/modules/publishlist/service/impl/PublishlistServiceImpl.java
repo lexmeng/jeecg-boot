@@ -6,10 +6,7 @@ import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.entity.Publishlist;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.exception.BussinessException;
-import org.jeecg.modules.publishlist.mapper.DependentComponentMapper;
-import org.jeecg.modules.publishlist.mapper.PackageUrlMapper;
-import org.jeecg.modules.publishlist.mapper.PublishlistProjectMapper;
-import org.jeecg.modules.publishlist.mapper.PublishlistMapper;
+import org.jeecg.modules.publishlist.mapper.*;
 import org.jeecg.modules.publishlist.service.IPublishlistService;
 import org.jeecg.modules.publishlist.domainservice.impl.PublishlistStatusMachine;
 import org.jeecg.modules.publishlist.vo.PublishlistQueryResult;
@@ -40,6 +37,9 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 	private PackageUrlMapper packageUrlMapper;
 	@Autowired
 	private PublishlistStatusMachine publishlistStatusMachine;
+
+	@Autowired
+	private IssueMapper issueMapper;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
@@ -166,6 +166,10 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 		publishlistProjectMapper.deleteByMainId(id);
 		dependentComponentMapper.deleteByMainId(id);
 		packageUrlMapper.deleteByMainId(id);
+		//删除发布单的时候，先删除发布单对应的issue
+		Map<String, Object> delMap = new HashMap<>();
+		delMap.put("publishlist_id",id);
+		issueMapper.deleteByMap(delMap);
 		publishlistMapper.deleteById(id);
 	}
 

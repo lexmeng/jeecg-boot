@@ -51,10 +51,13 @@ public class Config {
     public static Map<String, List<String>> KE_PLACEHODLER_MAP= new HashMap<>();
     public static Map<String, List<String>> KE_ITERATE_PLACEHODLER_MAP = new HashMap<>();
 
+    public static Map<String, List<String>> KE_HISTORY_PLACEHODLER_MAP = new HashMap<>();
+
     public static Map<String, List<String>> KC_PLACEHODLER_MAP= new HashMap<>();
 
     public static Map<String, List<String>> KC_ITERATE_PLACEHODLER_MAP = new HashMap<>();
 
+    public static Map<String, List<String>> KC_HISTORY_PLACEHODLER_MAP = new HashMap<>();
     public static List<String> PRODUCT_LINE_NAME_LIST = new ArrayList<>();
 
     public final static String PRODUCT_LINE_NAME_KE = "Kyligence Enterprise";
@@ -69,6 +72,7 @@ public class Config {
 
         List<String> placeholderList = new ArrayList<>();
         List<String> iteratePlacerholderList = new ArrayList<>();
+        List<String> historyPlaceholderList = new ArrayList<>();
 
 
         placeholderList.add("${productLineName}");//from publishlist字段，例如：Kyligence Enterprise
@@ -98,6 +102,8 @@ public class Config {
         iteratePlacerholderList.add(ITERATE_PLACEHOLDER_DEPENDENT_COMPONENT);
         iteratePlacerholderList.add(ITERATE_PLACEHOLDER_PACKAGE_URL);
 
+        historyPlaceholderList.add(HISTORY_PLACEHOLDER_PREFIX);
+
         placeholderList.add("${issueNum}");//from issue字段，例如：AL-7095
         placeholderList.add("${issueName}");
         placeholderList.add("${issueChName}");//from releaseInfo字段
@@ -114,40 +120,52 @@ public class Config {
         //简化一下，不再每个类型单独设置占位符检查了
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, iteratePlacerholderList);
+        KE_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, historyPlaceholderList);
 
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, iteratePlacerholderList);
+        KE_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, historyPlaceholderList);
 
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, iteratePlacerholderList);
+        KE_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, historyPlaceholderList);
 
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, iteratePlacerholderList);
+        KE_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, historyPlaceholderList);
 
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, iteratePlacerholderList);
+        KE_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, historyPlaceholderList);
 
         KE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, placeholderList);
         KE_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, iteratePlacerholderList);
+        KE_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, historyPlaceholderList);
 
         //简化一下，KE和KC以及别的产品线不再单独设置占位符检查了
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, iteratePlacerholderList);
+        KC_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_NOTE, historyPlaceholderList);
 
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, iteratePlacerholderList);
+        KC_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_RELEASE_MAIL, historyPlaceholderList);
 
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, iteratePlacerholderList);
+        KC_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_EN, historyPlaceholderList);
 
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, iteratePlacerholderList);
+        KC_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_HANDBOOK_PR_CH, historyPlaceholderList);
 
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, iteratePlacerholderList);
+        KC_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_PRODUCT_PACKAGE_PR, historyPlaceholderList);
 
         KC_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, placeholderList);
         KC_ITERATE_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, iteratePlacerholderList);
+        KC_HISTORY_PLACEHODLER_MAP.put(RELEASE_INFO_TYPE_COMPANY_WEBSITE, historyPlaceholderList);
 
 
     }

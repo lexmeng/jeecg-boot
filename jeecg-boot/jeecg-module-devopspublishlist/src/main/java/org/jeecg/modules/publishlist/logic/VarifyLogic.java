@@ -52,6 +52,18 @@ public class VarifyLogic {
         return iteratePlaceholderList;
     }
 
+    private static List<String> getAllHistoryPlaceholder(String content){
+        List<String> historyPlaceholderList = new ArrayList<>();
+
+        Pattern pattern = Pattern.compile("\\$\\$History\\(.+?\\)");
+        Matcher matcher = pattern.matcher(content);
+        while(matcher.find()){
+            String group = matcher.group(0);
+            historyPlaceholderList.add(group);
+        }
+        return historyPlaceholderList;
+    }
+
     public static Boolean verifyPlaceholder(Template template){
         String productLineName = template.getProductLineName();
         List<String> placeholderStrList;
@@ -59,6 +71,7 @@ public class VarifyLogic {
         if(productLineName.isEmpty()){
             throw new BussinessException("产品线为空");
         }
+        /*
         if(productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
             placeholderStrList = Config.KE_PLACEHODLER_MAP.get(template.getType());
         }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
@@ -66,16 +79,21 @@ public class VarifyLogic {
         }else{
             throw new BussinessException("模板产品线名错误");
         }
-
+        */
         //抓取所有placeholder
         List<String> placeholderList = getAllPlaceholder(template.getContent());
         List<String> iteratePlaceholderList = getAllIteratePlaceholder(template.getContent());
+        List<String> historyPlaceholderList = getAllHistoryPlaceholder(template.getContent());
 
         //判断是否在可选的placeholder中
         if(!validatePlaceholder(template.getType(), productLineName, placeholderList)){
             return false;
         }
-        if(!validatePlaceholder(template.getType(), productLineName, iteratePlaceholderList)){
+        if(!validateIteratePlaceholder(template.getType(), productLineName, iteratePlaceholderList)){
+            return false;
+        }
+
+        if(!validateHistoryPlaceholder(template.getType(), productLineName, iteratePlaceholderList)){
             return false;
         }
 
@@ -104,6 +122,53 @@ public class VarifyLogic {
             return false;
         }
 
+    }
+
+    private static Boolean validateIteratePlaceholder(String type, String productLineName, List<String> placeholderList){
+        validateProductLineName(productLineName);
+
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
+
+        List<String> placeholderAllList;
+        if (productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
+            placeholderAllList = Config.KE_ITERATE_PLACEHODLER_MAP.get(type);
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
+            placeholderAllList = Config.KC_ITERATE_PLACEHODLER_MAP.get(type);
+        }else{
+            throw new BussinessException("产品线名称错误！");
+        }
+
+        if(placeholderAllList.containsAll(placeholderList)){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    private static Boolean validateHistoryPlaceholder(String type, String productLineName, List<String> placeholderList){
+        validateProductLineName(productLineName);
+
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
+
+        List<String> placeholderAllList;
+        if (productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
+            placeholderAllList = Config.KE_HISTORY_PLACEHODLER_MAP.get(type);
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
+            placeholderAllList = Config.KC_HISTORY_PLACEHODLER_MAP.get(type);
+        }else{
+            throw new BussinessException("产品线名称错误！");
+        }
+
+        if(placeholderAllList.containsAll(placeholderList)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private static Boolean validateProductLineName(String productLineName){
