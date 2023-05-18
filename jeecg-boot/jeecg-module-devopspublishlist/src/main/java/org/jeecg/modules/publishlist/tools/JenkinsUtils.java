@@ -5,7 +5,11 @@ import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -125,6 +129,7 @@ public class JenkinsUtils {
         return stringBuilder.toString();
     }
 
+    /*
     public void buildWithParametersUseRestfulPost(String jobName, Map<String, String> paramMap){
         try{
             URL url = new URL(JENKINS_URL + "/job/" + jobName + "/buildWithParameters");
@@ -166,18 +171,39 @@ public class JenkinsUtils {
             e.printStackTrace();
         }
     }
+*/
+    public void buildWithParametersUseRestfulPost(String jobName, MultiValueMap<String, String> paramMap){
+        String userCredentials = JENKINS_USERNAME + ":" + JENKINS_API_TOKEN;
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", basicAuth);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(paramMap,headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        String apiUrl = JENKINS_URL + "/job/" + jobName + "/buildWithParameters";
+        ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+        if(response.getStatusCodeValue() == 201){
+            log.info("Jenkins job has been triggered successfully!");
+        }else{
+            log.info("Failed to trigger Jenkins Job.");
+        }
+    }
 
 
     public static void main(String[] args){
         JenkinsUtils utils = new JenkinsUtils();
 
-        Map<String, String> map = new HashMap<>();
-        String cnContent = "abdcdd";
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        String cnContent = "aa";
 
-        map.put("version", "4.5.1");
-        map.put("cn_content", cnContent);
-        map.put("en_content", "abcdefs");
-        map.put("document_version", "4.5");
+        map.add("version", "4.5.1");
+        map.add("cn_content", cnContent);
+        map.add("en_content", "abcdefs");
+        map.add("document_version", "4.5");
 
         utils.buildWithParametersUseRestfulPost("devopsweb-manual-pr", map);
     }
