@@ -16,6 +16,8 @@ import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.service.IDependentComponentService;
 import org.jeecg.modules.publishlist.service.IPackageUrlService;
 import org.jeecg.modules.publishlist.vo.PublishlistQueryResult;
+import org.jeecg.modules.publishlist.vo.QuardTestParam;
+import org.jeecg.modules.publishlist.vo.StepTestParam;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -90,7 +92,7 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	@ApiOperation(value="发布单-分页列表查询", notes="发布单-分页列表查询")
 	@GetMapping(value = "/list")
 	@AutoLogPublishlist("Enter PublishlistController queryPageList method")
-	public Result<IPage<PublishlistQueryResult>> queryPageList(Publishlist publishlist,
+	public Result<IPage<PublishlistPage>> queryPageList(Publishlist publishlist,
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
@@ -98,13 +100,13 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		Page<Publishlist> page = new Page<Publishlist>(pageNo, pageSize);
 		IPage<Publishlist> pageList = publishlistService.page(page, queryWrapper);
 
-		IPage<PublishlistQueryResult> resultList = new Page<PublishlistQueryResult>(pageNo, pageSize);
+		IPage<PublishlistPage> resultList = new Page<PublishlistPage>(pageNo, pageSize);
 		resultList.setTotal(pageList.getTotal());
 		resultList.setPages(pageList.getPages());
 
-		List<PublishlistQueryResult> queryList = new ArrayList<>();
+		List<PublishlistPage> queryList = new ArrayList<>();
 		for(Publishlist tempPublishlist : pageList.getRecords()){
-            PublishlistQueryResult queryResult = publishlistService.queryByMainId(tempPublishlist.getId());
+			PublishlistPage queryResult = publishlistService.queryByMainIdPage(tempPublishlist.getId());
 			queryList.add(queryResult);
 		}
 		resultList.setRecords(queryList);
@@ -187,8 +189,8 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	//@AutoLog(value = "发布单-通过id查询")
 	@ApiOperation(value="发布单-通过id查询", notes="发布单-通过id查询")
 	@GetMapping(value = "/queryById")
-	public Result<PublishlistQueryResult> queryById(@RequestParam(name="id",required=true) String id) {
-		PublishlistQueryResult publishlistQueryResult = publishlistService.queryByMainId(id);
+	public Result<PublishlistPage> queryById(@RequestParam(name="id",required=true) String id) {
+		PublishlistPage publishlistQueryResult = publishlistService.queryByMainIdPage(id);
 
 		if(publishlistQueryResult==null) {
 			return Result.error("未找到对应数据");
@@ -378,6 +380,21 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		 return Result.OK("提交成功！");
 	 }
 
+	 @AutoLog(value = "Quard测试jenkins任务")
+	 @ApiOperation(value="Quard测试jenkins任务", notes="Quard测试jenkins任务")
+	 @PostMapping(value = "/quardJenkins")
+	 public Result<String> quardJenkins(@RequestBody QuardTestParam quardTestParam) {
+		 jenkinsBPService.executeKE4QuardTestJob(quardTestParam);
 
+		 return Result.OK("执行成功！");
+	 }
+
+	 @AutoLog(value = "Step测试jenkins任务")
+	 @ApiOperation(value="Step测试jenkins任务", notes="Step测试jenkins任务")
+	 @PostMapping(value = "/stepJenkins")
+	 public Result<String> stepJenkins(@RequestBody StepTestParam stepTestParam) {
+		 jenkinsBPService.executeKE4StepTestJob(stepTestParam);
+		 return Result.OK("执行成功！");
+	 }
 
 }

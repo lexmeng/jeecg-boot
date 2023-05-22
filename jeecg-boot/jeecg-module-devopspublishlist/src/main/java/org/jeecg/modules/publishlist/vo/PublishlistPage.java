@@ -3,6 +3,7 @@ package org.jeecg.modules.publishlist.vo;
 import java.util.List;
 
 import lombok.Data;
+import org.jeecg.common.aspect.annotation.Dict;
 import org.jeecg.modules.publishlist.entity.DependentComponent;
 import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
@@ -37,6 +38,7 @@ public class PublishlistPage {
 	/**产品线名*/
 	@Excel(name = "产品线名", width = 15)
 	@ApiModelProperty(value = "产品线名")
+	@Dict(dicCode = "dict_bu")
     private String productLineName;
 	/**产品id*/
 	@Excel(name = "产品id", width = 15)
@@ -45,6 +47,7 @@ public class PublishlistPage {
 	/**产品名*/
 	@Excel(name = "产品名", width = 15)
 	@ApiModelProperty(value = "产品名")
+	@Dict(dicCode = "product")
     private String productName;
 	/**版本名*/
 	@Excel(name = "版本名", width = 15)
@@ -53,6 +56,7 @@ public class PublishlistPage {
 	/**版本类型*/
 	@Excel(name = "版本类型", width = 15)
 	@ApiModelProperty(value = "版本类型")
+	@Dict(dicCode = "version_type")
     private String versionType;
 	/**jira版本名*/
 	@Excel(name = "jira版本名", width = 15)
@@ -69,10 +73,12 @@ public class PublishlistPage {
 	/**迭代阶段*/
 	@Excel(name = "迭代阶段", width = 15)
 	@ApiModelProperty(value = "迭代阶段")
+	@Dict(dicCode = "sprint_stage")
     private String scrumStage;
 	/**发布单状态*/
 	@Excel(name = "发布单状态", width = 15)
 	@ApiModelProperty(value = "发布单状态")
+	@Dict(dicCode = "release_form_state")
     private String publishlistStage;
 	/**发布时间*/
 	@Excel(name = "发布时间", width = 15)
@@ -81,6 +87,7 @@ public class PublishlistPage {
 	/**产品经理id*/
 	@Excel(name = "产品经理id", width = 15)
 	@ApiModelProperty(value = "产品经理id")
+	@Dict(dicCode = "username", dicText = "realname", dictTable = "sys_user")
     private String pmId;
 	/**产品经理名*/
 	@Excel(name = "产品经理名", width = 15)

@@ -4,7 +4,9 @@ import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,7 +25,8 @@ public class JenkinsUtils {
 
     // 连接 Jenkins 需要设置的信息
     //"http://192.168.2.11:8080/jenkins/"
-    private String JENKINS_URL="https://cicd-ofs.kyligence.com/job/DevOps";
+    @Value("${jenkins.url}")
+    private String JENKINS_URL;
 
     @Value("${jenkins.account}")
     private String JENKINS_USERNAME;
@@ -97,7 +100,7 @@ public class JenkinsUtils {
     public void buildWithParametersUseRestful(String jobName, Map<String, String> paramMap)
     {
         try{
-            String urlStr = build(JENKINS_URL + "/job/" + jobName + "/buildWithParameters", paramMap);
+            String urlStr = build(JENKINS_URL + "/DevOps" + "/job/" + jobName + "/buildWithParameters", paramMap);
             URL url = new URL(urlStr);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -183,7 +186,28 @@ public class JenkinsUtils {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(paramMap,headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        String apiUrl = JENKINS_URL + "/job/" + jobName + "/buildWithParameters";
+        String apiUrl = JENKINS_URL + "/DevOps" + "/job/" + jobName + "/buildWithParameters";
+        ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+        if(response.getStatusCodeValue() == 201){
+            log.info("Jenkins job has been triggered successfully!");
+        }else{
+            log.info("Failed to trigger Jenkins Job.");
+        }
+    }
+
+    public void buildWithPrarametersInKEUseRestfulPost(String jobName, MultiValueMap<String, String> paramMap){
+        String userCredentials = JENKINS_USERNAME + ":" + JENKINS_API_TOKEN;
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", basicAuth);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(paramMap,headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        String apiUrl = JENKINS_URL + "/KE4" + "/job/" + jobName + "/buildWithParameters";
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
         if(response.getStatusCodeValue() == 201){

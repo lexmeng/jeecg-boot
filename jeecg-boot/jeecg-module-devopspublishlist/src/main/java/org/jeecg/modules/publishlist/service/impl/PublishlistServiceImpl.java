@@ -9,7 +9,9 @@ import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.mapper.*;
 import org.jeecg.modules.publishlist.service.IPublishlistService;
 import org.jeecg.modules.publishlist.domainservice.impl.PublishlistStatusMachine;
+import org.jeecg.modules.publishlist.vo.PublishlistPage;
 import org.jeecg.modules.publishlist.vo.PublishlistQueryResult;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +119,50 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
+	public PublishlistPage queryByMainIdPage(String id){
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("publishlist_id",id);
+
+		Publishlist publishlist = publishlistMapper.selectById(id);
+		List<PackageUrl> packageUrlList = packageUrlMapper.selectByMap(queryMap);
+		List<DependentComponent> dependentComponentList = dependentComponentMapper.selectByMap(queryMap);
+		List<PublishlistProject> publishlistProjectList = publishlistProjectMapper.selectByMap(queryMap);
+
+		PublishlistPage publishlistPage = new PublishlistPage();
+		copyProperties(publishlist, publishlistPage);
+		publishlistPage.setPublishlistProjectList(publishlistProjectList);
+		publishlistPage.setDependentComponentList(dependentComponentList);
+		publishlistPage.setPackageUrlList(packageUrlList);
+
+        return publishlistPage;
+	}
+
+	private void copyProperties(Publishlist publishlist, PublishlistPage page){
+		page.setId(publishlist.getId());
+		page.setName(publishlist.getName());
+		page.setProductLineName(publishlist.getProductLineName());
+		page.setProductName(publishlist.getProductName());
+		page.setVersionName(publishlist.getVersionName());
+		page.setVersionType(publishlist.getVersionType());
+		page.setJiraVersionName(publishlist.getJiraVersionName());
+		page.setDocumentVersion(publishlist.getDocumentVersion());
+		page.setScrumNum(publishlist.getScrumNum());
+		page.setScrumStage(publishlist.getScrumStage());
+		page.setPublishlistStage(publishlist.getPublishlistStage());
+		page.setPublishDatetime(publishlist.getPublishDatetime());
+		page.setPmId(publishlist.getPmId());
+		page.setPmName(publishlist.getPmName());
+		page.setCommitId(publishlist.getCommitId());
+		page.setUserManualEnLink(publishlist.getUserManualEnLink());
+		page.setUserManualChLink(publishlist.getUserManualChLink());
+		page.setCreateBy(publishlist.getCreateBy());
+		page.setCreateTime(publishlist.getCreateTime());
+		page.setUpdateBy(publishlist.getUpdateBy());
+		page.setUpdateTime(publishlist.getUpdateTime());
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public PublishlistQueryResult queryByMainId(String id){
 		Map<String, Object> queryMap = new HashMap<>();
 		queryMap.put("publishlist_id",id);
@@ -128,11 +174,10 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 
 		PublishlistQueryResult result = new PublishlistQueryResult();
 		result.setPublishlist(publishlist);
-		result.setPackageUrlList(packageUrlList);
-		result.setDependentComponentList(dependentComponentList);
 		result.setPublishlistProjectList(publishlistProjectList);
-
-        return result;
+		result.setDependentComponentList(dependentComponentList);
+		result.setPackageUrlList(packageUrlList);
+		return result;
 	}
 
 	@Override

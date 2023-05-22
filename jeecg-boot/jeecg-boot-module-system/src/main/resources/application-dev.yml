@@ -342,9 +342,15 @@ third-app:
       client-secret: ??
 
 jira:
-  account-name: name_here
+  account-name: account_here
   sign: sign_here
 
 jenkins:
+  url: https://cicd-ofs.kyligence.com/job
   account: account_here
   password: password_here
+
+github:
+  url: url_here
+  account: account_here
+  token: password_here

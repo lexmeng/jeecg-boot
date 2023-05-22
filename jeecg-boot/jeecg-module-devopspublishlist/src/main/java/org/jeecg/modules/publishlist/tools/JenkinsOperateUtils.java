@@ -3,8 +3,11 @@ package org.jeecg.modules.publishlist.tools;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.JobWithDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,18 +16,19 @@ import java.util.Map;
 public class JenkinsOperateUtils {
 
     // Jenkins 对象
+
     private JenkinsServer jenkinsServer;
     // http 客户端对象
     private JenkinsHttpClient jenkinsHttpClient;
 
-    JenkinsOperateUtils(){
-        JenkinsUtils utils = new JenkinsUtils();
+    @Autowired
+    private JenkinsUtils utils;
+    @PostConstruct
+    public void JenkinsOperateUtils(){
         // 连接 Jenkins
         jenkinsServer = utils.connection();
         // 设置客户端连接 Jenkins
         jenkinsHttpClient = utils.getClient();
-
-
     }
 
     public void getJob(){

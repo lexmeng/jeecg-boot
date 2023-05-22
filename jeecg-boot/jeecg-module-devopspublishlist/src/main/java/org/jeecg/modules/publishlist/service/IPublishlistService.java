@@ -6,6 +6,7 @@ import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.entity.Publishlist;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.publishlist.vo.PublishlistPage;
 import org.jeecg.modules.publishlist.vo.PublishlistQueryResult;
 
 import java.io.Serializable;
@@ -55,8 +56,9 @@ public interface IPublishlistService extends IService<Publishlist> {
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
 
-	public PublishlistQueryResult queryByMainId(String id);
+	public PublishlistPage queryByMainIdPage(String id);
 
+	public PublishlistQueryResult queryByMainId(String id);
 
 	public List<PublishlistQueryResult> listByMainMap(Map<String, Object> columnMap);
 
