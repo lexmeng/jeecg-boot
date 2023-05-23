@@ -1,6 +1,7 @@
 package org.jeecg.modules.publishlist.domainservice.impl;
 
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.system.vo.LoginUser;
@@ -60,20 +61,47 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
     //更新发布单issue列表，非第一次拉取
     @Transactional
     public void updateIssueList(String publishlistId, List<Issue> issueList){
+        if(issueList == null || issueList.size() == 0){
+            throw new BussinessException("拉取的Issue数量为0，请判断是否出现异常！");
+        }
         //1、删除原来的issue信息，非首次，issue列表里必然是有的。
         Map<String,Object> map = new HashMap<>();
         map.put("publishlist_id",publishlistId);
 
         List<Issue> listIssueList = issueService.listByMap(map);
+        /*
         if(listIssueList.isEmpty()){
             throw new BussinessException("发布单对应issue列表为空！");
         }
-
+        */
         issueService.removeByMap(map);
         //issueService.removeBatchByIds(issueList);
 
         //2、更新新的issue列表
         issueService.saveBatch(issueList);
+
+        //3、保存入history
+        Map<String, Object> historyMap = new HashMap<>();
+        historyMap.put("publishlist_id",publishlistId);
+
+        QueryWrapper<IssueHistory> wrapper = new QueryWrapper<>();
+        wrapper.eq("publishlist_id", publishlistId);
+        wrapper.orderByDesc("batch_num");
+        List<IssueHistory> historyIssueList = issueHistoryService.list(wrapper);
+        Integer batchNum = 0;
+        if(historyIssueList == null || historyIssueList.size() == 0){
+            batchNum = 1;
+        }else{
+            batchNum = historyIssueList.get(0).getBatchNum()+1;
+        }
+
+        List<IssueHistory> issueHistoryList = new ArrayList<>();
+        for(Issue issue : issueList){
+            IssueHistory issueHistory = convertIssueToHistoryIssue(issue, batchNum);
+            issueHistoryList.add(issueHistory);
+        }
+
+        issueHistoryService.saveBatch(issueHistoryList);
 
     }
 
@@ -142,6 +170,23 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         issueHistory.setProjectId(issue.getProjectId());
         issueHistory.setIssueCreateDatetime(issue.getCreateTime());
         issueHistory.setJiraVersionName(issue.getJiraVersionName());
+        issueHistory.setBatchNum(1);
+        return issueHistory;
+    }
+
+    private IssueHistory convertIssueToHistoryIssue(Issue issue, Integer batchNum){
+        IssueHistory issueHistory = new IssueHistory();
+        issueHistory.setId(IdTool.generalId());
+        issueHistory.setIssueId(issue.getIssueId());
+        issueHistory.setPublishlistId(issue.getPublishlistId());
+        issueHistory.setIssueNum(issue.getIssueNum());
+        issueHistory.setIssueName(issue.getIssueName());
+        issueHistory.setIssueType(issue.getIssueType());
+        issueHistory.setIssueLink(issue.getIssueLink());
+        issueHistory.setProjectId(issue.getProjectId());
+        issueHistory.setIssueCreateDatetime(issue.getCreateTime());
+        issueHistory.setJiraVersionName(issue.getJiraVersionName());
+        issueHistory.setBatchNum(batchNum);
         return issueHistory;
     }
 
@@ -153,6 +198,10 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
     //首次保存issue列表
     @Transactional
     public void saveIssueListFirstTime(String publishlistId, List<Issue> issueList){
+        if(issueList == null || issueList.size() == 0){
+            throw new BussinessException("拉取的Issue数量为0，请判断是否出现异常！");
+        }
+
         //1、如果发现已存在issue信息，则报错
         QueryWrapper<Issue> wrapper = new QueryWrapper<>();
         wrapper.eq("publishlist_id", publishlistId);

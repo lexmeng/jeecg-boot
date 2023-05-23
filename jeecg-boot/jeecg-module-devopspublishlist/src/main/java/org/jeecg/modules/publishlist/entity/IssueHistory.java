@@ -80,6 +80,10 @@ public class IssueHistory implements Serializable {
     @ApiModelProperty(value = "jira版本名")
     private String jiraVersionName;
 	/**当初创建的日期时间*/
+
+    @Excel(name = "批次号", width = 15)
+    @ApiModelProperty(value = "批次号")
+    private Integer batchNum;
 	@Excel(name = "当初创建的日期时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

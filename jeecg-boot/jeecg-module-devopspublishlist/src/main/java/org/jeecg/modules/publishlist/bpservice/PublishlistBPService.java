@@ -1,6 +1,7 @@
 package org.jeecg.modules.publishlist.bpservice;
 
 
+import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
@@ -46,6 +47,7 @@ public class PublishlistBPService {
     private IssueBPService issueBPService;
 
     //新建发布单
+    /*
     public void createPublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
         //生成publishlist存储的Id
         String publishlistId = IdTool.generalId();
@@ -68,7 +70,7 @@ public class PublishlistBPService {
         issueBPService.generateEnAndChNameAndSave(publishlistId);
 
     }
-
+*/
 
     public void savePublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
         publishlistService.saveMain(publishlist, publishlistProjectList,dependentComponentList,packageUrlList);
@@ -110,18 +112,8 @@ public class PublishlistBPService {
             List<Issue> issueList = issueDomainService.getIssueListByProject(publishlistId, project.getName(), publishlist.getJiraVersionName());
             totalIssueList.addAll(issueList);
         }
-        issueDomainService.publish(publishlistId, totalIssueList);
 
-        //记录发布时间，更新发布单状态
-        publishlistDomainService.publish(publishlistId);
-
-        //阶段二、生成releaseInfo信息
-        if(!publishlistDomainService.isPublished(publishlistId)){
-            throw new BussinessException("发布状态错误！");
-        }
-
-        //更新issue中英文名
-        issueBPService.generateEnAndChNameAndSave(publishlistId);
+        publishUpdateIssueAndPublishlist(publishlistId, totalIssueList);
 
         //删除之前生成的release info信息
         /*
@@ -155,6 +147,27 @@ public class PublishlistBPService {
         */
 
         return;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    private void publishUpdateIssueAndPublishlist(String publishlistId, List<Issue> totalIssueList){
+        //初步判断状态
+        if(publishlistDomainService.isPublished(publishlistId)){
+            throw new BussinessException("发布单状态错误！发布单已发布");
+        }
+
+        issueDomainService.publish(publishlistId, totalIssueList);
+
+        //记录发布时间，更新发布单状态
+        publishlistDomainService.publish(publishlistId);
+
+        //阶段二、生成releaseInfo信息
+        if(!publishlistDomainService.isPublished(publishlistId)){
+            throw new BussinessException("发布状态错误！");
+        }
+
+        //更新issue中英文名
+        issueBPService.generateEnAndChNameAndSave(publishlistId);
     }
 
 

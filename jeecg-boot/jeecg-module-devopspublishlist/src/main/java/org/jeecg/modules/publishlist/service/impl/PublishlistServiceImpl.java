@@ -43,6 +43,9 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 	@Autowired
 	private IssueMapper issueMapper;
 
+	@Autowired
+	private IssueHistoryMapper issueHistoryMapper;
+
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void saveMain(Publishlist publishlist, List<PublishlistProject> publishlistProjectList,List<DependentComponent> dependentComponentList,List<PackageUrl> packageUrlList) {
@@ -211,10 +214,14 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 		publishlistProjectMapper.deleteByMainId(id);
 		dependentComponentMapper.deleteByMainId(id);
 		packageUrlMapper.deleteByMainId(id);
-		//删除发布单的时候，先删除发布单对应的issue
+		//删除发布单的时候，先删除发布单对应的issue和issueHistory
 		Map<String, Object> delMap = new HashMap<>();
 		delMap.put("publishlist_id",id);
 		issueMapper.deleteByMap(delMap);
+		Map<String, Object> historyDelMap = new HashMap<>();
+		historyDelMap.put("publishlist_id", id);
+		issueHistoryMapper.deleteByMap(historyDelMap);
+
 		publishlistMapper.deleteById(id);
 	}
 
@@ -226,6 +233,14 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 			dependentComponentMapper.deleteByMainId(id.toString());
 			packageUrlMapper.deleteByMainId(id.toString());
 			publishlistMapper.deleteById(id);
+
+			//删除发布单的时候，先删除发布单对应的issue和issueHistory
+			Map<String, Object> delMap = new HashMap<>();
+			delMap.put("publishlist_id",id);
+			issueMapper.deleteByMap(delMap);
+			Map<String, Object> historyDelMap = new HashMap<>();
+			historyDelMap.put("publishlist_id", id);
+			issueHistoryMapper.deleteByMap(historyDelMap);
 		}
 	}
 	
