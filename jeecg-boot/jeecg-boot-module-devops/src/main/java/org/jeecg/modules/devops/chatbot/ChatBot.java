@@ -6,6 +6,7 @@ import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
 
+import java.time.Duration;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,7 +19,7 @@ public class ChatBot {
     private ChatCompletionOptions options = ChatCompletionOptions.DEFAULT;
 
     public ChatBot() {
-        this.openai = new OpenAiService(System.getenv("OPENAI_TOKEN"));
+        this.openai = new OpenAiService(System.getenv("OPENAI_TOKEN"), Duration.ZERO);
         this.history = new ChatMessageHistory();
     }
 
