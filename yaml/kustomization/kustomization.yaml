@@ -1,0 +1,6 @@
+configMapGenerator:
+  - name: game-config-4
+    labels:
+      game-config: config-4
+    files:
+      - ../jeecg-boot/jeecg-boot-module-system/src/main/resources/application-dev.yml

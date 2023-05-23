@@ -66,6 +66,7 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
       <a-button @click="handleAdd" type="primary" icon="plus" >添加用户</a-button>
+      <a-button type="primary" icon="retweet" @click="syncFeishu">飞书同步</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('用户信息')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
@@ -180,7 +181,7 @@
 <script>
   import UserModal from './modules/UserModal'
   import PasswordModal from './modules/PasswordModal'
-  import {putAction,getFileAccessHttpUrl} from '@/api/manage';
+  import {putAction, getFileAccessHttpUrl, getAction} from '@/api/manage';
   import {frozenBatch} from '@/api/api'
   import {JeecgListMixin} from '@/mixins/JeecgListMixin'
   import SysUserAgentModal from "./modules/SysUserAgentModal";
@@ -296,6 +297,7 @@
           deleteBatch: "/sys/user/deleteBatch",
           exportXlsUrl: "/sys/user/exportXls",
           importExcelUrl: "sys/user/importExcel",
+          syncFeishuUrl: "/sys/thirdApp/sync/feishu/toLocal"
         },
       }
     },
@@ -305,10 +307,20 @@
       }
     },
     methods: {
+      syncFeishu() {
+        getAction(this.url.syncFeishuUrl, {}).then(res => {
+          console.log("syncFeishu",res)
+          if(res.success){
+            this.$message.success(res.result.successInfo)
+            this.loadData()
+          }else{
+            this.$message.error(res.result.failInfo)
+          }
+        })
+      },
       getAvatarView: function (avatar) {
         return getFileAccessHttpUrl(avatar)
       },
-
       batchFrozen: function (status) {
         if (this.selectedRowKeys.length <= 0) {
           this.$message.warning('请选择一条记录！');

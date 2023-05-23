@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-web-backend
+  namespace: devops-web
+  labels:
+    app: devops-web-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-web-backend
+  template:
+    metadata:
+      labels:
+        app: devops-web-backend
+    spec:
+      containers:
+        - name: devops-web-backend
+          image: harbor-ofs.kyligence.com/devops/devops-web-server:0.1
+          ports:
+            - name: tcp-8080
+              containerPort: 8080
+              protocol: TCP
+          # 指定配置参数的引入
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_URL
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: devopsweb-mysql
+                  optional: true
+            - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: devopsweb-mysql
+                  optional: true
+            - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: devopsweb-mysql
+                  optional: true
+            - name: JIRA_ACCOUNT-NAME
+              valueFrom:
+                secretKeyRef:
+                  key: account-name
+                  name: devopsweb-jira
+                  optional: false
+            - name: JIRA_ACCOUNT-SIGN
+              valueFrom:
+                secretKeyRef:
+                  key: account-sign
+                  name: devopsweb-jira
+                  optional: false
+            - name: JENKINS_URL
+              valueFrom:
+                secretKeyRef:
+                  key: url
+                  name: devopsweb-jenkins
+                  optional: true
+            - name: JENKINS_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  key: account
+                  name: devopsweb-jenkins
+                  optional: true
+            - name: JENKINS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: devopsweb-jenkins
+                  optional: true
+            - name: SPRING_REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: host
+                  name: devopsweb-redis
+                  optional: true
+            - name: SPRING_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: devopsweb-redis
+                  optional: true
+            - name: GITHUB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: devopsweb-github
+                  key: url
+                  optional: true
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: devopsweb-github
+                  key: token
+                  optional: true
+      volumes:
+        - name: config
+          configMap:
+            name: devops-config

@@ -142,7 +142,7 @@
           {
             title:'产品线',
             align:"center",
-            dataIndex: 'productLineName_dictText'
+            dataIndex: 'productLineName'
           },
           {
             title:'产品名',

@@ -101,7 +101,7 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import IssueModal from './modules/IssueModal'
-  import { getAction, putAction, postAction } from '@api/manage'
+  import { getAction, postAction } from '@api/manage'
 
   export default {
     name: 'IssueList',
@@ -245,9 +245,10 @@
         })
       },
       handleUpdateList() {
-        let params = {}
-        params.publishlistId = this.publishlistId
-        postAction(this.url.updateIssuesUrl, params).then((res) => {
+        const formData = new FormData();
+        formData.append('publishlistId', this.publishlistId)
+        console.log(params)
+        postAction(this.url.updateIssuesUrl, formData).then((res) => {
           if(res.success) {
             console.log(res)
             this.loadData()

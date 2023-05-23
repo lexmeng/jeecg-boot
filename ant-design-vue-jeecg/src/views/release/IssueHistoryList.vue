@@ -46,7 +46,9 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         class="j-table-force-nowrap"
         @change="handleTableChange">
-
+        <template slot="linkSlot" slot-scope="text,record">
+          <a :href="recod.issueLink" target="_blank">{{ text }}</a>
+        </template>
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
         </template>
@@ -99,6 +101,7 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import IssueHistoryModal from './modules/IssueHistoryModal'
+  import {getAction} from "@api/manage";
 
   export default {
     name: 'IssueHistoryList',
@@ -132,9 +135,10 @@
             title:'issue号',
             align:"center",
             dataIndex: 'issueNum',
-            customRender:function (t,r,index) {
-              return '<a href="+r.issueLink+">"+t+"</a>'
-            }
+            scopedSlots: { customRender: 'linkSlot' },
+            // customRender:function (t,r,index) {
+            //   return '<a href="+r.issueLink+">"+t+"</a>'
+            // }
           },
           {
             title:'issue名',
@@ -186,17 +190,20 @@
           deleteBatch: "/release/issueHistory/deleteBatch",
           exportXlsUrl: "/release/issueHistory/exportXls",
           importExcelUrl: "release/issueHistory/importExcel",
-
         },
         dictOptions:{},
         superFieldList:[],
         publishlistId: ''
       }
     },
+    beforeCreate() {
+      console.log('beforeCreate->',this.dataSource)
+      this.dataSource = []
+    },
     created() {
       this.getSuperFieldList();
-      this.publishlistId = this.$route.query.pid
-      this.reLoadData()
+      this.publishlistId = this.$route.query.pid || this.pid
+      console.log('issueList created->', this.$route.query.pid, this.pid, this.queryParam)
     },
     computed: {
       importExcelUrl: function(){
@@ -206,9 +213,35 @@
     methods: {
       initDictConfig(){
       },
-      reloadData(pid){
-        this.queryParam = {publishlistId: pid || this.publishlistId}
-        this.loadData()
+      loadData(arg) {
+        if(!this.url.list){
+          this.$message.error("请设置url.list属性!")
+          return
+        }
+        //加载数据 若传入参数1则加载第一页的内容
+        if (arg === 1) {
+          this.ipagination.current = 1;
+        }
+        var params = this.getQueryParams();//查询条件
+        params.publishlistId = this.pid
+        console.log("params", params)
+        this.loading = true;
+        getAction(this.url.list, params).then((res) => {
+          if (res.success) {
+            //update-begin---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
+            this.dataSource = res.result.records||res.result;
+            if(res.result.total) {
+              this.ipagination.total = res.result.total;
+            }else{
+              this.ipagination.total = 0;
+            }
+            //update-end---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
+          }else{
+            this.$message.warning(res.message)
+          }
+        }).finally(() => {
+          this.loading = false
+        })
       },
       getSuperFieldList(){
         let fieldList=[];

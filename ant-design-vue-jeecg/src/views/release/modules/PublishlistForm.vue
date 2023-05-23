@@ -4,6 +4,23 @@
         <!-- 主表单区域 -->
         <a-form-model ref="form" :model="model" :rules="validatorRules" slot="detail">
           <a-row class="form-row">
+            <a-divider orientation="left">产品相关</a-divider>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="产品线名" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="productLineName">
+                <j-dict-select-tag type="list" v-model="model.productLineName" dictCode="dict_bu"
+                                   placeholder="请选择产品线" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="产品" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="productName">
+                <j-dict-select-tag type="list" v-model="model.productName" dictCode="product" placeholder="请选择产品" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="产品经理" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="pmId">
+                <j-select-user-by-dep v-model="model.pmId" :multi="false" />
+              </a-form-model-item>
+            </a-col>
             <a-divider orientation="left">发布单</a-divider>
             <a-col :lg="8" :md="12" :sm="24" :span="24">
               <a-form-model-item label="发布单名" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="name">
@@ -19,11 +36,6 @@
               <a-form-model-item label="版本类型" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="versionType">
                 <j-dict-select-tag type="list" v-model="model.versionType" dictCode="version_type"
                                    placeholder="请选择业务线" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :lg="8" :md="12" :sm="24" :span="24">
-              <a-form-model-item label="文档URL ID" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="documentUrlId">
-                <a-input v-model="model.documentUrlId" placeholder="请输入文档URL ID"></a-input>
               </a-form-model-item>
             </a-col>
             <a-col :lg="8" :md="12" :sm="24" :span="24">
@@ -50,29 +62,12 @@
                                    placeholder="请选择发布单状态" />
               </a-form-model-item>
             </a-col>
-            <a-divider orientation="left">产品相关</a-divider>
-            <a-col :lg="8" :md="12" :sm="24" :span="24">
-              <a-form-model-item label="产品线名" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="productLineName">
-                <j-dict-select-tag type="list" v-model="model.productLineName" dictCode="dict_bu"
-                                   placeholder="请选择产品线" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :lg="8" :md="12" :sm="24" :span="24">
-              <a-form-model-item label="产品" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="productName">
-                <j-dict-select-tag type="list" v-model="model.productName" dictCode="product" placeholder="请选择产品" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :lg="8" :md="12" :sm="24" :span="24">
-              <a-form-model-item label="产品经理" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="pmId">
-                <j-select-user-by-dep v-model="model.pmId" :multi="false" />
-              </a-form-model-item>
-            </a-col>
             <!--Jira相关-->
             <a-divider orientation="left"  rientation-margin="50px">Jira - 同步Issue需要</a-divider>
             <a-col :lg="8" :md="12" :sm="24" :span="24">
               <a-form-model-item label="Jira项目" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="projectOptions">
                 <j-multi-select-tag placeholder="请选择Jira项目" v-model="model.projectOptions"
-                                    dictCode="pub_project,name,project_key" @change="handleJiraChange" :async="true">
+                                    dictCode="pub_project,name,id" @change="handleJiraChange" :async="true">
                 </j-multi-select-tag>
               </a-form-model-item>
             </a-col>
@@ -84,30 +79,46 @@
             </a-col>
           </a-row>
           <!--发布后数据-->
-          <a-divider orientation="left"  rientation-margin="50px">发布后数据</a-divider>
-          <a-col :lg="12" :md="12" :sm="24" :span="24">
-            <a-form-model-item label="Commit ID" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="commitId">
-              <a-input v-model="model.commitId" placeholder="请输入commid id"  ></a-input>
-            </a-form-model-item>
-          </a-col>
-          <a-col :lg="12" :md="12" :sm="24" :span="24">
-            <a-form-model-item label="实际发布时间" :labelCol="labelCol" :wrapperCol="wrapperCol"
-                               prop="publishDatetime">
-              <!--              <a-input v-model="model.publishDatetime" placeholder="请输入发布时间" ></a-input>-->
-              <j-date v-model="model.publishDatetime" :showTime="true" dateFormat="YYYY-MM-DD HH:mm:ss" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :lg="12" :md="12" :sm="24" :span="24">
-            <a-form-model-item label="用户手册中文链接" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="urerManualEnLink">
-              <a-input v-model="model.urerManualEnLink" placeholder="请输入用户手册中文链接"  ></a-input>
-            </a-form-model-item>
-          </a-col>
-          <a-col :lg="12" :md="12" :sm="24" :span="24">
-            <a-form-model-item label="用户手册英文链接" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="userManualChLink">
-              <a-input v-model="model.userManualChLink" placeholder="请输入用户手册英文链接"  ></a-input>
-            </a-form-model-item>
-          </a-col>
-
+          <a-card title="发布后数据" size="small" :bordered="false" :show="!disabled">
+            <!-- <a-divider orientation="left"  rientation-margin="50px">发布后数据</a-divider> -->
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="Commit ID" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="commitId">
+                <a-input v-model="model.commitId" placeholder="请输入commid id"  ></a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="实际发布时间" :labelCol="labelCol" :wrapperCol="wrapperCol"
+                                prop="publishDatetime">
+                <!--              <a-input v-model="model.publishDatetime" placeholder="请输入发布时间" ></a-input>-->
+                <j-date v-model="model.publishDatetime" :showTime="true" dateFormat="YYYY-MM-DD HH:mm:ss" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="用户手册中文链接" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="urerManualEnLink">
+                <a-input v-model="model.urerManualEnLink" placeholder="请输入用户手册中文链接"  ></a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="用户手册英文链接" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="userManualChLink">
+                <a-input v-model="model.userManualChLink" placeholder="请输入用户手册英文链接"  ></a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="创建人" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="createBy">
+                <a-input v-model="model.createBy" placeholder="请输入发布单名"></a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="创建时间" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="createTime">
+                <a-input v-model="model.createTime" placeholder="请输入发布单名"></a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="8" :md="12" :sm="24" :span="24">
+              <a-form-model-item label="ID" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="id">
+                <a-input v-model="model.id" placeholder="ID"></a-input>
+              </a-form-model-item>
+            </a-col>
+          </a-card>
         </a-form-model>
       </j-form-container>
   </a-spin>
@@ -137,12 +148,17 @@ export default {
       required: false
     }
   },
+  watch: {
+    'model.publishlistProjectList': function(val) {
+      console.log('model.publishlistProjectList', val);
+      this.model.projectOptions = _.map(this.model.publishlistProjectList, 'projectId').join(',')
+    }
+  },
   data() {
     return {
       model: {},
       dictOptions: {},
       productOptions: {},
-      projectOptions: {},
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -170,9 +186,6 @@ export default {
         ],
         versionType: [
           { required: true, message: '请输入版本类型!' }
-        ],
-        documentUrlId: [
-          { required: true, message: '请输入文档UrlID!' }
         ],
         documentVersion: [
           { required: true, message: '请输入文档版本!' }
@@ -223,8 +236,7 @@ export default {
       this.edit(this.modelDefault);
     },
     edit (record) {
-      console.log('edit record', record)
-      this.model = Object.assign({}, record);
+      this.model = Object.assign({}, record)
       this.visible = true;
     },
     submitForm () {
@@ -259,18 +271,13 @@ export default {
       })
     },
     handleJiraChange(value) {
+      console.log('handleJiraChange', value);
       let selectedProject = _.split(value,',')
-      getAction(this.url.project.list, {}).then((res)=> {
-        if(res.success) {
-          let _projectList = res.result.records || res.result
-          let _selected = _.filter(_projectList, function(p) { return _.includes(selectedProject, p.projectKey)})
-          this.model.publishlistProjectList = _.map(_selected, function(s) {
-            return {"projectId": s.id}
-          })
-          this.model.projectOptions = value
-          console.log('handleJiraChange value ->', value, selectedProject, _projectList, _selected, this.model.publishlistProjectList)
-        }
+      this.model.publishlistProjectList = _.map(selectedProject, function(sp){
+        return {"projectId": sp}
       })
+      // this.model.projectOptions = _.map(selectedProject, 'name').join(',')
+      console.log("publishlistProjectList", this.model.publishlistProjectList);
     }
   }
 }

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-web-frontend
+  labels:
+    app: devops-web-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-web-frontend
+  template:
+    metadata:
+      labels:
+        app: devops-web-frontend
+    spec:
+      containers:
+        - name: devops-web-frontend
+          image: harbor-ofs.kyligence.com/devops/devops-web-backend:v0.2
+          ports:
+            - containerPort: 8080
+          #配置容器存活探针，此处使用的http请求。(还有TCP和shell命令等探测方法)
+          livenessProbe:
+            httpGet:
+              #请求的路径，这个是一个测试的接口，请求这个路径会返回200状态，根据实际应用情况更改。
+              path: /devopsweb
+              port: 8080
+              scheme: HTTP
+            #容器启动后 等待5秒再开始检测
+            initialDelaySeconds: 50
+            #超时时间
+            timeoutSeconds: 1
+            #检测间隔
+            periodSeconds: 5
+            #成功阈值
+            successThreshold: 1
+            #失败阈值
+            failureThreshold: 3
+          #启动前探针，此处可以让一些启动比较慢的应用一些宽容时间。
+          #选项与上面基本一样
+          startupProbe:
+            httpGet:
+              path: /devopsweb
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 1
+            #探测间隔
+            periodSeconds: 6
+            successThreshold: 1
+            #失败阈值，此处和探测间隔就是在任务分发下来后，有6*20 120秒的时间启动
+            #每过6秒探测一次，如果探测了20次还没有启动就认为启动失败，k8s就不会把流量转入这个新的pod上。
+            failureThreshold: 20
