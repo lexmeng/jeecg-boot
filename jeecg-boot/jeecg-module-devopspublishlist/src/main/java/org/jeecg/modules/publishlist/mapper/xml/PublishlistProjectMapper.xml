@@ -4,13 +4,13 @@
 
 	<delete id="deleteByMainId" parameterType="java.lang.String">
 		DELETE 
-		FROM  publishlist_project 
+		FROM  pub_publishlist_project
 		WHERE
 			 publishlist_id = #{mainId} 	</delete>
 	
 	<select id="selectByMainId" parameterType="java.lang.String" resultType="org.jeecg.modules.publishlist.entity.PublishlistProject">
 		SELECT * 
-		FROM  publishlist_project
+		FROM  pub_publishlist_project
 		WHERE
 			 publishlist_id = #{mainId} 	</select>
 </mapper>

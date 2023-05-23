@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jeecg.modules.publishlist.entity.Issue;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.exception.JiraException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -194,6 +195,13 @@ public class JiraClientUtils {
                     .body(payload)
                     .asJson();
 
+            log.info("Http request response. status code:"+response.getStatus());
+            log.info("Http request response. status text:"+response.getStatusText());
+            log.info("Http request response. body:"+response.getBody().toString());
+            if(response.getStatus() != 200){
+                String errorMessage = String.format("读取issue的网络请求出错！code:%s text:%s body:%s",response.getStatus(),response.getStatusText(),response.getBody().toString());
+                throw new BussinessException(errorMessage);
+            }
             IssueSearchResult issueSearchResult = convertPostBodyToIssueSearchResult(response.getBody());
 
             return issueSearchResult;
