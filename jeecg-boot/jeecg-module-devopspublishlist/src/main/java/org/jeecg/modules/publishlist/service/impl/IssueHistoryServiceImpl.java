@@ -35,12 +35,20 @@ public class IssueHistoryServiceImpl extends ServiceImpl<IssueHistoryMapper, Iss
         for(Integer batchNo : batchNumList){
             IssueHistoryBatchVo vo = new IssueHistoryBatchVo();
             vo.setBatchNum(batchNo);
+
             //如果batchNo是1，全是增集
             if(batchNo.equals(1)){
 
                 List<IssueHistory> list = queryIssueHistoryByBatchNo(publishlistId, batchNo);
                 vo.setAddIssueList(list);
                 vo.setSubIssueList(new ArrayList<IssueHistory>());
+
+                if(list.size() != 0){
+                    vo.setCreateBy(list.get(0).getCreateBy());
+                    vo.setCreateTime(list.get(0).getCreateTime());
+                    vo.setUpdateBy(list.get(0).getUpdateBy());
+                    vo.setUpdateTime(list.get(0).getUpdateTime());
+                }
             }else{
                 List<IssueHistory> current = queryIssueHistoryByBatchNo(publishlistId, batchNo);
                 List<IssueHistory> previous = queryIssueHistoryByBatchNo(publishlistId, batchNo -1);
@@ -51,6 +59,13 @@ public class IssueHistoryServiceImpl extends ServiceImpl<IssueHistoryMapper, Iss
 
                 vo.setAddIssueList(addArray);
                 vo.setSubIssueList(subArray);
+
+                if(current.size() != 0){
+                    vo.setCreateBy(current.get(0).getCreateBy());
+                    vo.setCreateTime(current.get(0).getCreateTime());
+                    vo.setUpdateBy(current.get(0).getUpdateBy());
+                    vo.setUpdateTime(current.get(0).getUpdateTime());
+                }
             }
             batchVoList.add(vo);
         }

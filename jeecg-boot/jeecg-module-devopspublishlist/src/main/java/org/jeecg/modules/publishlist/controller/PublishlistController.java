@@ -347,6 +347,20 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		 return Result.OK(productPackagePRContent);
 	 }
 
+	 @ApiOperation(value="生成官网内容", notes="生成官网内容")
+	 @GetMapping(value = "/generateWebsiteContent")
+	 public Result<String> generateWebsiteContent(@RequestParam(name="id",required=true) String id) {
+		 Publishlist publishlist = publishlistService.getById(id);
+		 if(publishlist==null) {
+			 return Result.error("未找到对应数据");
+		 }
+
+		 Map<String, String> placeholderContentMap = new HashMap<>();
+		 String companyWebsiteContent = releaseInfoBPService.generateCompanyWebsiteContent(id, placeholderContentMap);
+
+		 return Result.OK(companyWebsiteContent);
+	 }
+
 	 @ApiOperation(value="调用jenkins提交ProductPackagePR", notes="调用jenkins提交ProductPackagePR")
 	 @GetMapping(value = "/jenkinsCommitProductPackagePR")
 	 public Result<String> jenkinsCommitProductPackagePR(@RequestParam(name="id",required=true) String id) {

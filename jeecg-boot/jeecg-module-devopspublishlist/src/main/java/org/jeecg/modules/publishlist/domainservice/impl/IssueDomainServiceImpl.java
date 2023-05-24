@@ -3,6 +3,7 @@ package org.jeecg.modules.publishlist.domainservice.impl;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.publishlist.config.Config;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
+@Slf4j
 public class IssueDomainServiceImpl implements IIssueDomainService {
 
     @Autowired
@@ -114,7 +116,9 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         //SearchResult searchResult = jiraClientUtils.searchIssueByProjectAndFixVersions(projectName, jiraVersionName);
         IssueSearchResult restSearchResult = jiraClientUtils.restSearchIssueByProjectAndFixVersions(projectName, jiraVersionName);
         if(restSearchResult.getTotal()==0){
-            throw new BussinessException("拉取的jira issue数为空，请先新建jira issue！");
+            String errorInfo = String.format("拉取的jira issue数为空. 发布单号：%s，项目名；%s， jira版本名：%s", publishlistId, projectName, jiraVersionName);
+            log.info(errorInfo);
+            //throw new BussinessException("拉取的jira issue数为空，请先新建jira issue！");
         }
 
         /*for(com.atlassian.jira.rest.client.api.domain.Issue issue: searchResult.getIssues()){
