@@ -10,18 +10,16 @@ import org.jeecg.modules.devops.blueocean.BlueOceanConfig;
 import org.jeecg.modules.devops.blueocean.vo.BlueOceanFolder;
 import org.jeecg.modules.devops.blueocean.vo.BlueOceanJob;
 import org.jeecg.modules.devops.blueocean.vo.BlueOceanRun;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class BlueOceanService implements ApplicationListener<ContextRefreshedEvent> {
+public class BlueOceanService {
 
-    private BlueOceanClientImpl client;
+    private volatile BlueOceanClientImpl client;
+
 
     @Autowired
     private BlueOceanConfig blueOceanConfig;
@@ -31,22 +29,22 @@ public class BlueOceanService implements ApplicationListener<ContextRefreshedEve
 
 
     public List<BlueOceanFolder> getFolders() {
-        return toObject(client.getFolders(), new TypeReference<List<BlueOceanFolder>>() {
+        return toObject(getClient().getFolders(), new TypeReference<List<BlueOceanFolder>>() {
         });
     }
 
     public List<BlueOceanJob> getJobs(String folder) {
-        return toObject(client.getJobs(folder), new TypeReference<List<BlueOceanJob>>() {
+        return toObject(getClient().getJobs(folder), new TypeReference<List<BlueOceanJob>>() {
         });
     }
 
     public List<BlueOceanRun> getRuns(String folder, String job) {
-        return toObject(client.getJobRuns(folder, job, 0, 3), new TypeReference<List<BlueOceanRun>>() {
+        return toObject(getClient().getJobRuns(folder, job, 0, 3), new TypeReference<List<BlueOceanRun>>() {
         });
     }
 
     public String downloadJobRunLog(String folder, String job, String number) {
-        return String.valueOf(client.downloadJobRunLog(folder, job, number));
+        return String.valueOf(getClient().downloadJobRunLog(folder, job, number));
     }
 
     private <T> T toObject(JsonNode jsonNode, Class<T> clazz) {
@@ -57,14 +55,16 @@ public class BlueOceanService implements ApplicationListener<ContextRefreshedEve
         return objectMapper.convertValue(jsonNode, typeReference);
     }
 
-
-    @Override
     @SneakyThrows
-    public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
-        if (client != null) {
-            return;
+    private BlueOceanClientImpl getClient() {
+        if (client == null) {
+            synchronized (this) {
+                if (client == null) {
+                    client = BlueOceanClientFactory.create(blueOceanConfig);
+                }
+            }
         }
 
-        client = BlueOceanClientFactory.create(blueOceanConfig);
+        return client;
     }
 }
