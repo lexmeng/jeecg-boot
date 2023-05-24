@@ -346,11 +346,12 @@ jira:
   sign: sign_here
 
 jenkins:
-  url: https://cicd-ofs.kyligence.com/job
+  url: https://cicd-ofs.kyligence.com/
   account: account_here
   password: password_here
+  token: token_here
 
 github:
   url: url_here
   account: account_here
-  token: password_here
+  token: token_here

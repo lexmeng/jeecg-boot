@@ -1,7 +1,10 @@
 package org.jeecg.modules.publishlist.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.publishlist.entity.IssueHistory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * @Description: issue历史表
@@ -11,4 +14,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface IssueHistoryMapper extends BaseMapper<IssueHistory> {
 
+    public List<Integer> selectBatchNumBySort(@Param("publishlistId") String publishlistId, @Param("start") long start, @Param("size") long size);
+
+    public Integer selectBatchNumCount(@Param("publishlistId") String publishlistId);
 }

@@ -1,6 +1,7 @@
 package org.jeecg.modules.publishlist.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
@@ -14,6 +15,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.modules.publishlist.vo.IssueHistoryBatchVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -56,6 +58,33 @@ public class IssueHistoryController extends JeecgController<IssueHistory, IIssue
 		IPage<IssueHistory> pageList = issueHistoryService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
+
+	 /**
+	  * 分页列表查询批次历史
+	  *
+	  * @param
+	  * @param pageNo
+	  * @param pageSize
+	  * @param req
+	  * @return
+	  */
+	 //@AutoLog(value = "issue历史表-分页列表查询")
+	 @ApiOperation(value="issue历史批次-分页列表查询", notes="issue历史批次-分页列表查询")
+	 @GetMapping(value = "/listBatch")
+	 public Result<IPage<IssueHistoryBatchVo>> queryBatchPageList(@RequestParam(name="publishlistId",required=true) String publishlistId,
+															 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+															 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+															 HttpServletRequest req) {
+		 IPage<IssueHistoryBatchVo> page = new Page<>(pageNo, pageSize);
+
+		 List<IssueHistoryBatchVo> issueHistoryBatchVoList = issueHistoryService.pageQueryBatch(publishlistId, page);
+		 page.setRecords(issueHistoryBatchVoList);
+
+		 long total = issueHistoryService.queryBatchTotal(publishlistId);
+		 page.setTotal(total);
+
+		 return Result.OK(page);
+	 }
 	
 	/**
 	 *   添加

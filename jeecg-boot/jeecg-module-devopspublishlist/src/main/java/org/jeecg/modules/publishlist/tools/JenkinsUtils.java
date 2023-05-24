@@ -31,7 +31,7 @@ public class JenkinsUtils {
     @Value("${jenkins.account}")
     private String JENKINS_USERNAME;
 
-    @Value("${jenkins.password}")
+    @Value("${jenkins.token}")
     private String JENKINS_API_TOKEN;
 
     /**
@@ -186,7 +186,7 @@ public class JenkinsUtils {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(paramMap,headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        String apiUrl = JENKINS_URL + "/DevOps" + "/job/" + jobName + "/buildWithParameters";
+        String apiUrl = JENKINS_URL + "job" + "/DevOps" + "/job/" + jobName + "/buildWithParameters";
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
         if(response.getStatusCodeValue() == 201){
@@ -207,7 +207,7 @@ public class JenkinsUtils {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(paramMap,headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        String apiUrl = JENKINS_URL + "/KE4" + "/job/" + jobName + "/buildWithParameters";
+        String apiUrl = JENKINS_URL + "job" + "/KE4" + "/job/" + jobName + "/buildWithParameters";
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
         if(response.getStatusCodeValue() == 201){
