@@ -1,98 +1,34 @@
 <template>
-  <a-card :bordered="false">
-    <!-- 查询区域 -->
-<!--    <div class="table-page-search-wrapper">-->
-<!--      <a-form layout="inline" @keyup.enter.native="searchQuery">-->
-<!--        <a-row :gutter="24">-->
-<!--        </a-row>-->
-<!--      </a-form>-->
-<!--    </div>-->
-    <!-- 查询区域-END -->
-
-    <!-- 操作按钮区域 -->
-    <div class="table-operator">
-<!--      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>-->
-      <a-button type="primary" icon="download" @click="handleExportXls('issue历史表')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
-        <a-button type="primary" icon="import">导入</a-button>
-      </a-upload>
-      <!-- 高级查询区域 -->
-      <j-super-query :fieldList="superFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery"></j-super-query>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
-      </a-dropdown>
-    </div>
-
-    <!-- table区域-begin -->
-    <div>
-      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
-        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-      </div>
-
-      <a-table
-        ref="table"
-        size="middle"
-        :scroll="{x:true}"
-        bordered
-        rowKey="id"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-        class="j-table-force-nowrap"
-        @change="handleTableChange">
-        <template slot="linkSlot" slot-scope="text,record">
-          <a :href="recod.issueLink" target="_blank">{{ text }}</a>
-        </template>
-        <template slot="htmlSlot" slot-scope="text">
-          <div v-html="text"></div>
-        </template>
-        <template slot="imgSlot" slot-scope="text,record">
-          <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
-          <img v-else :src="getImgView(text)" :preview="record.id" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
-        </template>
-        <template slot="fileSlot" slot-scope="text">
-          <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
-          <a-button
-            v-else
-            :ghost="true"
-            type="primary"
-            icon="download"
-            size="small"
-            @click="downloadFile(text)">
-            下载
-          </a-button>
-        </template>
-
-        <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
-
-          <a-divider type="vertical" />
-          <a-dropdown>
-            <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a @click="handleDetail(record)">详情</a>
-              </a-menu-item>
-              <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
-                  <a>删除</a>
-                </a-popconfirm>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
-        </span>
-
-      </a-table>
-    </div>
-
-    <issue-history-modal ref="modalForm" @ok="modalFormOk"></issue-history-modal>
-  </a-card>
+  <a-timeline>
+    <a-timeline-item v-for="item in timeLines" :key="item.issueNum" :color="item.color">
+      批次：{{ item.batchNum }} , 添加 Issue {{ item.addCounts }} 个，移除 Issue {{ item.subCounts }} 个。
+      <a-collapse :bordered="false" style="padding-top: 10px;" accordion v-if="item.hasItem">
+        <a-collapse-panel key="1" header="添加的 Issue" v-if="item.addIssueList.length>0">
+          <a-list :data-source="item.addIssueList">
+            <a-list-item slot="renderItem" slot-scope="addItem, index">
+              <a-list-item-meta :description="addItem.issueName">
+                <a target="_blank" slot="title" :href="addItem.issueLink">{{ addItem.issueNum }}</a>
+              </a-list-item-meta>
+              <div>{{ addItem.issueType }}</div>
+              <!-- <a-avatar
+                slot="avatar"
+                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              /> -->
+            </a-list-item>
+          </a-list>
+        </a-collapse-panel>
+        <a-collapse-panel key="2" header="移除的 Issue" v-if="item.subIssueList.length>0">
+          <a-list :data-source="item.subIssueList">
+            <a-list-item slot="renderItem" slot-scope="subItem, index">
+              <a-list-item-meta :description="subItem.issueName">
+                <a target="_blank" slot="title" :href="subItem.issueLink">{{ subItem.issueNum }}</a>
+              </a-list-item-meta>
+            </a-list-item>
+          </a-list>
+        </a-collapse-panel>
+      </a-collapse>
+    </a-timeline-item>
+  </a-timeline>
 </template>
 
 <script>
@@ -134,16 +70,20 @@
           {
             title:'issue号',
             align:"center",
-            dataIndex: 'issueNum',
-            scopedSlots: { customRender: 'linkSlot' },
-            // customRender:function (t,r,index) {
-            //   return '<a href="+r.issueLink+">"+t+"</a>'
-            // }
+            dataIndex: 'issueNum'
           },
           {
             title:'issue名',
-            align:"center",
-            dataIndex: 'issueName'
+            align:"left",
+            dataIndex: 'issueName',
+            width: 220,
+            customRender: (text, record, index) => {
+              if(text.length > 50) {
+                return text.slice(0,50) + '...'
+              }else{
+                return text
+              }
+            }
           },
           {
             title:'issue类型',
@@ -190,10 +130,12 @@
           deleteBatch: "/release/issueHistory/deleteBatch",
           exportXlsUrl: "/release/issueHistory/exportXls",
           importExcelUrl: "release/issueHistory/importExcel",
+          listBatch: "/release/issueHistory/listBatch",
         },
         dictOptions:{},
         superFieldList:[],
-        publishlistId: ''
+        publishlistId: '',
+        timeLines: []
       }
     },
     beforeCreate() {
@@ -205,16 +147,38 @@
       this.publishlistId = this.$route.query.pid || this.pid
       console.log('issueList created->', this.$route.query.pid, this.pid, this.queryParam)
     },
+    watch: {
+      dataSource: function(val) {
+        console.log('dataSource======> ', val)
+        let datas = _.map(this.dataSource, function (item) {
+          console.log('item======> ', item);
+          let timeItem = item
+          timeItem.addCounts = item.addIssueList ? item.addIssueList.length : 0
+          timeItem.subCounts = item.subIssueList ? item.subIssueList.length : 0
+          timeItem.hasItem = timeItem.addCounts + timeItem.subCounts > 0
+          if(timeItem.addCounts > 0) {
+            timeItem.color = 'green'
+          } else if(timeItem.subCounts > 0) {
+            timeItem.color = 'red'
+          } else {
+            timeItem.color = 'blue'
+          }
+          return timeItem
+        })
+        console.log('datas', datas);
+        this.timeLines = datas
+      }
+    },
     computed: {
       importExcelUrl: function(){
         return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-      },
+      }
     },
     methods: {
       initDictConfig(){
       },
       loadData(arg) {
-        if(!this.url.list){
+        if(!this.url.listBatch){
           this.$message.error("请设置url.list属性!")
           return
         }
@@ -222,11 +186,13 @@
         if (arg === 1) {
           this.ipagination.current = 1;
         }
-        var params = this.getQueryParams();//查询条件
+        var queryParam = this.getQueryParams();
+        var params = {} //this.getQueryParams();//查询条件
         params.publishlistId = this.pid
-        console.log("params", params)
+        params.pageNo = queryParam.pageNo
+        params.pageSize = queryParam.pageSize
         this.loading = true;
-        getAction(this.url.list, params).then((res) => {
+        getAction(this.url.listBatch, params).then((res) => {
           if (res.success) {
             //update-begin---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
             this.dataSource = res.result.records||res.result;

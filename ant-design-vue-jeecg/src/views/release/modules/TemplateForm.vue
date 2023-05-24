@@ -29,8 +29,8 @@
           <a-col :span="24">
             <a-form-model-item label="内容" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="content">
               <!--              <a-input v-model="model.content" placeholder="请输入内容"  ></a-input>-->
-              <j-editor v-if="model.type=='ReleaseMail'" v-model="model.content"></j-editor>
-              <j-markdown-editor v-else v-model="model.content"></j-markdown-editor>
+              <j-editor v-if="model.type=='ReleaseMail'" v-model="model.content" style="height:500px"></j-editor>
+              <j-markdown-editor v-else v-model="model.content" height="500px"></j-markdown-editor>
             </a-form-model-item>
           </a-col>
         </a-row>

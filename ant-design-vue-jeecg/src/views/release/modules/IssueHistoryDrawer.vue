@@ -33,17 +33,13 @@
       }
     },
     methods: {
-      add () {
-        this.visible=true
+      list(record){
+        this.visible = true
+        this.publishlistId = record.id
         this.$nextTick(()=>{
-          this.$refs.realForm.add();
+          this.$refs.realList.pid = record.id
+          this.$refs.realList.loadData(1)
         })
-      },
-      edit (record) {
-        this.visible=true
-        this.$nextTick(()=>{
-          this.$refs.realForm.edit(record);
-        });
       },
       close () {
         this.$emit('close');

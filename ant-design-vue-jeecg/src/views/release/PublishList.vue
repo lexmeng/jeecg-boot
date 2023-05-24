@@ -273,7 +273,7 @@
         this.$refs.issueList.disableSubmit = true
       },
       handleIssuesHistory(record){
-        this.$refs.issueHistory.list(record.id)
+        this.$refs.issueHistory.list(record)
         this.$refs.issueHistory.title = "发布单【" + record.name + "】- Jira Issues 变更历史"
         this.$refs.issueHistory.disableSubmit = true
       },

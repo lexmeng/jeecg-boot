@@ -23,12 +23,13 @@
     <!-- actions -->
     <template slot="action">
       <a-button type="primary" icon="cloud-upload" @click="reloadData">发布</a-button>
-      <a-button type="dashed" style="margin:0 4px" icon="reload" @click="reloadData">刷新</a-button>
+      <a-button type="dashed" style="margin:0 4px" icon="reload" @click="reloadData"></a-button>
       <a-button-group>
         <a-button @click="handleReleaseNote">ReleaseNote</a-button>
         <a-button @click="handleReleaseMail">ReleaseMail</a-button>
         <a-button @click="handlePackagePR">PR 文本</a-button>
-        <a-button @click="handleHandbookPR">手册 PR 文本</a-button>
+        <a-button @click="handleHandbookChPR">手册中文 PR 文本</a-button>
+        <a-button @click="handleHandbookEnPR">手册英文 PR 文本</a-button>
         <a-button @click="handleWebsite">官网文本</a-button>
       </a-button-group>
     </template>
@@ -90,21 +91,24 @@ export default {
         genReleaseNote: '/release/generateReleaseNoteContent',
         genReleaseEmail: '/release/generateReleaseMailContent',
         genPackagePr: '/release/generateProductPackagePRContent',
-        genHandbookPr: '/release/generateProductHandbookPRContent',
-        genWebsite: '/release/generateWebsite'
+        genHandbookChPr: '/release/generateProductHandbookPRChContent',
+        genHandbookEnPr: '/release/generateProductHandbookPREnContent',
+        genWebsite: '/release/generateWebsiteContent'
       }
     }
   },
   created() {
     this.publishlistId = this.$route.query.id
     // this.publishForm = this.$route.query.record
-    this.reloadData(this.publishlistId)
+    // this.reloadData(this.publishlistId)
     this.initDictConfig()
+  },
+  mounted() {
+    this.reloadData(this.publishlistId)
   },
   computed: {
     sprintCurrent() {
       let ss = Object.keys(this.sprintStages).map((key) => this.sprintStages[key].text);
-      console.log('ss', ss, this.publishForm.scrumStage, ss.indexOf(this.publishForm.scrumStage))
       return ss.indexOf(this.publishForm.scrumStage)
     }
   },
@@ -122,8 +126,8 @@ export default {
       this.queryParam = {id: pid || this.publishlistId}
       getAction(this.url.queryById, this.queryParam).then((res) => {
         if(res.success){
-          this.publishForm = res.result.publishlist
-          console.log(res.result)
+          this.publishForm = res.result
+          console.log('publishForm', res.result)
         }else{
           this.$message.error(res.message)
         }
@@ -137,9 +141,11 @@ export default {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
+            'publishlistId': this.publishlistId,
             'title': 'ReleaseNote',
             'content': res.result,
-            'isMarkDown': this.isMarkDown
+            'isMarkDown': this.isMarkDown,
+            'templateType': 'ReleaseNote'
           })
         }else{
           this.$message.error(res.message)
@@ -154,9 +160,11 @@ export default {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
+            'publishlistId': this.publishlistId,
             'title': 'Release Email',
             'content': res.result,
-            'isMarkDown': this.isMarkDown
+            'isMarkDown': this.isMarkDown,
+            'templateType': 'ReleaseMail'
           })
         }else{
           this.$message.error(res.message)
@@ -171,26 +179,49 @@ export default {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
+            'publishlistId': this.publishlistId,
             'title': '打包 PR 生成',
             'content': res.result,
-            'isMarkDown': this.isMarkDown
+            'isMarkDown': this.isMarkDown,
+            'templateType': 'ProductPackagePRContent'
           })
         }else{
           this.$message.error(res.message)
         }
       })
     },
-    handleHandbookPR() {
+    handleHandbookChPR() {
       this.isMarkDown = true
       const params = {id: this.publishlistId}
-      getAction(this.url.genHandbookPr, params).then((res) => {
+      getAction(this.url.genHandbookChPr, params).then((res) => {
         if(res.success){
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
-            'title': '手册 PR 生成',
+            'publishlistId': this.publishlistId,
+            'title': '手册中文 PR 生成',
             'content': res.result,
-            'isMarkDown': this.isMarkDown
+            'isMarkDown': this.isMarkDown,
+            'templateType': 'HandBookPRChContent'
+          })
+        }else{
+          this.$message.error(res.message)
+        }
+      })
+    },
+    handleHandbookEnPR() {
+      this.isMarkDown = true
+      const params = {id: this.publishlistId}
+      getAction(this.url.genHandbookEnPr, params).then((res) => {
+        if(res.success){
+          console.log(res.result)
+          this.txtContent = res.result
+          this.$refs.modalForm.view({
+            'publishlistId': this.publishlistId,
+            'title': '手册英文 PR 生成',
+            'content': res.result,
+            'isMarkDown': this.isMarkDown,
+            'templateType': 'HandBookPREnContent'
           })
         }else{
           this.$message.error(res.message)
@@ -205,16 +236,17 @@ export default {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
+            'publishlistId': this.publishlistId,
             'title': '官网内容生成',
             'content': res.result,
-            'isMarkDown': this.isMarkDown
+            'isMarkDown': this.isMarkDown,
+            'templateType': 'Website'
           })
         }else{
           this.$message.error(res.message)
         }
       })
     },
-
     modalFormOk() {},
     add() {
       this.visible = true

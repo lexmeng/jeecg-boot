@@ -247,10 +247,9 @@
       handleUpdateList() {
         const formData = new FormData();
         formData.append('publishlistId', this.publishlistId)
-        console.log(params)
         postAction(this.url.updateIssuesUrl, formData).then((res) => {
           if(res.success) {
-            console.log(res)
+            this.$message.success('更新 Jira Issue 成功，可以查在变更历史中查看历史信息。')
             this.loadData()
           }else{
             this.$message.error(res.message)

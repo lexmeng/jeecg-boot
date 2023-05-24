@@ -27,7 +27,7 @@
     data () {
       return {
         title:"操作",
-        width:1000,
+        width:1400,
         visible: false,
         disableSubmit: false
       }
