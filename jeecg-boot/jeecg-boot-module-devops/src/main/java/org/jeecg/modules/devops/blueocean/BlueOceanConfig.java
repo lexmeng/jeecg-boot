@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class BlueOceanConfig implements Serializable {
 
     @NotBlank
-    String baseUrl;
+    String url;
 
     @NotBlank
     String account;

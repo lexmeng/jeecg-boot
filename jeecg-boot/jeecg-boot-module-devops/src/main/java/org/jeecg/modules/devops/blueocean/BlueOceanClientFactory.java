@@ -56,7 +56,7 @@ public class BlueOceanClientFactory {
                 .build();
 
         final Request setCookieReq = new Request.Builder()
-                .url(Paths.get(config.baseUrl, SET_COOKIE_URL).toString())
+                .url(Paths.get(config.url, SET_COOKIE_URL).toString())
                 .build();
         final Response setCookie = client.newCall(setCookieReq)
                 .execute();
@@ -72,7 +72,7 @@ public class BlueOceanClientFactory {
                 .build();
 
         final Response loginResponse = client.newCall(new Request.Builder()
-                        .url(Paths.get(config.baseUrl, LOGIN_URL).toString())
+                        .url(Paths.get(config.url, LOGIN_URL).toString())
                         .header("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36")
                         .post(loginForm)
                         .build())
@@ -84,7 +84,7 @@ public class BlueOceanClientFactory {
         }
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(config.baseUrl)
+                .baseUrl(config.url)
                 .callFactory((Call.Factory) client)
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
