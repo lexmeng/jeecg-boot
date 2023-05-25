@@ -261,16 +261,45 @@ public class ReleaseInfoLogic {
         return content;
     }
 
+    private static String seperateStrToRegStr(String seperatorString){
+        if(Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KE.equals(seperatorString)){
+            return Config.ISSUE_EN_AND_CH_REG_SEPARATOR_IN_KE;
+        }else if(Config.ISSUE_EN_AND_CH_SEPARATOR_IN_KC.equals(seperatorString)){
+            return Config.ISSUE_EN_AND_CH_REG_SEPARATOR_IN_KC;
+        }else{
+            throw new BussinessException("分隔符不支持："+seperatorString);
+        }
+    }
+
     public static String[] splitNameInfoFromIssue(Issue issue, String seperatorString){
-        String[] splitStringList = issue.getIssueName().split(seperatorString);
         if(!issue.getIssueName().contains(seperatorString)){
             throw new BussinessException("issue名称不包含分隔符："+seperatorString+"。请修改！issue名称："+issue.getIssueName());
         }
+
+        String[] splitStringList = issue.getIssueName().split(seperateStrToRegStr(seperatorString));
+
         if(splitStringList[0] == null || splitStringList[0].equals("")){
             throw new BussinessException("issue分隔错误："+issue.getId());
         }
         if(splitStringList[1] == null || splitStringList[1].equals("")){
             throw new BussinessException("issue分隔错误："+issue.getId());
+        }
+
+        return splitStringList;
+    }
+
+    public static String[] splitNameInfoFromString(String name, String seperatorString){
+        if(!name.contains(seperatorString)){
+            throw new BussinessException("issue名称不包含分隔符："+seperatorString+"。请修改！issue名称："+name);
+        }
+
+        String[] splitStringList = name.split(seperateStrToRegStr(seperatorString));
+
+        if(splitStringList[0] == null || splitStringList[0].equals("")){
+            throw new BussinessException("issue分隔错误："+name);
+        }
+        if(splitStringList[1] == null || splitStringList[1].equals("")){
+            throw new BussinessException("issue分隔错误："+name);
         }
 
         return splitStringList;

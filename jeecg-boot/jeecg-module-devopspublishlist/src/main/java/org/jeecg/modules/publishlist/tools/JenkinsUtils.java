@@ -187,6 +187,12 @@ public class JenkinsUtils {
 
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = JENKINS_URL + "job" + "/DevOps" + "/job/" + jobName + "/buildWithParameters";
+
+        log.info("buildWithParametersUseRestfulPost, apiUrl:"+apiUrl);
+        for(String key : paramMap.keySet()){
+            log.info("buildWithParametersUseRestfulPost, param key:"+key+"  value:"+paramMap.get(key));
+        }
+
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
         if(response.getStatusCodeValue() == 201){

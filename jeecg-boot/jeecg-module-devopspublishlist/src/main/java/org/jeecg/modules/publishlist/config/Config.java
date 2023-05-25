@@ -20,6 +20,10 @@ public class Config {
 
     public final static String ISSUE_EN_AND_CH_SEPARATOR_IN_KC = "||";
 
+    public final static String ISSUE_EN_AND_CH_REG_SEPARATOR_IN_KE = "\\|\\|";
+
+    public final static String ISSUE_EN_AND_CH_REG_SEPARATOR_IN_KC = "\\|\\|";
+
     public final static String ISSUE_TYPE_STORY = "story";//同jira系统保持一致
 
 
