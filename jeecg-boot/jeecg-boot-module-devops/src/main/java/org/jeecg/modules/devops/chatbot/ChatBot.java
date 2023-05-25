@@ -4,22 +4,20 @@ import cn.hutool.core.lang.Assert;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
-import com.theokanning.openai.service.OpenAiService;
 
-import java.time.Duration;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ChatBot {
 
-    private final OpenAiService openai;
+    private final Adapter adapter;
 
     private final ChatMessageHistory history;
 
     private ChatCompletionOptions options = ChatCompletionOptions.DEFAULT;
 
-    public ChatBot() {
-        this.openai = new OpenAiService(System.getenv("OPENAI_TOKEN"), Duration.ZERO);
+    public ChatBot(Adapter adapter) {
+        this.adapter = adapter;
         this.history = new ChatMessageHistory();
     }
 
@@ -31,7 +29,7 @@ public class ChatBot {
 
     public ChatMessage call(final String content) {
         final ChatMessage userMessage = new ChatMessage(ChatMessageRole.USER.value(), content);
-        final ChatMessage completionMessage = openai.createChatCompletion(chatCompletionRequest(userMessage)).getChoices().get(0).getMessage();
+        final ChatMessage completionMessage = adapter.createChatCompletion(chatCompletionRequest(userMessage)).getChoices().get(0).getMessage();
         history.add(userMessage, completionMessage);
         return completionMessage;
 

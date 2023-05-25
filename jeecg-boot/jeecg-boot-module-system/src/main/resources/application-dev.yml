@@ -355,3 +355,9 @@ github:
   url: url_here
   account: account_here
   token: token_here
+
+openai:
+  token: token_here
+  provider: azure or openai
+  endpoint: if provider == azure, endpoint_here
+  deployment: if provider == azure, deployment_here
