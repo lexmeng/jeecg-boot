@@ -1,5 +1,5 @@
 export default {
-  minHeight: '200px',
+  minHeight: '500px',
   previewStyle: 'vertical',
   useCommandShortcut: true,
   useDefaultHTMLSanitizer: true,

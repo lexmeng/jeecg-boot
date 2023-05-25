@@ -68,6 +68,14 @@
             下载
           </a-button>
         </template>
+        <template slot="tooltopSlot" slot-scope="text,record">
+          <a-tooltip>
+            <template slot="text">
+              {{text}}
+            </template>
+            {{text}}
+          </a-tooltip>
+        </template>
 
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
@@ -140,9 +148,38 @@
             title:'issue名',
             align:"left",
             dataIndex: 'issueName',
-            width: 220,
+            width: 120,
+            ellipsis: true,
             customRender: (text, record, index) => {
               if(text.length > 50) {
+                return text.slice(0,50) + '...'
+              }else{
+                return text
+              }
+            }
+          },
+          {
+            title:'中文名',
+            align:"left",
+            dataIndex: 'issueChName',
+            width: 120,
+            ellipsis: true,
+            customRender: (text, record, index) => {
+              if(text && text.length > 50) {
+                return text.slice(0,50) + '...'
+              }else{
+                return text
+              }
+            }
+          },
+          {
+            title:'英文名',
+            align:"left",
+            dataIndex: 'issueEnName',
+            width: 120,
+            ellipsis: true,
+            customRender: (text, record, index) => {
+              if(text && text.length > 50) {
                 return text.slice(0,50) + '...'
               }else{
                 return text
@@ -204,7 +241,6 @@
     created() {
       this.getSuperFieldList();
       this.publishlistId = this.$route.query.pid || this.pid
-      console.log('issueList created->', this.$route.query.pid, this.pid, this.queryParam)
     },
     computed: {
       importExcelUrl: function(){
@@ -225,12 +261,12 @@
         }
         var params = this.getQueryParams();//查询条件
         params.publishlistId = this.pid
-        console.log("params", params)
         this.loading = true;
         getAction(this.url.list, params).then((res) => {
           if (res.success) {
             //update-begin---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
             this.dataSource = res.result.records||res.result;
+            console.log('issue list =>>>>', this.dataSource);
             if(res.result.total) {
               this.ipagination.total = res.result.total;
             }else{

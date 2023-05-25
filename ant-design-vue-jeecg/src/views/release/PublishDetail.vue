@@ -22,12 +22,12 @@
     </a-row>
     <!-- actions -->
     <template slot="action">
-      <a-button type="primary" icon="cloud-upload" @click="reloadData">发布</a-button>
-      <a-button type="dashed" style="margin:0 4px" icon="reload" @click="reloadData"></a-button>
+      <a-button type="dashed" icon="reload" @click="reloadData"></a-button>
+      <a-button type="primary" style="margin:0 4px" icon="cloud-upload" @click="reloadData">发布</a-button>
       <a-button-group>
         <a-button @click="handleReleaseNote">ReleaseNote</a-button>
         <a-button @click="handleReleaseMail">ReleaseMail</a-button>
-        <a-button @click="handlePackagePR">PR 文本</a-button>
+        <a-button @click="handlePackagePR">产品包 PR 文本</a-button>
         <a-button @click="handleHandbookChPR">手册中文 PR 文本</a-button>
         <a-button @click="handleHandbookEnPR">手册英文 PR 文本</a-button>
         <a-button @click="handleWebsite">官网文本</a-button>
@@ -99,6 +99,7 @@ export default {
   },
   created() {
     this.publishlistId = this.$route.query.id
+    console.log("publishlistId", this.publishlistId);
     // this.publishForm = this.$route.query.record
     // this.reloadData(this.publishlistId)
     this.initDictConfig()
@@ -122,8 +123,8 @@ export default {
         }
       });
     },
-    reloadData(pid) {
-      this.queryParam = {id: pid || this.publishlistId}
+    reloadData() {
+      this.queryParam = {id: this.publishlistId}
       getAction(this.url.queryById, this.queryParam).then((res) => {
         if(res.success){
           this.publishForm = res.result

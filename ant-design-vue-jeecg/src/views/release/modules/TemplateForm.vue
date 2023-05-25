@@ -3,33 +3,39 @@
     <j-form-container :disabled="formDisabled">
       <a-form-model ref="form" :model="model" :rules="validatorRules" slot="detail">
         <a-row>
-          <a-col :span="24">
+          <a-col :lg="12" :md="12" :sm="24" :span="24">
             <a-form-model-item label="类型" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="type">
               <!--              <a-input v-model="model.type" placeholder="请输入类型"  ></a-input>-->
               <j-dict-select-tag type="list" v-model="model.type" dictCode="template_type"
                                  placeholder="请选择模板类型" />
             </a-form-model-item>
           </a-col>
-          <a-col :span="24">
+          <a-col :lg="12" :md="12" :sm="24" :span="24">
             <a-form-model-item label="产品线名" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="productLineName">
               <j-dict-select-tag type="list" v-model="model.productLineName" dictCode="dict_bu"
                                  placeholder="请选择产品线" />
             </a-form-model-item>
           </a-col>
-          <a-col :span="24">
+          <a-col :lg="12" :md="12" :sm="24" :span="24">
             <a-form-model-item label="产品" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="productName">
               <j-dict-select-tag type="list" v-model="model.productName" dictCode="product" placeholder="请选择产品" />
             </a-form-model-item>
           </a-col>
-          <a-col :span="24">
+          <a-col :lg="12" :md="12" :sm="24" :span="24">
             <a-form-model-item label="文档版本" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="documentVersion">
               <a-input v-model="model.documentVersion" placeholder="请输入文档版本"></a-input>
             </a-form-model-item>
           </a-col>
-          <a-col :span="24">
+        </a-row>
+        <a-row>
+          <a-col :lg="24" :md="24" :sm="24" :span="24">
             <a-form-model-item label="内容" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="content">
-              <!--              <a-input v-model="model.content" placeholder="请输入内容"  ></a-input>-->
-              <j-editor v-if="model.type=='ReleaseMail'" v-model="model.content" style="height:500px"></j-editor>
+              <a-alert type="success">
+                <span slot="message">
+                  模板编写说明文档: <a target="_blank" href="https://kyligence.feishu.cn/wiki/wikcntChvZy7stn4BHd026mkSNc">DevOps平台占位符使用说明</a>
+                </span>
+              </a-alert>
+              <j-editor v-if="model.type=='ReleaseMail'" v-model="model.content" height="500px"></j-editor>
               <j-markdown-editor v-else v-model="model.content" height="500px"></j-markdown-editor>
             </a-form-model-item>
           </a-col>

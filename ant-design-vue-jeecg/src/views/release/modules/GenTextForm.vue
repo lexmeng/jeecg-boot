@@ -6,8 +6,8 @@
         模板编写说明文档: <a target="_blank" href="https://kyligence.feishu.cn/wiki/wikcntChvZy7stn4BHd026mkSNc">DevOps平台占位符使用说明</a>
       </span>
     </a-alert>
-    <j-markdown-editor v-if="model.isMarkDown" v-model="model.content" height="500px"></j-markdown-editor>
-    <j-editor v-else v-model="model.content" style="height:500px"></j-editor>
+    <j-markdown-editor v-if="model.isMarkDown" v-model="model.content" height="930px"></j-markdown-editor>
+    <j-editor v-else v-model="model.content" height="930px"></j-editor>
   </a-spin>
 </template>
 
@@ -88,7 +88,7 @@
   }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
   .tui-editor-defaultUI .te-switch-button{
     width: 120px !important;
   }
