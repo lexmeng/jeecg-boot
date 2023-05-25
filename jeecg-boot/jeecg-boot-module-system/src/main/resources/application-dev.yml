@@ -358,6 +358,6 @@ github:
 
 openai:
   token: token_here
-  provider: azure or openai
+  provider: azure
   endpoint: if provider == azure, endpoint_here
   deployment: if provider == azure, deployment_here
