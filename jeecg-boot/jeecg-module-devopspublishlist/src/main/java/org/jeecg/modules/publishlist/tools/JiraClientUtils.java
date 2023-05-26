@@ -1,44 +1,37 @@
 package org.jeecg.modules.publishlist.tools;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
-import com.atlassian.jira.rest.client.api.domain.Project;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonObject;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import io.atlassian.util.concurrent.Promise;
-
 import lombok.extern.slf4j.Slf4j;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.net.URI;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jeecg.modules.publishlist.entity.Issue;
 import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.exception.JiraException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Slf4j
@@ -57,8 +50,34 @@ public class JiraClientUtils {
     @Value("${jira.sign}")
     private String jiraSign;
 
+    private static final com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
+            = new com.fasterxml.jackson.databind.ObjectMapper();
+
+    static {
+        jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Unirest.setObjectMapper(new ObjectMapper() {
+
+            public <T> T readValue(String value, Class<T> valueType) {
+                try {
+                    return jacksonObjectMapper.readValue(value, valueType);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            public String writeValue(Object value) {
+                try {
+                    return jacksonObjectMapper.writeValueAsString(value);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        });
+    }
+
     @PostConstruct
-    public void initJiraRestClient(){
+    public void initJiraRestClient() {
         AsynchronousJiraRestClientFactory asyncClientFactory = new AsynchronousJiraRestClientFactory();
         jiraRestClient = asyncClientFactory.createWithBasicHttpAuthentication(
                 URI.create("http://olapio.atlassian.net"), jiraAccountName, jiraSign
@@ -86,7 +105,7 @@ public class JiraClientUtils {
         return issueClient.getIssue(issueKey).claim();
     }*/
 
-    public SearchResult searchIssueByProjectAndFixVersions(String projectName, String fixVersions) throws JiraException{
+    public SearchResult searchIssueByProjectAndFixVersions(String projectName, String fixVersions) throws JiraException {
 
         //String searchString = String.format("project = \"%s\" AND fixVersion in (\"%s\")", projectName, fixVersions);
         String searchString = "project = \"KE\"";
@@ -123,8 +142,7 @@ public class JiraClientUtils {
     */
 
 
-
-    public void searchJqlGet() throws UnirestException{
+    public void searchJqlGet() throws UnirestException {
         //RestTemplateBuilder builder = new RestTemplateBuilder();
         //RestTemplate restTemplate = builder.basicAuthentication(jiraAccountName,jiraSign).build();
         HttpResponse<JsonNode> response = Unirest.get("https://olapio.atlassian.net/rest/api/3/search")
@@ -136,10 +154,41 @@ public class JiraClientUtils {
         log.info(response.getBody().toString());
     }
 
-    private String delTab(String str){
+    private String delTab(String str) {
         str = str.replace("\n", "").replace("\t", "");
         return str;
     }
+
+    public IssueDevStatusResult fetchIssueDevStatus(final String issueId) {
+        final String devStatusApi = "https://olapio.atlassian.net/rest/dev-status/latest/issue/detail?issueId=%s&applicationType=GitHub&dataType=pullrequest";
+        try {
+            HttpResponse<JsonNode> response = Unirest.get(String.format(devStatusApi, issueId))
+                    .basicAuth(jiraAccountName, jiraSign)
+                    .header("Accept", "application/json")
+                    .header("Content-Type", "application/json")
+                    .asJson();
+
+            log.info("Http request response. status code:" + response.getStatus());
+            log.info("Http request response. status text:" + response.getStatusText());
+            log.info("Http request response. body:" + response.getBody().toString());
+            if (response.getStatus() != 200) {
+                String errorMessage = String.format("读取issue 开发信息的网络请求出错！code:%s text:%s body:%s", response.getStatus(), response.getStatusText(), response.getBody().toString());
+                throw new BussinessException(errorMessage);
+            }
+
+            JSONObject data = response.getBody().getObject();
+            JSONArray detail = data.getJSONArray("detail");
+            if (detail.length() <= 0) {
+                return new IssueDevStatusResult();
+            }
+
+            return jacksonObjectMapper.readValue(detail.get(0).toString(), IssueDevStatusResult.class);
+
+        } catch (UnirestException | IOException e) {
+            throw new RuntimeException("Jira系统访问产生错误: " + e.toString(), e);
+        }
+    }
+
     public IssueSearchResult restSearchIssueByProjectAndFixVersions(String projectName, String fixVersions) {
         String searchString = String.format("project = \"%s\" AND fixVersion in (\"%s\")", delTab(projectName), delTab(fixVersions));
 
@@ -164,29 +213,7 @@ public class JiraClientUtils {
             payload.put("startAt", 0);
         }
 
-        Unirest.setObjectMapper(new ObjectMapper(){
-            private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
-                    = new com.fasterxml.jackson.databind.ObjectMapper();
-
-            public <T> T readValue(String value, Class<T> valueType) {
-                try {
-                    return jacksonObjectMapper.readValue(value, valueType);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            public String writeValue(Object value) {
-                try {
-                    return jacksonObjectMapper.writeValueAsString(value);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-        });
-
-        try{
+        try {
 
             HttpResponse<JsonNode> response = Unirest.post("https://olapio.atlassian.net/rest/api/3/search")
                     .basicAuth(jiraAccountName, jiraSign)
@@ -195,26 +222,26 @@ public class JiraClientUtils {
                     .body(payload)
                     .asJson();
 
-            log.info("Http request response. status code:"+response.getStatus());
-            log.info("Http request response. status text:"+response.getStatusText());
-            log.info("Http request response. body:"+response.getBody().toString());
-            if(response.getStatus() != 200){
-                String errorMessage = String.format("读取issue的网络请求出错！code:%s text:%s body:%s",response.getStatus(),response.getStatusText(),response.getBody().toString());
+            log.info("Http request response. status code:" + response.getStatus());
+            log.info("Http request response. status text:" + response.getStatusText());
+            log.info("Http request response. body:" + response.getBody().toString());
+            if (response.getStatus() != 200) {
+                String errorMessage = String.format("读取issue的网络请求出错！code:%s text:%s body:%s", response.getStatus(), response.getStatusText(), response.getBody().toString());
                 throw new BussinessException(errorMessage);
             }
             IssueSearchResult issueSearchResult = convertPostBodyToIssueSearchResult(response.getBody());
 
             return issueSearchResult;
 
-        }catch (UnirestException e){
+        } catch (UnirestException e) {
             e.printStackTrace();
-            throw new RuntimeException("Jira系统访问产生错误: "+e.toString());
+            throw new RuntimeException("Jira系统访问产生错误: " + e.toString());
         }
 
 
     }
 
-    private IssueSearchResult convertPostBodyToIssueSearchResult(JsonNode node){
+    private IssueSearchResult convertPostBodyToIssueSearchResult(JsonNode node) {
         IssueSearchResult issueSearchResult = new IssueSearchResult();
 
         JSONObject jsonObject = node.getObject();
@@ -225,7 +252,7 @@ public class JiraClientUtils {
 
         org.json.JSONArray jsonArray = jsonObject.getJSONArray("issues");
         List<Issue> issueList = new ArrayList<>();
-        for(Object object : jsonArray){
+        for (Object object : jsonArray) {
             JSONObject tempObject = (JSONObject) object;
             Issue issue = new Issue();
             issue.setIssueId(tempObject.getString("id"));
@@ -243,7 +270,6 @@ public class JiraClientUtils {
         issueSearchResult.setIssues(issueList);
         return issueSearchResult;
     }
-
 
 
     public static void main(String[] args){

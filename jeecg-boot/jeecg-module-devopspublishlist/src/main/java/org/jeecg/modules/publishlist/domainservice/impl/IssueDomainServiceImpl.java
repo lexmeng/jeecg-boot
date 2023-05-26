@@ -1,27 +1,28 @@
 package org.jeecg.modules.publishlist.domainservice.impl;
 
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.system.vo.LoginUser;
-import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.entity.Issue;
 import org.jeecg.modules.publishlist.entity.IssueHistory;
-import org.jeecg.modules.publishlist.entity.PublishlistProject;
 import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.service.IIssueHistoryService;
 import org.jeecg.modules.publishlist.service.IIssueService;
 import org.jeecg.modules.publishlist.tools.IdTool;
+import org.jeecg.modules.publishlist.tools.IssueDevStatusResult;
 import org.jeecg.modules.publishlist.tools.IssueSearchResult;
 import org.jeecg.modules.publishlist.tools.JiraClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -136,6 +137,11 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         }
 
         return restSearchResult.getIssues();
+    }
+
+    @Override
+    public IssueDevStatusResult fetchIssueDevStatus(String issueId) {
+        return jiraClientUtils.fetchIssueDevStatus(issueId);
     }
 
 

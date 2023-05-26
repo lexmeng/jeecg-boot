@@ -1,26 +1,33 @@
 package org.jeecg.modules.publishlist.controller;
 
-import java.util.Arrays;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.publishlist.bpservice.IssueBPService;
 import org.jeecg.modules.publishlist.entity.Issue;
 import org.jeecg.modules.publishlist.service.IIssueService;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-
-import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.modules.publishlist.tools.IssueDevStatusResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.jeecg.common.aspect.annotation.AutoLog;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
  /**
  * @Description: issue本地记录
@@ -150,6 +157,12 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 		 return Result.OK("更新成功！");
 	 }
 
+
+	 @ApiOperation(value = "获取 Issue 开发信息", notes = "获取 Issue 开发信息，包含分支信息和 PR 信息")
+	 @GetMapping(value = "/devStatus")
+	 public Result<IssueDevStatusResult> fetchIssueDevStatus(@RequestParam("issueId") String issueId) {
+		 return Result.ok(issueBPService.fetchIssueDevStatus(issueId));
+	 }
     /**
     * 导出excel
     *

@@ -17,6 +17,7 @@ import org.jeecg.modules.publishlist.service.IIssueService;
 import org.jeecg.modules.publishlist.service.IProjectService;
 import org.jeecg.modules.publishlist.service.IPublishlistProjectService;
 import org.jeecg.modules.publishlist.service.IPublishlistService;
+import org.jeecg.modules.publishlist.tools.IssueDevStatusResult;
 import org.jeecg.modules.publishlist.tools.JiraClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -114,6 +115,10 @@ public class IssueBPService {
             issueService.updateById(issue);
         }
 
+    }
+
+    public IssueDevStatusResult fetchIssueDevStatus(String issueId){
+        return issueDomainService.fetchIssueDevStatus(issueId);
     }
 
     public List<Issue> getIssueListForRelease(String publishlistId){
