@@ -2,6 +2,7 @@ package org.jeecg.modules.publishlist.bpservice;
 
 
 import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
@@ -75,7 +76,7 @@ public class PublishlistBPService {
     public void savePublishlist(Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
         publishlistService.saveMain(publishlist, publishlistProjectList,dependentComponentList,packageUrlList);
 
-        createIssueAndReleaseInfoAfterCreatePublishlist(publishlist);
+        SpringContextUtils.getBean(PublishlistBPService.class).createIssueAndReleaseInfoAfterCreatePublishlist(publishlist);
     }
 
     @Transactional
@@ -113,7 +114,7 @@ public class PublishlistBPService {
             totalIssueList.addAll(issueList);
         }
 
-        publishUpdateIssueAndPublishlist(publishlistId, totalIssueList);
+        SpringContextUtils.getBean(PublishlistBPService.class).publishUpdateIssueAndPublishlist(publishlistId, totalIssueList);
 
         //删除之前生成的release info信息
         /*
@@ -150,7 +151,7 @@ public class PublishlistBPService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    private void publishUpdateIssueAndPublishlist(String publishlistId, List<Issue> totalIssueList){
+    public void publishUpdateIssueAndPublishlist(String publishlistId, List<Issue> totalIssueList){
         //初步判断状态
         if(publishlistDomainService.isPublished(publishlistId)){
             throw new BussinessException("发布单状态错误！发布单已发布");
@@ -172,7 +173,7 @@ public class PublishlistBPService {
 
 
     @Transactional
-    private void savePublishlist(List<Issue> issueList, Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
+    public void savePublishlist(List<Issue> issueList, Publishlist publishlist, List<PublishlistProject> publishlistProjectList, List<DependentComponent> dependentComponentList, List<PackageUrl> packageUrlList){
         //issueService.saveBatch(issueList);
 
         publishlistService.saveMain(publishlist, publishlistProjectList, dependentComponentList, packageUrlList);

@@ -1,6 +1,7 @@
 package org.jeecg.modules.publishlist.bpservice;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.domainservice.IIssueDomainService;
 import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class IssueBPService {
@@ -73,7 +76,7 @@ public class IssueBPService {
 
         //3、更新releaseInfo
         //releaseInfoBPService.updateReleaseInfo(publishlistId, totalIssueList);
-        generateEnAndChNameAndSave(publishlistId);
+        SpringContextUtils.getBean(IssueBPService.class).generateEnAndChNameAndSave(publishlistId);
     }
 
     @Transactional
