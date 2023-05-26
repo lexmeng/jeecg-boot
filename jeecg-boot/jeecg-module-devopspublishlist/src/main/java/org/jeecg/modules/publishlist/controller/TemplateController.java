@@ -10,6 +10,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.publishlist.entity.Template;
 import org.jeecg.modules.publishlist.exception.BussinessException;
+import org.jeecg.modules.publishlist.logic.VarifyLogic;
 import org.jeecg.modules.publishlist.service.ITemplateService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -88,6 +89,12 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 		}
 
 		template.setId(IdTool.generalId());
+
+		if(!VarifyLogic.verifyPlaceholder(template)){
+			String invalidatePlaceholder = VarifyLogic.findInvalidatePlaceholder(template);
+			throw new BussinessException("有非法占位符；"+invalidatePlaceholder);
+		}
+
 		templateService.save(template);
 		return Result.OK("添加成功！");
 	}
@@ -103,6 +110,12 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	//@RequiresPermissions("org.jeecg.modules.demo:pub_template:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Template template) {
+
+		if(!VarifyLogic.verifyPlaceholder(template)){
+			String invalidatePlaceholder = VarifyLogic.findInvalidatePlaceholder(template);
+			throw new BussinessException("有非法占位符；"+invalidatePlaceholder);
+		}
+
 		templateService.updateById(template);
 		return Result.OK("编辑成功!");
 	}

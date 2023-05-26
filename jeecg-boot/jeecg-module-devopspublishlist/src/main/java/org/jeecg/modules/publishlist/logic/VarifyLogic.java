@@ -171,6 +171,62 @@ public class VarifyLogic {
         }
     }
 
+    private static List<String> getAllNormalPlaceholder(String type, String productLineName){
+        validateProductLineName(productLineName);
+
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
+        List<String> placeholderAllList;
+        if (productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
+            placeholderAllList = Config.KE_PLACEHODLER_MAP.get(type);
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
+            placeholderAllList = Config.KC_PLACEHODLER_MAP.get(type);
+        }else{
+            throw new BussinessException("产品线名称错误！");
+        }
+        return placeholderAllList;
+    }
+
+    private static List<String> getAllIteratePlaceholder(String type, String productLineName){
+        validateProductLineName(productLineName);
+
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
+
+        List<String> placeholderAllList;
+        if (productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
+            placeholderAllList = Config.KE_ITERATE_PLACEHODLER_MAP.get(type);
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
+            placeholderAllList = Config.KC_ITERATE_PLACEHODLER_MAP.get(type);
+        }else{
+            throw new BussinessException("产品线名称错误！");
+        }
+
+        return placeholderAllList;
+    }
+
+    private static List<String> getAllHistoryPlaceholder(String type, String productLineName){
+        validateProductLineName(productLineName);
+
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
+
+        List<String> placeholderAllList;
+        if (productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
+            placeholderAllList = Config.KE_HISTORY_PLACEHODLER_MAP.get(type);
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
+            placeholderAllList = Config.KC_HISTORY_PLACEHODLER_MAP.get(type);
+        }else{
+            throw new BussinessException("产品线名称错误！");
+        }
+
+        return placeholderAllList;
+    }
+
+
     private static Boolean validateProductLineName(String productLineName){
         if(productLineName == null || productLineName.equals("")){
             throw new BussinessException("产品线名称为空");
@@ -183,5 +239,61 @@ public class VarifyLogic {
         }
 
         return true;
+    }
+
+    public static String findInvalidatePlaceholder(Template template){
+        String productLineName = template.getProductLineName();
+        List<String> placeholderStrList;
+
+        if(productLineName.isEmpty()){
+            throw new BussinessException("产品线为空");
+        }
+        /*
+        if(productLineName.contains(Config.PRODUCT_LINE_NAME_KE)){
+            placeholderStrList = Config.KE_PLACEHODLER_MAP.get(template.getType());
+        }else if(productLineName.contains(Config.PRODUCT_LINE_NAME_KC)){
+            placeholderStrList = Config.KC_PLACEHODLER_MAP.get(template.getType());
+        }else{
+            throw new BussinessException("模板产品线名错误");
+        }
+        */
+        //抓取所有placeholder
+        List<String> placeholderList = getAllPlaceholder(template.getContent());
+        List<String> iteratePlaceholderList = getAllIteratePlaceholder(template.getContent());
+        List<String> historyPlaceholderList = getAllHistoryPlaceholder(template.getContent());
+
+        List<String> allNormalPlaceholderList = getAllNormalPlaceholder(template.getType(), template.getProductLineName());
+        List<String> allIteratePlaceholderList = getAllIteratePlaceholder(template.getType(), template.getProductLineName());
+        List<String> allHistoryPlaceholderList = getAllHistoryPlaceholder(template.getType(), template.getProductLineName());
+
+        List<String> invalidateNormalPlaceholderList = notInList(placeholderList,allNormalPlaceholderList);
+        List<String> invalidateIteratePlaceholderList = notInList(iteratePlaceholderList,allIteratePlaceholderList);
+        List<String> invalidateHistoryPlaceholderList = notInList(historyPlaceholderList,allHistoryPlaceholderList);
+
+        String result = listToString(invalidateNormalPlaceholderList)+listToString(invalidateIteratePlaceholderList)+listToString(invalidateHistoryPlaceholderList);
+        return result.substring(0, result.length() - 1);
+    }
+
+    private static List<String> notInList(List<String> placeholderList, List<String> allPlaceholderList){
+        List<String> resultList = new ArrayList<>();
+        for(String str : placeholderList){
+            if(!allPlaceholderList.contains(str)){
+                resultList.add(str);
+            }
+        }
+
+        return resultList;
+    }
+
+    private static String listToString(List<String> list){
+        if(list == null || list.size()==0) return "";
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String str : list){
+            stringBuilder.append(str);
+            stringBuilder.append(",");
+        }
+        String str = stringBuilder.toString();
+        return str;
     }
 }

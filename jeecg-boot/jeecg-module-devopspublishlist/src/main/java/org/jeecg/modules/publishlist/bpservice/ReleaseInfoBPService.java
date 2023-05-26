@@ -77,7 +77,8 @@ public class ReleaseInfoBPService {
 
         //三、校验所有占位符
         if(!VarifyLogic.verifyPlaceholder(template)){
-            throw new BussinessException("有非法占位符！");
+            String invalidatePlaceholder = VarifyLogic.findInvalidatePlaceholder(template);
+            throw new BussinessException("有非法占位符；"+invalidatePlaceholder);
         }
 
         //四、读取模板内容
