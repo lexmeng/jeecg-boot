@@ -6,8 +6,7 @@
         模板编写说明文档: <a target="_blank" href="https://kyligence.feishu.cn/wiki/wikcntChvZy7stn4BHd026mkSNc">DevOps平台占位符使用说明</a>
       </span>
     </a-alert>
-    <j-markdown-editor v-if="model.isMarkDown" v-model="model.content" height="930px"></j-markdown-editor>
-    <j-editor v-else v-model="model.content" height="930px"></j-editor>
+    <j-markdown-editor v-model="model.content" height="800px"></j-markdown-editor>
   </a-spin>
 </template>
 
