@@ -148,7 +148,7 @@ public class IssueBPService {
         List<Issue> resultIssueList = new ArrayList<>();
         for(Issue issue : issueList){
             if(ReleaseInfoLogic.isNeedToGenerateReleaseInfo(issue.getIssueName(), publishlist.getProductLineName())){
-                if(Config.ISSUE_TYPE_STORY.equals(issue.getIssueType())){
+                if(Config.ISSUE_TYPE_STORY.equals(issue.getIssueType().toLowerCase())){
                     resultIssueList.add(issue);
                 }
             }
@@ -166,7 +166,7 @@ public class IssueBPService {
         List<Issue> resultIssueList = new ArrayList<>();
         for(Issue issue : issueList){
             if(ReleaseInfoLogic.isNeedToGenerateReleaseInfo(issue.getIssueName(), publishlist.getProductLineName())){
-                if(Config.ISSUE_TYPE_BUG.equals(issue.getIssueType())){
+                if(Config.ISSUE_TYPE_BUG.equals(issue.getIssueType().toLowerCase())){
                     resultIssueList.add(issue);
                 }
             }

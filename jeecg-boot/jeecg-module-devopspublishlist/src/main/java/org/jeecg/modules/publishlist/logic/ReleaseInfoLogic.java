@@ -196,7 +196,7 @@ public class ReleaseInfoLogic {
             }else if(group.equals(Config.ITERATE_PLACEHOLDER_ISSUE_STORY)){
                 List<Issue> storyIssueList = new ArrayList<>();
                 for(Issue issue: issueList){
-                    if(issue.getIssueType().equals(Config.ISSUE_TYPE_STORY)){
+                    if(issue.getIssueType().toLowerCase().equals(Config.ISSUE_TYPE_STORY)){
                         storyIssueList.add(issue);
                     }
                 }
@@ -209,7 +209,7 @@ public class ReleaseInfoLogic {
             }else if(group.equals(Config.ITERATE_PLACEHOLDER_ISSUE_BUG)){
                 List<Issue> bugIssueList = new ArrayList<>();
                 for(Issue issue: issueList){
-                    if(Config.ISSUE_TYPE_BUG.equals(issue.getIssueType()) || Config.ISSUE_TYPE_BUG_CN.equals(issue.getIssueType()) ){
+                    if(Config.ISSUE_TYPE_BUG.equals(issue.getIssueType().toLowerCase()) || Config.ISSUE_TYPE_BUG_CN.equals(issue.getIssueType()) ){
                         bugIssueList.add(issue);
                     }
                 }
