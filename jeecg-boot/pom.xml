@@ -109,6 +109,9 @@
 
     <qiniu-java-sdk.version>7.4.0</qiniu-java-sdk.version>
 
+	<github-api.version>1.301</github-api.version>
+
+
     <!-- Log4j2爆雷漏洞 -->
 
     <log4j2.version>2.17.0</log4j2.version>
@@ -447,6 +450,12 @@
 				<groupId>com.theokanning.openai-gpt3-java</groupId>
 				<artifactId>service</artifactId>
 				<version>${openai-service.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.kohsuke</groupId>
+				<artifactId>github-api</artifactId>
+				<version>${github-api.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -138,6 +138,11 @@
             <version>1.5.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.kohsuke</groupId>
+            <artifactId>github-api</artifactId>
+        </dependency>
+
 
     </dependencies>
 </project>
