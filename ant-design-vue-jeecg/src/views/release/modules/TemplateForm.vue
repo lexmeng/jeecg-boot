@@ -28,7 +28,7 @@
           </a-col>
         </a-row>
         <a-row>
-          <a-col :lg="24" :md="24" :sm="24" :span="24">
+          <a-col :lg="12" :md="12" :sm="24" :span="24">
             <a-form-model-item label="内容" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="content">
               <a-alert type="success">
                 <span slot="message">
@@ -37,8 +37,10 @@
               </a-alert>
               <!-- <j-editor v-if="model.type=='ReleaseMail'" v-model="model.content" height="500px"></j-editor>
               <j-markdown-editor v-else v-model="model.content" height="500px"></j-markdown-editor> -->
-              <j-markdown-editor v-model="model.content" height="500px"></j-markdown-editor>
             </a-form-model-item>
+          </a-col>  
+          <a-col :span="24">
+            <j-markdown-editor v-model="model.content" height="500px"></j-markdown-editor>
           </a-col>
         </a-row>
       </a-form-model>
