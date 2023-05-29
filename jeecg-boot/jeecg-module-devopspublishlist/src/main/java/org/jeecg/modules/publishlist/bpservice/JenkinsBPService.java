@@ -1,5 +1,7 @@
 package org.jeecg.modules.publishlist.bpservice;
 
+import com.mchange.v2.collection.MapEntry;
+import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.tools.JenkinsOperateUtils;
 import org.jeecg.modules.publishlist.tools.JenkinsUtils;
@@ -22,13 +24,21 @@ public class JenkinsBPService {
     @Autowired
     private JenkinsUtils jenkinsUtils;
 
+    public void jenkinsBuildWithParameters(String typeName, String folderName, String jobName, Map<String, String> paramMap){
+        MultiValueMap<String, String> paramMultiValueMap = new LinkedMultiValueMap<>();
+        for(String key : paramMap.keySet()){
+            paramMultiValueMap.add(key, paramMap.get(key));
+        }
+        jenkinsUtils.buildWithParametersUseRestfulPost(typeName, folderName,jobName, paramMultiValueMap);
+    }
+
     public void jenkinsCommitProductPackagePR(String version, String content, String documentVersion){
         MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
         paramMap.add("version", version);
         paramMap.add("content", content);
         paramMap.add("document_version", documentVersion);
         //jenkinsOperateUtils.buildParamJob("devopsweb-productpackage-pr", paramMap);
-        jenkinsUtils.buildWithParametersUseRestfulPost("devopsweb-productpackage-pr", paramMap);
+        jenkinsUtils.buildWithParametersUseRestfulPost(Config.JENKINS_TYPE_OFS, "DevOps","devopsweb-productpackage-pr", paramMap);
     }
 
     public void jenkinsCommitProductHandbookPR(String version, String cnContent, String enContent, String documentVersion){
@@ -38,7 +48,7 @@ public class JenkinsBPService {
         paramMap.add("en_content", enContent);
         paramMap.add("document_version", documentVersion);
         //jenkinsOperateUtils.buildParamJob("devops_manual-pr", paramMap);
-        jenkinsUtils.buildWithParametersUseRestfulPost("devopsweb-manual-pr", paramMap);
+        jenkinsUtils.buildWithParametersUseRestfulPost(Config.JENKINS_TYPE_OFS,"DevOps","devopsweb-manual-pr", paramMap);
     }
 
     public void executeKE4StepTestJob(StepTestParam stepTestParam){
@@ -65,7 +75,7 @@ public class JenkinsBPService {
         paramMap.add("envStage",stepTestParam.getEnvStage());
         paramMap.add("check_time", stepTestParam.getCheckTime());
 
-        jenkinsUtils.buildWithPrarametersInKEUseRestfulPost("0.KE-STEP", paramMap);
+        jenkinsUtils.buildWithPrarametersInKEUseRestfulPost(Config.JENKINS_TYPE_OFS, "0.KE-STEP", paramMap);
     }
 
     public void executeKE4QuardTestJob(QuardTestParam quardTestParam){
@@ -89,6 +99,6 @@ public class JenkinsBPService {
         paramMap.add("select_tests", quardTestParam.getSelectTests());
         paramMap.add("package_url", quardTestParam.getPackageUrl());
 
-        jenkinsUtils.buildWithPrarametersInKEUseRestfulPost("0.KE-QUARD", paramMap);
+        jenkinsUtils.buildWithPrarametersInKEUseRestfulPost(Config.JENKINS_TYPE_OFS, "0.KE-QUARD", paramMap);
     }
 }

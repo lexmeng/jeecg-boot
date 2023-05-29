@@ -68,6 +68,9 @@ public class Config {
 
     public final static String PRODUCT_LINE_NAME_KC = "Kyligence Cloud";
 
+    public final static String JENKINS_TYPE_AWS = "AWS";
+
+    public final static String JENKINS_TYPE_OFS = "OFS";
 
     @PostConstruct
     public void initPlaceholderMap(){

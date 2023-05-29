@@ -26,9 +26,9 @@ public class JenkinsOperateUtils {
     @PostConstruct
     public void JenkinsOperateUtils(){
         // 连接 Jenkins
-        jenkinsServer = utils.connection();
+        //jenkinsServer = utils.connection();
         // 设置客户端连接 Jenkins
-        jenkinsHttpClient = utils.getClient();
+        //jenkinsHttpClient = utils.getClient();
     }
 
     public void getJob(){
