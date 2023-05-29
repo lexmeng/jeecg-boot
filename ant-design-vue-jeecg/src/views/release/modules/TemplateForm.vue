@@ -35,8 +35,9 @@
                   模板编写说明文档: <a target="_blank" href="https://kyligence.feishu.cn/wiki/wikcntChvZy7stn4BHd026mkSNc">DevOps平台占位符使用说明</a>
                 </span>
               </a-alert>
-              <j-editor v-if="model.type=='ReleaseMail'" v-model="model.content" height="500px"></j-editor>
-              <j-markdown-editor v-else v-model="model.content" height="500px"></j-markdown-editor>
+              <!-- <j-editor v-if="model.type=='ReleaseMail'" v-model="model.content" height="500px"></j-editor>
+              <j-markdown-editor v-else v-model="model.content" height="500px"></j-markdown-editor> -->
+              <j-markdown-editor v-model="model.content" height="500px"></j-markdown-editor>
             </a-form-model-item>
           </a-col>
         </a-row>
