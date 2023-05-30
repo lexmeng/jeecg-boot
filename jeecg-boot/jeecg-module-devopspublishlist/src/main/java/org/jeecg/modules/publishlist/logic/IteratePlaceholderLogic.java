@@ -29,7 +29,7 @@ public class IteratePlaceholderLogic<T extends PlaceholderAble<S>, S> {
 
         for (String str : strList) {
             resultContent = resultContent.concat(str.substring(1, str.length() - 1));//去掉字符串前后的大括弧
-            resultContent = resultContent.concat("\n\t");
+            //resultContent = resultContent.concat("\n\t");
         }
         return resultContent;
     }

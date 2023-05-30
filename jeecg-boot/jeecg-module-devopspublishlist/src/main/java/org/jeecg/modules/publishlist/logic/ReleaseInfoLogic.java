@@ -284,6 +284,9 @@ public class ReleaseInfoLogic {
             if(!placeholderMap.keySet().contains(group)){
                 continue;
             }
+            if(placeholderMap.get(group) == null){
+                placeholderMap.put(group, "");
+            }
             content = matcher.replaceFirst(placeholderMap.get(group));
             //content = content.replace(group, placeholderMap.get(group));
             matcher = pattern.matcher(content);
