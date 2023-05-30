@@ -34,6 +34,7 @@ public class Config {
 
     public final static String ITERATE_PLACEHOLDER_ISSUE = "$$Iterate(issue)";
 
+    public final static String ITERATE_PLACEHOLDER_ISSUE_PREFIX = "$$Iterate(issue-";
     public final static String ITERATE_PLACEHOLDER_ISSUE_BUG = "$$Iterate(issue-bug)";
 
     public final static String ITERATE_PLACEHOLDER_ISSUE_STORY = "$$Iterate(issue-story)";

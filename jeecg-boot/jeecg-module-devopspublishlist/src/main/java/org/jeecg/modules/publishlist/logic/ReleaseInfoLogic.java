@@ -193,7 +193,36 @@ public class ReleaseInfoLogic {
                 //String resultContent = replacePlaceholderInIssueIterate(issueList, issueContent)
                 content = content.replace(Config.ITERATE_PLACEHOLDER_ISSUE+issueContent, resultContent);
 
-            }else if(group.equals(Config.ITERATE_PLACEHOLDER_ISSUE_STORY)){
+            }
+
+            else if(group.startsWith(Config.ITERATE_PLACEHOLDER_ISSUE_PREFIX)){
+                String[] strArray = group.split("-");
+                if(strArray.length < 3){
+                    throw new BussinessException("issue占位符格式错误！");
+                }
+                String projectName = strArray[1];
+                String issueType = strArray[2];
+                if(projectName == null || projectName.isEmpty() || issueType==null || issueType.isEmpty()){
+                    throw new BussinessException("issue占位符格式错误！");
+                }
+                issueType = issueType.substring(0, issueType.length() - 1);//去掉最后一个字符，更优的方法是用正则匹配
+
+                List<Issue> filterIssueList = new ArrayList<>();
+                for(Issue issue: issueList){
+                    if(issue.getIssueType().equals(issueType) && issue.getProjectId().equals(projectName)){
+                        filterIssueList.add(issue);
+                    }
+                }
+
+                String issueContent = getNextBracketAfterIteratePlaceholder(content, index);
+
+                IteratePlaceholderLogic<IssuePlaceholder, Issue> iteratePlaceholderLogic = new IteratePlaceholderLogic<>();
+                String resultContent = iteratePlaceholderLogic.replacePlaceholderInIterate(new IssuePlaceholder(), filterIssueList, issueContent);
+                //String resultContent= replacePlaceholderInIssueIterate(storyIssueList, issueContent);
+                content = content.replace(group+issueContent, resultContent);
+            }
+            /*
+            else if(group.equals(Config.ITERATE_PLACEHOLDER_ISSUE_STORY)){
                 List<Issue> storyIssueList = new ArrayList<>();
                 for(Issue issue: issueList){
                     if(issue.getIssueType().toLowerCase().equals(Config.ISSUE_TYPE_STORY)){
@@ -220,7 +249,9 @@ public class ReleaseInfoLogic {
                 String resultContent = iteratePlaceholderLogic.replacePlaceholderInIterate(new IssuePlaceholder(), bugIssueList, issueContent);
                 //String resultContent= replacePlaceholderInIssueIterate(bugIssueList, issueContent);
                 content = content.replace(Config.ITERATE_PLACEHOLDER_ISSUE_BUG+issueContent, resultContent);
-            }else if(group.equals(Config.ITERATE_PLACEHOLDER_DEPENDENT_COMPONENT)){
+            }
+            */
+            else if(group.equals(Config.ITERATE_PLACEHOLDER_DEPENDENT_COMPONENT)){
                 String dependentComponentContent = getNextBracketAfterIteratePlaceholder(content, index);
 
                 IteratePlaceholderLogic<DependentComponentPlaceholder, DependentComponent> iteratePlaceholderLogic = new IteratePlaceholderLogic<>();

@@ -21,8 +21,8 @@ public class BlueOceanService {
     private volatile BlueOceanClientImpl client;
 
 
-    @Autowired
-    private BlueOceanConfig blueOceanConfig;
+    //@Autowired
+    private BlueOceanConfig blueOceanConfig = new BlueOceanConfig();
 
     @Autowired
     private ObjectMapper objectMapper;

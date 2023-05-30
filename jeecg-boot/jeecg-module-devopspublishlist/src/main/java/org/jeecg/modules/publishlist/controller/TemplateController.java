@@ -91,8 +91,9 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 		template.setId(IdTool.generalId());
 
 		if(!VarifyLogic.verifyPlaceholder(template)){
-			String invalidatePlaceholder = VarifyLogic.findInvalidatePlaceholder(template);
-			throw new BussinessException("有非法占位符；"+invalidatePlaceholder);
+			//String invalidatePlaceholder = VarifyLogic.findInvalidatePlaceholder(template);
+			//throw new BussinessException("有非法占位符；"+invalidatePlaceholder);
+			throw new BussinessException("有非法占位符!");
 		}
 
 		templateService.save(template);
@@ -112,8 +113,9 @@ public class TemplateController extends JeecgController<Template, ITemplateServi
 	public Result<String> edit(@RequestBody Template template) {
 
 		if(!VarifyLogic.verifyPlaceholder(template)){
-			String invalidatePlaceholder = VarifyLogic.findInvalidatePlaceholder(template);
-			throw new BussinessException("有非法占位符；"+invalidatePlaceholder);
+			//String invalidatePlaceholder = VarifyLogic.findInvalidatePlaceholder(template);
+			//throw new BussinessException("有非法占位符；"+invalidatePlaceholder);
+			throw new BussinessException("有非法占位符!");
 		}
 
 		templateService.updateById(template);

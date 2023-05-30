@@ -92,7 +92,6 @@ public class VarifyLogic {
         if(!validateIteratePlaceholder(template.getType(), productLineName, iteratePlaceholderList)){
             return false;
         }
-
         if(!validateHistoryPlaceholder(template.getType(), productLineName, historyPlaceholderList)){
             return false;
         }
@@ -140,12 +139,21 @@ public class VarifyLogic {
             throw new BussinessException("产品线名称错误！");
         }
 
-        if(placeholderAllList.containsAll(placeholderList)){
-            return true;
-        }else{
-            return false;
-        }
 
+        for(String placeholder : placeholderList){
+            if(placeholder.startsWith(Config.ITERATE_PLACEHOLDER_ISSUE_PREFIX)){
+                //先简单判断是否含有2个-，未来再判断项目和类型的枚举值
+                String[] itemArray = placeholder.split("-");
+                if(itemArray.length < 3){
+                    return false;
+                }
+            }else{
+                if(!placeholderAllList.contains(placeholder)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static Boolean validateHistoryPlaceholder(String type, String productLineName, List<String> placeholderList){

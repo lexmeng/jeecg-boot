@@ -1,13 +1,17 @@
 package org.jeecg.modules.publishlist.tools;
 
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
+import lombok.extern.slf4j.Slf4j;
 import org.jeecg.modules.publishlist.config.Config;
 import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
 
+@Component
+@Slf4j
 public class JenkinsUtils {
     @Autowired
     private JenkinsOFSUtils jenkinsOFSUtils;

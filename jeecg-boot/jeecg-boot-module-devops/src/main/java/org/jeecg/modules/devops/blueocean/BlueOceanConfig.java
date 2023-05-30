@@ -10,8 +10,8 @@ import java.io.Serializable;
 
 @Validated
 @Data
-@Configuration
-@ConfigurationProperties(prefix = "jenkins")
+//@Configuration
+//@ConfigurationProperties(prefix = "jenkins")
 public class BlueOceanConfig implements Serializable {
 
     @NotBlank
