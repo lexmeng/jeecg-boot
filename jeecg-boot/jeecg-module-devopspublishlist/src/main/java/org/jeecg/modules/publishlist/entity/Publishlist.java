@@ -110,7 +110,17 @@ public class Publishlist implements Serializable {
     @Excel(name = "用户手册英文链接", width = 15)
     @ApiModelProperty(value = "用户手册英文链接")
     private java.lang.String userManualChLink;
-    /**创建人*/
+	/**产品行文变更文档链接*/
+	@Excel(name = "产品行文变更文档链接", width = 15)
+    @ApiModelProperty(value = "产品行文变更文档链接")
+    private String productChangeDocLink;
+	/**发布日期*/
+	@Excel(name = "发布日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "发布日期")
+    private Date releaseDate;
+	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private String createBy;
     /**创建日期*/

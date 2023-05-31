@@ -6,6 +6,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jeecg.common.system.api.ISysBaseAPI;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.modules.publishlist.aspect.AutoLogPublishlist;
 import org.jeecg.modules.publishlist.bpservice.JenkinsBPService;
@@ -78,6 +79,9 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 
 	@Autowired
 	private JenkinsBPService jenkinsBPService;
+
+	@Autowired
+	private ISysBaseAPI sysBaseAPI;
 	
 	/**
 	 * 分页列表查询
@@ -126,7 +130,8 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	public Result<String> add(@RequestBody PublishlistPage publishlistPage) {
 		Publishlist publishlist = new Publishlist();
 		BeanUtils.copyProperties(publishlistPage, publishlist);
-
+		LoginUser user = sysBaseAPI.getUserByName(publishlist.getPmId());
+		publishlist.setPmName(user.getRealname());
 		publishlistBPService.savePublishlist(publishlist, publishlistPage.getPublishlistProjectList(),publishlistPage.getDependentComponentList(),publishlistPage.getPackageUrlList());
 
 		return Result.OK("添加成功！");
@@ -144,6 +149,9 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 	public Result<String> edit(@RequestBody PublishlistPage publishlistPage) {
 		Publishlist publishlist = new Publishlist();
 		BeanUtils.copyProperties(publishlistPage, publishlist);
+		LoginUser user = sysBaseAPI.getUserByName(publishlist.getPmId());
+		publishlist.setPmName(user.getRealname());
+
 		Publishlist publishlistEntity = publishlistService.getById(publishlist.getId());
 		if(publishlistEntity==null) {
 			return Result.error("未找到对应数据");
