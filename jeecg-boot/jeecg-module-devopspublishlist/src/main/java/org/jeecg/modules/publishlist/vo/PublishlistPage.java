@@ -1,5 +1,6 @@
 package org.jeecg.modules.publishlist.vo;
 
+import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
@@ -105,6 +106,14 @@ public class PublishlistPage {
 	@Excel(name = "用户手册英文链接", width = 15)
 	@ApiModelProperty(value = "用户手册英文链接")
     private String userManualChLink;
+	/**产品行文变更文档链接*/
+	@ApiModelProperty(value = "产品行文变更文档链接")
+	private String productChangeDocLink;
+	/**发布日期*/
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@ApiModelProperty(value = "发布日期")
+	private Date releaseDate;
 	/**创建人*/
 	@ApiModelProperty(value = "创建人")
     private String createBy;

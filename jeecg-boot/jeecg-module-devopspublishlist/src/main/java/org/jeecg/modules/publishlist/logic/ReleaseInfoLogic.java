@@ -6,6 +6,7 @@ import org.jeecg.modules.publishlist.entity.*;
 import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.vo.PublishlistQueryResult;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,11 @@ public class ReleaseInfoLogic {
         placeholderContentMap.put("${documentUrlId}", publishlist.getDocumentUrlId());
         placeholderContentMap.put("${userManualChLink}", publishlist.getUserManualChLink());
         placeholderContentMap.put("${userManualEnLink}", publishlist.getUserManualEnLink());
+        placeholderContentMap.put("${productChangeDocLink}", publishlist.getProductChangeDocLink());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = dateFormat.format(publishlist.getReleaseDate());
+        placeholderContentMap.put("${releaseDate}", dateString);
 
         return placeholderContentMap;
     }

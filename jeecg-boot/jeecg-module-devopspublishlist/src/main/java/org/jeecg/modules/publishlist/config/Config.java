@@ -102,6 +102,9 @@ public class Config {
         placeholderList.add("${userManualChLink}");
         placeholderList.add("${userManualEnLink}");
 
+        placeholderList.add("${productChangeDocLink}");
+        placeholderList.add("${releaseDate}");
+
         //placeholderList.add("${productBehaviorChangeUrl}");//
 
         iteratePlacerholderList.add(ITERATE_PLACEHOLDER_ISSUE);//循环占位符
