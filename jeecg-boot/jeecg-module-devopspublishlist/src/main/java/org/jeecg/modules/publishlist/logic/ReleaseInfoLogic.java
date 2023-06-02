@@ -57,8 +57,12 @@ public class ReleaseInfoLogic {
         placeholderContentMap.put("${productChangeDocLink}", publishlist.getProductChangeDocLink());
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String dateString = dateFormat.format(publishlist.getReleaseDate());
-        placeholderContentMap.put("${releaseDate}", dateString);
+        if(publishlist.getReleaseDate()==null){
+            placeholderContentMap.put("${releaseDate}", "");
+        }else{
+            String dateString = dateFormat.format(publishlist.getReleaseDate());
+            placeholderContentMap.put("${releaseDate}", dateString);
+        }
 
         return placeholderContentMap;
     }
