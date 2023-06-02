@@ -272,12 +272,40 @@ public class JiraClientUtils {
     }
 
 
+    public void getIssueFields(){
+        try{
+            HttpResponse<JsonNode> response = Unirest.get("https://olapio.atlassian.net/rest/api/3/field")
+                    .basicAuth(jiraAccountName, jiraSign)
+                    .header("Accept", "application/json")
+                    .asJson();
+            log.info("Http request response. body:" + response.getBody().toString());
+        }catch(UnirestException e){
+            e.printStackTrace();
+            throw new RuntimeException("Jira系统访问产生错误: " + e.toString());
+        }
+    }
+
+    public void getIssue(String issueId){
+        try{
+            HttpResponse<JsonNode> response = Unirest.get("https://olapio.atlassian.net/rest/api/3/issue/"+issueId)
+                    .basicAuth(jiraAccountName, jiraSign)
+                    .header("Accept", "application/json")
+                    .asJson();
+
+            log.info("Http request response. body:" + response.getBody().toString());
+        }catch(UnirestException e){
+            e.printStackTrace();
+            throw new RuntimeException("Jira系统访问产生错误: " + e.toString());
+        }
+    }
+
     public static void main(String[] args){
         JiraClientUtils utils = new JiraClientUtils();
         try{
             //utils.searchJira("Kyligence Enterprise","KE 4.6.6.0-GA 03/09");
             utils.initJiraRestClient();
-            utils.searchIssueByProjectAndFixVersions("KE","KE 4.5.19.11-GA");
+
+            //utils.searchIssueByProjectAndFixVersions("KE","KE 4.5.19.11-GA");
             //IssueSearchResult result =utils.restSearchIssueByProjectAndFixVersions("KE","KE 4.5.19.11-GA");
             //System.out.println(result);
         }

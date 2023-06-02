@@ -402,21 +402,5 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		 return Result.OK("提交成功！");
 	 }
 
-	 @AutoLog(value = "Quard测试jenkins任务")
-	 @ApiOperation(value="Quard测试jenkins任务", notes="Quard测试jenkins任务")
-	 @PostMapping(value = "/quardJenkins")
-	 public Result<String> quardJenkins(@RequestBody QuardTestParam quardTestParam) {
-		 jenkinsBPService.executeKE4QuardTestJob(quardTestParam);
-
-		 return Result.OK("执行成功！");
-	 }
-
-	 @AutoLog(value = "Step测试jenkins任务")
-	 @ApiOperation(value="Step测试jenkins任务", notes="Step测试jenkins任务")
-	 @PostMapping(value = "/stepJenkins")
-	 public Result<String> stepJenkins(@RequestBody StepTestParam stepTestParam) {
-		 jenkinsBPService.executeKE4StepTestJob(stepTestParam);
-		 return Result.OK("执行成功！");
-	 }
 
 }

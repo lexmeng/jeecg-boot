@@ -1,13 +1,14 @@
 package org.jeecg.modules.publishlist.tools;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import lombok.extern.slf4j.Slf4j;
+import org.jeecg.modules.publishlist.exception.BussinessException;
+import org.jeecg.modules.publishlist.vo.JenkinsJobResult;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -174,7 +175,7 @@ public class JenkinsAWSUtils implements JenkinsUtilsInterface{
         }
     }
 */
-    public void buildWithParametersUseRestfulPost(String folderName, String jobName, MultiValueMap<String, String> paramMap){
+    public ResponseEntity<String> buildWithParametersUseRestfulPost(String folderName, String jobName, MultiValueMap<String, String> paramMap){
         String userCredentials = JENKINS_USERNAME + ":" + JENKINS_API_TOKEN;
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
 
@@ -198,10 +199,12 @@ public class JenkinsAWSUtils implements JenkinsUtilsInterface{
             log.info("Jenkins job has been triggered successfully!");
         }else{
             log.info("Failed to trigger Jenkins Job.");
+            throw new BussinessException("Failed to trigger Jenkins Job."+response.getBody().toString());
         }
+        return response;
     }
 
-    public void buildWithPrarametersInKEUseRestfulPost(String jobName, MultiValueMap<String, String> paramMap){
+    public ResponseEntity<String> buildWithPrarametersInKEUseRestfulPost(String jobName, MultiValueMap<String, String> paramMap){
         String userCredentials = JENKINS_USERNAME + ":" + JENKINS_API_TOKEN;
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
 
@@ -219,7 +222,69 @@ public class JenkinsAWSUtils implements JenkinsUtilsInterface{
             log.info("Jenkins job has been triggered successfully!");
         }else{
             log.info("Failed to trigger Jenkins Job.");
+            throw new BussinessException("Failed to trigger Jenkins Job."+response.getBody().toString());
         }
+        return response;
+    }
+
+    @Override
+    public JenkinsJobResult getJobResult(URI uri){
+        String userCredentials = JENKINS_USERNAME + ":" + JENKINS_API_TOKEN;
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", basicAuth);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        String urlStr = uri.toString()+"api/json";
+        ResponseEntity<String> response = restTemplate.exchange(urlStr, HttpMethod.GET, new HttpEntity<String>(headers), String.class);
+        log.info(response.getBody().toString());
+
+        if(response.getStatusCodeValue() != 200){
+            throw new BussinessException("getBuildNo web request error!"+response.getHeaders().toString()+"body:"+response.getBody().toString());
+        }
+
+        JSONObject jsonObject = (JSONObject)JSONObject.toJSON(JSON.parse(response.getBody()));
+
+        JSONObject executable = jsonObject.getJSONObject("executable");
+        if(executable == null){
+            return null;
+        }else{
+            Integer number = executable.getIntValue("number");
+            String url = executable.getString("url");
+
+            JenkinsJobResult jenkinsJobResult = new JenkinsJobResult();
+            jenkinsJobResult.setNumber(number);
+            jenkinsJobResult.setUrl(url);
+            return jenkinsJobResult;
+        }
+
+    }
+
+    @Override
+    public JenkinsJobResult retryGetJobResult(URI queueItemUri){
+        Integer count = 600;//600次
+        Integer sleepTime = 1000;//1秒
+
+        while(count > 0){
+            JenkinsJobResult result = getJobResult(queueItemUri);
+            if(result == null){
+                try{
+                    Thread.sleep(sleepTime);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                log.info("count:"+count);
+                count--;
+            }else{
+                log.info(result.toString());
+                return result;
+            }
+        }
+        log.info("retryGetJobResult TimeOut.uri:"+queueItemUri.toString());
+        return null;
     }
 
 

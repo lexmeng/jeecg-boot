@@ -1,18 +1,26 @@
 package org.jeecg.modules.publishlist.bpservice;
 
 import com.mchange.v2.collection.MapEntry;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.publishlist.config.Config;
+import org.jeecg.modules.publishlist.entity.TestQuardRequest;
 import org.jeecg.modules.publishlist.exception.BussinessException;
+import org.jeecg.modules.publishlist.service.ITestQuardRequestService;
+import org.jeecg.modules.publishlist.tools.IdTool;
 import org.jeecg.modules.publishlist.tools.JenkinsOperateUtils;
 import org.jeecg.modules.publishlist.tools.JenkinsUtils;
 import org.jeecg.modules.publishlist.tools.ParamUtils;
+import org.jeecg.modules.publishlist.vo.JenkinsJobResult;
 import org.jeecg.modules.publishlist.vo.QuardTestParam;
 import org.jeecg.modules.publishlist.vo.StepTestParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.net.URI;
 import java.util.*;
 
 @Service
@@ -23,6 +31,9 @@ public class JenkinsBPService {
 
     @Autowired
     private JenkinsUtils jenkinsUtils;
+
+    @Autowired
+    private ITestQuardRequestService testQuardRequestService;
 
     public void jenkinsBuildWithParameters(String typeName, String folderName, String jobName, Map<String, String> paramMap){
         MultiValueMap<String, String> paramMultiValueMap = new LinkedMultiValueMap<>();
@@ -78,7 +89,7 @@ public class JenkinsBPService {
         jenkinsUtils.buildWithPrarametersInKEUseRestfulPost(Config.JENKINS_TYPE_OFS, "0.KE-STEP", paramMap);
     }
 
-    public void executeKE4QuardTestJob(QuardTestParam quardTestParam){
+    public Boolean executeKE4QuardTestJob(QuardTestParam quardTestParam){
         List<String> quardTypeEnum = Arrays.asList("KE4X_Daily", "KE4X_FULLCASE", "KE4X_COMPATIBILITY", "KE4X_UPGRADE");
         ParamUtils.checkInEnum(quardTestParam.getQuardType(), quardTypeEnum);
 
@@ -99,6 +110,32 @@ public class JenkinsBPService {
         paramMap.add("select_tests", quardTestParam.getSelectTests());
         paramMap.add("package_url", quardTestParam.getPackageUrl());
 
-        jenkinsUtils.buildWithPrarametersInKEUseRestfulPost(Config.JENKINS_TYPE_OFS, "0.KE-QUARD", paramMap);
+        ResponseEntity<String> response = jenkinsUtils.buildWithPrarametersInKEUseRestfulPost(Config.JENKINS_TYPE_OFS, "0.KE-QUARD", paramMap);
+        URI queueItemUri = response.getHeaders().getLocation();
+        JenkinsJobResult jobResult = jenkinsUtils.retryGetJobResult(Config.JENKINS_TYPE_OFS, queueItemUri);
+        if(jobResult == null){
+            throw new BussinessException("Jenkins job号获取超时！请手动写入job号");
+        }
+
+        TestQuardRequest quardRequest = new TestQuardRequest();
+
+        quardRequest.setId(IdTool.generalId());
+        quardRequest.setTestType(quardTestParam.getQuardType());
+        quardRequest.setPlatformName(quardTestParam.getPlatform());
+        quardRequest.setQuardRepo(quardTestParam.getQuardRepo());
+        quardRequest.setQuardBranch(quardTestParam.getQuardBranch());
+        quardRequest.setUpgradeFromNum(quardTestParam.getReuseNum());
+        quardRequest.setUpgradeToNum(quardTestParam.getUpgradeNum());
+        quardRequest.setSelectTests(quardTestParam.getSelectTests());
+        quardRequest.setPackageUrl(quardTestParam.getPackageUrl());
+        quardRequest.setJenkinsJobNum(jobResult.getNumber().toString());
+        quardRequest.setJenkinsJobUrl(jobResult.getUrl());
+
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        quardRequest.setCreateBy(sysUser.getUsername());
+        quardRequest.setCreateTime(new Date());
+
+        Boolean result = testQuardRequestService.save(quardRequest);
+        return result;
     }
 }
