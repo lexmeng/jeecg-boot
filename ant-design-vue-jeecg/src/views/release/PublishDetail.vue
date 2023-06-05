@@ -131,9 +131,9 @@ export default {
   created() {
     this.publishlistId = this.$route.query.id
     this.initDictConfig()
+    this.reloadData()
   },
   mounted() {
-    this.reloadData()
   },
   computed: {
     sprintCurrent() {
@@ -312,13 +312,14 @@ export default {
     submitCallback() {
       this.$emit('ok')
       this.visible = false
-    }
+    },
     publish() {
 
     },
     handlePakcage(){},
     handleQuard(){},
     handleStep(){},
+  }
 }
 </script>
 
