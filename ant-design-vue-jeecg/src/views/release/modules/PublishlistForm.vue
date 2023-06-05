@@ -130,8 +130,8 @@
           <a-card title="用户文档" size="small" :bordered="false" :show="!disabled">
             <a-row class="form-row">
               <a-col :span="18">
-                <a-form-model-item label="用户手册中文链接" :labelCol="labelCol1" :wrapperCol="wrapperCol1" prop="urerManualEnLink">
-                  <a-input addon-before="URL" v-model="model.urerManualEnLink" placeholder="请输入用户手册中文链接"  ></a-input>
+                <a-form-model-item label="用户手册中文链接" :labelCol="labelCol1" :wrapperCol="wrapperCol1" prop="userManualEnLink">
+                  <a-input addon-before="URL" v-model="model.userManualEnLink" placeholder="请输入用户手册中文链接"  ></a-input>
                 </a-form-model-item>
               </a-col>
               <a-col :span="18">
