@@ -43,6 +43,11 @@ public class TestQuardResult implements Serializable {
 	@Excel(name = "jenkins job 号", width = 15)
     @ApiModelProperty(value = "jenkins job 号")
     private java.lang.String jenkinsJobNum;
+    /**allure报告链接*/
+    @Excel(name = "allure报告链接", width = 15)
+    @ApiModelProperty(value = "allure报告链接")
+    private java.lang.String reportLink;
+
 	/**总用例数*/
 	@Excel(name = "总用例数", width = 15)
     @ApiModelProperty(value = "总用例数")

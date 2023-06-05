@@ -35,12 +35,13 @@ public class TestingLogic {
         return testQuardTask;
     }
 
-    public static TestQuardResult generateTestQuardResultFromAllureResult(AllureResult allureResult, String requestId, String jenkinsJobNo){
+    public static TestQuardResult generateTestQuardResultFromAllureResult(AllureResult allureResult, String requestId, String jenkinsJobNo, String allureReportLink){
         TestQuardResult testQuardResult = new TestQuardResult();
         testQuardResult.setId(IdTool.generalId());
 
         testQuardResult.setQuardRequestId(requestId);
         testQuardResult.setJenkinsJobNum(jenkinsJobNo);
+        testQuardResult.setReportLink(allureReportLink);
         testQuardResult.setTotalCaseNum(allureResult.getTotal());
         testQuardResult.setFailedCaseNum(allureResult.getFailed());
         testQuardResult.setBrokenCaseNum(allureResult.getBroken());

@@ -32,6 +32,9 @@ public class QuardTestProcess {
     @ApiModelProperty(value = "升级回滚目的版本号")
     private String upgradeTo;
 
+    @ApiModelProperty(value = "allure报告链接")
+    private String reportLink;
+
     @ApiModelProperty(value = "测试结果")
     private AllureResult allureResult;
 

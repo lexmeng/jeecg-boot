@@ -79,7 +79,7 @@ public class TestingController {
         if("finished".equals(quardTestProcess.getQuardStage().toLowerCase())){
             AllureResult allureResult = quardTestProcess.getAllureResult();
             String requestId = testQuardRequestService.getRequestIdByJenkinsJobNo(quardTestProcess.getJenkinsJobId());
-            TestQuardResult testQuardResult = TestingLogic.generateTestQuardResultFromAllureResult(allureResult, requestId, quardTestProcess.getJenkinsJobId());
+            TestQuardResult testQuardResult = TestingLogic.generateTestQuardResultFromAllureResult(allureResult, requestId, quardTestProcess.getJenkinsJobId(), quardTestProcess.getReportLink());
 
             testQuardResultService.save(testQuardResult);
         }
