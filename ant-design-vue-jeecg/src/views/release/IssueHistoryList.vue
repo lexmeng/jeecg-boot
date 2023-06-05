@@ -10,10 +10,6 @@
                 <a target="_blank" slot="title" :href="addItem.issueLink">{{ addItem.issueNum }}</a>
               </a-list-item-meta>
               <div>{{ addItem.issueType }}</div>
-              <!-- <a-avatar
-                slot="avatar"
-                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              /> -->
             </a-list-item>
           </a-list>
         </a-collapse-panel>
@@ -190,7 +186,7 @@
         var params = {} //this.getQueryParams();//查询条件
         params.publishlistId = this.pid
         params.pageNo = queryParam.pageNo
-        params.pageSize = queryParam.pageSize
+        params.pageSize = 100
         this.loading = true;
         getAction(this.url.listBatch, params).then((res) => {
           if (res.success) {

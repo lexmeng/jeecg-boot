@@ -23,7 +23,7 @@
     <!-- actions -->
     <template slot="action">
       <a-button type="dashed" icon="reload" @click="reloadData"></a-button>
-      <a-button type="primary" style="margin:0 4px" icon="cloud-upload" @click="reloadData">发布</a-button>
+      <a-button type="primary" style="margin:0 4px" icon="cloud-upload" @click="publish">发布</a-button>
       <a-button-group>
         <a-button @click="handleReleaseNote">ReleaseNote</a-button>
         <a-button @click="handleReleaseMail">ReleaseMail</a-button>
@@ -34,11 +34,36 @@
       </a-button-group>
     </template>
 
-    <a-card :bordered="false" title="Sprint 迭代进度">
-      <a-steps :direction="isMobile() && 'vertical' || 'horizontal'" :current="sprintCurrent" progressDot>
-        <a-step v-for="item in sprintStages" :key="item.key" :title="item.text"></a-step>
-      </a-steps>
-    </a-card>
+<!--    <a-card :bordered="false" title="Sprint 迭代进度">-->
+<!--      <a-steps :direction="isMobile() && 'vertical' || 'horizontal'" :current="sprintCurrent" progressDot>-->
+<!--        <a-step v-for="item in sprintStages" :key="item.key" :title="item.text"></a-step>-->
+<!--      </a-steps>-->
+<!--    </a-card>-->
+    <a-collapse default-active-key="2" :bordered="false">
+      <template #expandIcon="props">
+        <a-icon type="caret-right" :rotate="props.isActive ? 90 : 0" />
+      </template>
+      <a-collapse-panel key="1" header="研发阶段" :style="customStyle">
+        <issue-dev-list pid="publishlistId" ref="issueList"></issue-dev-list>
+      </a-collapse-panel>
+      <a-collapse-panel key="2" header="测试阶段" :style="customStyle">
+        <a-button-group>
+          <a-button @click="handlePakcage" type="primary" icon="build">打QA包</a-button>
+          <a-button @click="handleQuard" type="primary" icon="build">Run Quard</a-button>
+          <a-button @click="handleStep" type="primary" icon="build">Run Step</a-button>
+
+        </a-button-group>
+
+      <!--        <a-steps direction="horizontal" :current="testingCurrent" progressDot>-->
+      <!--          <a-step key="1" title="打包"></a-step>-->
+      <!--          <a-step key="2" title="Quard"></a-step>-->
+      <!--          <a-step key="3" title="Step"></a-step>-->
+      <!--        </a-steps>-->
+      </a-collapse-panel>
+      <a-collapse-panel key="3" header="交付阶段" :style="customStyle">
+        <p>{{ text }}</p>
+      </a-collapse-panel>
+    </a-collapse>
 
     <gen-text-drawer ref="modalForm" @ok="modalFormOk"></gen-text-drawer>
 
@@ -58,12 +83,14 @@ import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 import { getAction } from '@api/manage'
 import GenTextDrawer from "@views/release/modules/GenTextDrawer.vue";
 import ProjectDrawer from "@views/release/modules/ProjectDrawer.vue";
+import IssueDevList from "@views/release/IssueDevList.vue";
 
 const DetailListItem = DetailList.Item
 
 export default {
   name: 'PublishDetail',
   components: {
+    IssueDevList,
     ProjectDrawer,
     GenTextDrawer,
     PageLayout,
@@ -86,6 +113,9 @@ export default {
       sprintStages: {},
       publishlistId: '',
       isMarkDown: true,
+      issueList: [],
+      testingCurrent: 0,
+      customStyle: 'background: #fff;border-radius:4px;margin-bottom: 5px;border: 0;overflow: hidden',
       url: {
         queryById: '/release/queryById',
         genReleaseNote: '/release/generateReleaseNoteContent',
@@ -93,19 +123,17 @@ export default {
         genPackagePr: '/release/generateProductPackagePRContent',
         genHandbookChPr: '/release/generateProductHandbookPRChContent',
         genHandbookEnPr: '/release/generateProductHandbookPREnContent',
-        genWebsite: '/release/generateWebsiteContent'
+        genWebsite: '/release/generateWebsiteContent',
+        issueList: "/release/issue/list",
       }
     }
   },
   created() {
     this.publishlistId = this.$route.query.id
-    console.log("publishlistId", this.publishlistId);
-    // this.publishForm = this.$route.query.record
-    // this.reloadData(this.publishlistId)
     this.initDictConfig()
   },
   mounted() {
-    this.reloadData(this.publishlistId)
+    this.reloadData()
   },
   computed: {
     sprintCurrent() {
@@ -124,14 +152,34 @@ export default {
       });
     },
     reloadData() {
+      this.loadDetial()
+      this.loadIssues()
+    },
+    loadDetial(){
       this.queryParam = {id: this.publishlistId}
       getAction(this.url.queryById, this.queryParam).then((res) => {
         if(res.success){
           this.publishForm = res.result
-          console.log('publishForm', res.result)
         }else{
           this.$message.error(res.message)
         }
+      })
+    },
+    loadIssues(pn) {
+      this.loading = true;
+      var params = {}
+      params.publishlistId = this.publishlistId
+      params.pageNo = pn || 1
+      params.pageSize = 10
+      getAction(this.url.issueList, params).then((res) => {
+        if (res.success) {
+          this.issueList = res.result.records||res.result;
+          this.$refs.issueList.dataSource = this.issueList
+        }else{
+          this.$message.warning(res.message)
+        }
+      }).finally(() => {
+        this.loading = false
       })
     },
     handleReleaseNote() {
@@ -265,10 +313,14 @@ export default {
       this.$emit('ok')
       this.visible = false
     }
-  }
+    publish() {
+
+    },
+    handlePakcage(){},
+    handleQuard(){},
+    handleStep(){},
 }
 </script>
-
 
 <style lang="less" scoped>
 

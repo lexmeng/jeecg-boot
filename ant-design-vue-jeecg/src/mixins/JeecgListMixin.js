@@ -19,7 +19,7 @@ export const JeecgListMixin = {
       /* 分页参数 */
       ipagination:{
         current: 1,
-        pageSize: 10,
+        pageSize: 15,
         pageSizeOptions: ['10', '20', '30'],
         showTotal: (total, range) => {
           return range[0] + "-" + range[1] + " 共" + total + "条"
