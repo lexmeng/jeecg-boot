@@ -153,15 +153,18 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 		page.setScrumStage(publishlist.getScrumStage());
 		page.setPublishlistStage(publishlist.getPublishlistStage());
 		page.setPublishDatetime(publishlist.getPublishDatetime());
+		page.setReleaseDate(publishlist.getReleaseDate());
 		page.setPmId(publishlist.getPmId());
 		page.setPmName(publishlist.getPmName());
 		page.setCommitId(publishlist.getCommitId());
 		page.setUserManualEnLink(publishlist.getUserManualEnLink());
 		page.setUserManualChLink(publishlist.getUserManualChLink());
+		page.setProductChangeDocLink(publishlist.getProductChangeDocLink());
 		page.setCreateBy(publishlist.getCreateBy());
 		page.setCreateTime(publishlist.getCreateTime());
 		page.setUpdateBy(publishlist.getUpdateBy());
 		page.setUpdateTime(publishlist.getUpdateTime());
+
 	}
 
 	@Override
