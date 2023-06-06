@@ -299,7 +299,7 @@ public class JenkinsAWSUtils implements JenkinsUtilsInterface{
         map.add("en_content", "abcdefs");
         map.add("document_version", "4.5");
 
-        utils.buildWithParametersUseRestfulPost("DevOps","devopsweb-manual-pr", map);
+        utils.buildWithParametersUseRestfulPost("PM","devopsweb-manual-pr", map);
     }
 
 

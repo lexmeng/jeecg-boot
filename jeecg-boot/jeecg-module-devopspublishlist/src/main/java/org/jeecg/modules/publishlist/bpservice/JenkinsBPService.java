@@ -50,7 +50,7 @@ public class JenkinsBPService {
         paramMap.add("content", content);
         paramMap.add("document_version", documentVersion);
         //jenkinsOperateUtils.buildParamJob("devopsweb-productpackage-pr", paramMap);
-        jenkinsUtils.buildWithParametersUseRestfulPost(Config.JENKINS_TYPE_OFS, "DevOps","devopsweb-productpackage-pr", paramMap);
+        jenkinsUtils.buildWithParametersUseRestfulPost(Config.JENKINS_TYPE_OFS, "PM","devopsweb-productpackage-pr", paramMap);
     }
 
     public void jenkinsCommitProductHandbookPR(String version, String cnContent, String enContent, String documentVersion){
@@ -60,7 +60,7 @@ public class JenkinsBPService {
         paramMap.add("en_content", enContent);
         paramMap.add("document_version", documentVersion);
         //jenkinsOperateUtils.buildParamJob("devops_manual-pr", paramMap);
-        jenkinsUtils.buildWithParametersUseRestfulPost(Config.JENKINS_TYPE_OFS,"DevOps","devopsweb-manual-pr", paramMap);
+        jenkinsUtils.buildWithParametersUseRestfulPost(Config.JENKINS_TYPE_OFS,"PM","devopsweb-manual-pr", paramMap);
     }
 
     public void executeKE4StepTestJob(StepTestParam stepTestParam){
