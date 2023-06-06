@@ -371,7 +371,7 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 
 	 @ApiOperation(value="调用jenkins提交ProductPackagePR", notes="调用jenkins提交ProductPackagePR")
 	 @GetMapping(value = "/jenkinsCommitProductPackagePR")
-	 public Result<String> jenkinsCommitProductPackagePR(@RequestParam(name="id",required=true) String id) {
+	 public Result<String> jenkinsCommitProductPackagePR(@RequestParam(name="id",required=true) String id, @RequestParam(name="rowNumInsert",required = true) String rowNumInsert) {
 		 Publishlist publishlist = publishlistService.getById(id);
 		 if(publishlist==null) {
 			 return Result.error("未找到对应数据");
@@ -380,7 +380,7 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		 Map<String, String> placeholderContentMap = new HashMap<>();
 		 String productPackagePRContent = releaseInfoBPService.generateProductPackagePRContent(id, placeholderContentMap);
 
-		 jenkinsBPService.jenkinsCommitProductPackagePR(publishlist.getVersionName(), productPackagePRContent, publishlist.getDocumentVersion());
+		 jenkinsBPService.jenkinsCommitProductPackagePR(publishlist.getVersionName(), productPackagePRContent, publishlist.getDocumentVersion(), rowNumInsert);
 
 		 return Result.OK("提交成功！");
 	 }

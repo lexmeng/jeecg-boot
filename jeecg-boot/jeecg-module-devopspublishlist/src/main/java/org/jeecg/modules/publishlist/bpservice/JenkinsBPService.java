@@ -43,8 +43,9 @@ public class JenkinsBPService {
         jenkinsUtils.buildWithParametersUseRestfulPost(typeName, folderName,jobName, paramMultiValueMap);
     }
 
-    public void jenkinsCommitProductPackagePR(String version, String content, String documentVersion){
+    public void jenkinsCommitProductPackagePR(String version, String content, String documentVersion, String rowNumInsert){
         MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
+        paramMap.add("row_num_insert", rowNumInsert);
         paramMap.add("version", version);
         paramMap.add("content", content);
         paramMap.add("document_version", documentVersion);
