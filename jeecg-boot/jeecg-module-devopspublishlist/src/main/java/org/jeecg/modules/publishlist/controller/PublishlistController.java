@@ -12,6 +12,7 @@ import org.jeecg.modules.publishlist.aspect.AutoLogPublishlist;
 import org.jeecg.modules.publishlist.bpservice.JenkinsBPService;
 import org.jeecg.modules.publishlist.bpservice.PublishlistBPService;
 import org.jeecg.modules.publishlist.bpservice.ReleaseInfoBPService;
+import org.jeecg.modules.publishlist.domainservice.IPublishlistDomainService;
 import org.jeecg.modules.publishlist.entity.DependentComponent;
 import org.jeecg.modules.publishlist.entity.PackageUrl;
 import org.jeecg.modules.publishlist.service.IDependentComponentService;
@@ -67,6 +68,9 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 
 	@Autowired
 	private PublishlistBPService publishlistBPService;
+
+	@Autowired
+	private IPublishlistDomainService publishlistDomainService;
 
 	@Autowired
 	private ReleaseInfoBPService releaseInfoBPService;
@@ -205,6 +209,23 @@ public class PublishlistController extends JeecgController<Publishlist, IPublish
 		}
 		return Result.OK(publishlistQueryResult);
 	}
+
+
+	 @AutoLog(value = "发布单-开发状态")
+	 @ApiOperation(value="发布单-开发状态", notes="发布单-开发状态")
+	 @RequestMapping(value = "/develop", method = {RequestMethod.PUT,RequestMethod.POST})
+	 public Result<String> develop(@RequestParam(name="publishlistId",required=true) String publishlistId) {
+		 publishlistDomainService.develop(publishlistId);
+		 return Result.OK("开发状态成功！");
+	 }
+
+	 @AutoLog(value = "发布单-测试状态")
+	 @ApiOperation(value="发布单-测试状态", notes="发布单-测试状态")
+	 @RequestMapping(value = "/test", method = {RequestMethod.PUT,RequestMethod.POST})
+	 public Result<String> test(@RequestParam(name="publishlistId",required=true) String publishlistId) {
+		 publishlistDomainService.test(publishlistId);
+		 return Result.OK("测试状态成功！");
+	 }
 
 	 @AutoLog(value = "发布单-发布")
 	 @ApiOperation(value="发布单-发布", notes="发布单-发布")

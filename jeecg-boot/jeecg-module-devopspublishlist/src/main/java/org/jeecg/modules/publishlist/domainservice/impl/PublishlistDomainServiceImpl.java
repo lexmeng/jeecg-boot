@@ -87,6 +87,37 @@ public class PublishlistDomainServiceImpl implements IPublishlistDomainService {
     }
 
     @Transactional
+    @Override
+    public void develop(String publishlistId){
+        Publishlist publishlist = publishlistMapper.selectById(publishlistId);
+
+        String currentStatus = publishlist.getPublishlistStage();
+        publishlist.setPublishlistStage(statusMachine.develop(currentStatus));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        publishlist.setPublishDatetime(sdf.format(System.currentTimeMillis()));
+        updatePublislist(publishlist);
+
+        publishlistMapper.updateById(publishlist);
+    }
+
+    @Transactional
+    @Override
+    public void test(String publishlistId){
+        Publishlist publishlist = publishlistMapper.selectById(publishlistId);
+
+        String currentStatus = publishlist.getPublishlistStage();
+        publishlist.setPublishlistStage(statusMachine.test(currentStatus));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        publishlist.setPublishDatetime(sdf.format(System.currentTimeMillis()));
+        updatePublislist(publishlist);
+
+        publishlistMapper.updateById(publishlist);
+    }
+
+
+    @Transactional
     public void publish(String publishlistId){
         Publishlist publishlist = publishlistMapper.selectById(publishlistId);
 
