@@ -154,11 +154,11 @@
             align:"center",
             dataIndex: 'versionName'
           },
-          {
-            title:'版本类型',
-            align:"center",
-            dataIndex: 'versionType_dictText'
-          },
+          // {
+          //   title:'版本类型',
+          //   align:"center",
+          //   dataIndex: 'versionType_dictText'
+          // },
           {
             title:'jira版本名',
             align:"center",
@@ -169,16 +169,16 @@
             align:"center",
             dataIndex: 'documentVersion'
           },
-          {
-            title:'迭代冲刺号',
-            align:"center",
-            dataIndex: 'scrumNum'
-          },
-          {
-            title:'迭代阶段',
-            align:"center",
-            dataIndex: 'scrumStage_dictText'
-          },
+          // {
+          //   title:'迭代冲刺号',
+          //   align:"center",
+          //   dataIndex: 'scrumNum'
+          // },
+          // {
+          //   title:'迭代阶段',
+          //   align:"center",
+          //   dataIndex: 'scrumStage_dictText'
+          // },
           {
             title:'发布单状态',
             align:"center",

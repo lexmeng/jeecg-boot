@@ -1,13 +1,14 @@
 <template>
-  <page-layout :title="'发布单：' + publishForm.name" logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
+  <page-layout :title="'发布单：' + publishForm.name"
+    logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
     <detail-list slot="headerContent" size="small" :col="3" class="detail-layout">
       <detail-list-item term="创建人">{{ publishForm.createBy }}</detail-list-item>
       <detail-list-item term="产品线">{{ publishForm.productLineName }}</detail-list-item>
       <detail-list-item term="创建时间">{{ publishForm.createTime }}</detail-list-item>
       <detail-list-item term="产品">{{ publishForm.productName }}</detail-list-item>
-      <detail-list-item term="迭代冲刺号">{{publishForm.scrumNum}}</detail-list-item>
+      <detail-list-item term="迭代冲刺号">{{ publishForm.scrumNum }}</detail-list-item>
       <detail-list-item term="版本类型">{{ publishForm.versionType }}</detail-list-item>
-      <detail-list-item term="版本">{{publishForm.versionName}}</detail-list-item>
+      <detail-list-item term="版本">{{ publishForm.versionName }}</detail-list-item>
       <detail-list-item term="JIRA版本">{{ publishForm.jiraVersionName }}</detail-list-item>
     </detail-list>
     <a-row slot="extra" class="status-list">
@@ -34,45 +35,45 @@
       </a-button-group>
     </template>
 
-<!--    <a-card :bordered="false" title="Sprint 迭代进度">-->
-<!--      <a-steps :direction="isMobile() && 'vertical' || 'horizontal'" :current="sprintCurrent" progressDot>-->
-<!--        <a-step v-for="item in sprintStages" :key="item.key" :title="item.text"></a-step>-->
-<!--      </a-steps>-->
-<!--    </a-card>-->
-    <a-collapse default-active-key="2" :bordered="false">
+    <!--    <a-card :bordered="false" title="Sprint 迭代进度">-->
+    <!--      <a-steps :direction="isMobile() && 'vertical' || 'horizontal'" :current="sprintCurrent" progressDot>-->
+    <!--        <a-step v-for="item in sprintStages" :key="item.key" :title="item.text"></a-step>-->
+    <!--      </a-steps>-->
+    <!--    </a-card>-->
+    <a-collapse :default-active-key="currentStage" :bordered="false">
       <template #expandIcon="props">
         <a-icon type="caret-right" :rotate="props.isActive ? 90 : 0" />
       </template>
       <a-collapse-panel key="1" header="研发阶段" :style="customStyle">
-        <issue-dev-list pid="publishlistId" ref="issueList"></issue-dev-list>
+        <issue-dev-list :pid="publishlistId" ref="issueList"></issue-dev-list>
       </a-collapse-panel>
       <a-collapse-panel key="2" header="测试阶段" :style="customStyle">
         <a-button-group>
           <a-button @click="handlePakcage" type="primary" icon="build">打QA包</a-button>
           <a-button @click="handleQuard" type="primary" icon="build">Run Quard</a-button>
           <a-button @click="handleStep" type="primary" icon="build">Run Step</a-button>
-
         </a-button-group>
 
-      <!--        <a-steps direction="horizontal" :current="testingCurrent" progressDot>-->
-      <!--          <a-step key="1" title="打包"></a-step>-->
-      <!--          <a-step key="2" title="Quard"></a-step>-->
-      <!--          <a-step key="3" title="Step"></a-step>-->
-      <!--        </a-steps>-->
+        <!--        <a-steps direction="horizontal" :current="testingCurrent" progressDot>-->
+        <!--          <a-step key="1" title="打包"></a-step>-->
+        <!--          <a-step key="2" title="Quard"></a-step>-->
+        <!--          <a-step key="3" title="Step"></a-step>-->
+        <!--        </a-steps>-->
       </a-collapse-panel>
       <a-collapse-panel key="3" header="交付阶段" :style="customStyle">
-        <p>{{ text }}</p>
+
       </a-collapse-panel>
     </a-collapse>
 
     <gen-text-drawer ref="modalForm" @ok="modalFormOk"></gen-text-drawer>
 
-<!--    <a-card class="card" style="margin-top: 24px" :title="txtTitle" :bordered="false">-->
-<!--      <j-markdown-editor v-if="isMarkDown" v-model="txtContent"></j-markdown-editor>-->
-<!--      <j-editor v-else v-model="txtContent"></j-editor>-->
-<!--    </a-card>-->
+    <!--    <a-card class="card" style="margin-top: 24px" :title="txtTitle" :bordered="false">-->
+    <!--      <j-markdown-editor v-if="isMarkDown" v-model="txtContent"></j-markdown-editor>-->
+    <!--      <j-editor v-else v-model="txtContent"></j-editor>-->
+    <!--    </a-card>-->
   </page-layout>
 </template>
+
 <script>
 import JMarkdownEditor from '@comp/jeecg/JMarkdownEditor/index'
 import PageLayout from '@comp/page/PageLayout'
@@ -103,7 +104,7 @@ export default {
   data() {
     return {
       title: '',
-      width: 800,
+      width: 900,
       visible: false,
       disableSubmit: false,
       txtTitle: '文本信息',
@@ -139,10 +140,13 @@ export default {
     sprintCurrent() {
       let ss = Object.keys(this.sprintStages).map((key) => this.sprintStages[key].text);
       return ss.indexOf(this.publishForm.scrumStage)
+    },
+    currentStage() {
+      return
     }
   },
   methods: {
-    initDictConfig(){
+    initDictConfig() {
       //初始化字典 - sprint 迭代阶段
       initDictOptions('sprint_stage').then((res) => {
         if (res.success) {
@@ -155,12 +159,12 @@ export default {
       this.loadDetial()
       this.loadIssues()
     },
-    loadDetial(){
-      this.queryParam = {id: this.publishlistId}
+    loadDetial() {
+      this.queryParam = { id: this.publishlistId }
       getAction(this.url.queryById, this.queryParam).then((res) => {
-        if(res.success){
+        if (res.success) {
           this.publishForm = res.result
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       })
@@ -173,9 +177,9 @@ export default {
       params.pageSize = 10
       getAction(this.url.issueList, params).then((res) => {
         if (res.success) {
-          this.issueList = res.result.records||res.result;
-          this.$refs.issueList.dataSource = this.issueList
-        }else{
+          this.issueList = res.result.records || res.result;
+          // this.$refs.issueList.dataSource = this.issueList
+        } else {
           this.$message.warning(res.message)
         }
       }).finally(() => {
@@ -184,9 +188,9 @@ export default {
     },
     handleReleaseNote() {
       this.isMarkDown = true
-      const params = {id: this.publishlistId}
+      const params = { id: this.publishlistId }
       getAction(this.url.genReleaseNote, params).then((res) => {
-        if(res.success){
+        if (res.success) {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
@@ -196,16 +200,16 @@ export default {
             'isMarkDown': this.isMarkDown,
             'templateType': 'ReleaseNote'
           })
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       })
     },
     handleReleaseMail() {
       this.isMarkDown = false
-      const params = {id: this.publishlistId}
+      const params = { id: this.publishlistId }
       getAction(this.url.genReleaseEmail, params).then((res) => {
-        if(res.success){
+        if (res.success) {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
@@ -215,14 +219,14 @@ export default {
             'isMarkDown': this.isMarkDown,
             'templateType': 'ReleaseMail'
           })
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       })
     },
     handlePackagePR() {
       this.isMarkDown = true
-      const params = {id: this.publishlistId}
+      const params = { id: this.publishlistId }
       getAction(this.url.genPackagePr, params).then((res) => {
         if(res.success){
           console.log(res.result)
@@ -241,9 +245,9 @@ export default {
     },
     handleHandbookChPR() {
       this.isMarkDown = true
-      const params = {id: this.publishlistId}
+      const params = { id: this.publishlistId }
       getAction(this.url.genHandbookChPr, params).then((res) => {
-        if(res.success){
+        if (res.success) {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
@@ -253,16 +257,16 @@ export default {
             'isMarkDown': this.isMarkDown,
             'templateType': 'HandBookPRChContent'
           })
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       })
     },
     handleHandbookEnPR() {
       this.isMarkDown = true
-      const params = {id: this.publishlistId}
+      const params = { id: this.publishlistId }
       getAction(this.url.genHandbookEnPr, params).then((res) => {
-        if(res.success){
+        if (res.success) {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
@@ -272,16 +276,16 @@ export default {
             'isMarkDown': this.isMarkDown,
             'templateType': 'HandBookPREnContent'
           })
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       })
     },
     handleWebsite() {
       this.isMarkDown = true
-      const params = {id: this.publishlistId}
+      const params = { id: this.publishlistId }
       getAction(this.url.genWebsite, params).then((res) => {
-        if(res.success){
+        if (res.success) {
           console.log(res.result)
           this.txtContent = res.result
           this.$refs.modalForm.view({
@@ -291,12 +295,12 @@ export default {
             'isMarkDown': this.isMarkDown,
             'templateType': 'Website'
           })
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       })
     },
-    modalFormOk() {},
+    modalFormOk() { },
     add() {
       this.visible = true
       this.$nextTick(() => {
@@ -316,15 +320,14 @@ export default {
     publish() {
 
     },
-    handlePakcage(){},
-    handleQuard(){},
-    handleStep(){},
+    handlePakcage() { },
+    handleQuard() { },
+    handleStep() { },
   }
 }
 </script>
 
 <style lang="less" scoped>
-
 .detail-layout {
   margin-left: 44px;
 }
@@ -357,9 +360,7 @@ export default {
     margin-left: unset;
   }
 
-  .text {
-
-  }
+  .text {}
 
   .status-list {
     text-align: left;
