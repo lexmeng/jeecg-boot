@@ -156,6 +156,7 @@ public class ShiroConfig {
         //step数据汇报接口排除
         filterChainDefinitionMap.put("/test/testStepStageData/add", "anon");
         filterChainDefinitionMap.put("/test/testStepResult/add", "anon");
+        filterChainDefinitionMap.put("/test/testStepStageData/updateStageEndTime", "anon");
 
         //ci ut数据汇报接口排除
         filterChainDefinitionMap.put("/dev/devCiUtDaily/add", "anon");

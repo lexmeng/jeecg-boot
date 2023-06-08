@@ -2,6 +2,7 @@ package org.jeecg.modules.publishlist.controller;
 
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -87,6 +88,35 @@ public class TestStepStageDataController extends JeecgController<TestStepStageDa
 		testStepStageDataService.save(testStepStageData);
 		return Result.OK("添加成功！");
 	}
+
+	 @AutoLog(value = "雷神测试过程数据-添加阶段结束时间")
+	 @ApiOperation(value="雷神测试过程数据-添加阶段结束时间", notes="雷神测试过程数据-添加阶段结束时间")
+	 //@RequiresPermissions("org.jeecg.modules.demo:test_step_stage_data:add")
+	 @PostMapping(value = "/updateStageEndTime")
+	 public Result<String> updateStageEndTime(@RequestBody TestStepStageData testStepStageDataReq) {
+		 Map<String,Object> queryMap = new HashMap<>();
+		 queryMap.put("jenkins_job_num",testStepStageDataReq.getJenkinsJobNum());
+		 queryMap.put("test_type",testStepStageDataReq.getTestType());
+		 queryMap.put("platform_name",testStepStageDataReq.getPlatformName());
+		 queryMap.put("test_stage",testStepStageDataReq.getTestStage());
+		 List<TestStepStageData> testStepStageDataList = testStepStageDataService.listByMap(queryMap);
+		 if(testStepStageDataList==null){
+			 return Result.error("未找到对应数据");
+		 }
+
+		 if(testStepStageDataList.size() > 1) {
+			 return Result.error("数据有误，相同维度数据有多于1行");
+		 }
+
+		 TestStepStageData testStepStageData = testStepStageDataList.get(0);
+		 testStepStageData.setEndTime(testStepStageDataReq.getEndTime());
+		 testStepStageData.setUpdateTime(testStepStageDataReq.getUpdateTime());
+		 testStepStageData.setUpdateBy(testStepStageDataReq.getUpdateBy());
+		 testStepStageDataService.updateById(testStepStageData);
+
+		 return Result.OK("更新成功！");
+	 }
+
 	
 	/**
 	 *  编辑
