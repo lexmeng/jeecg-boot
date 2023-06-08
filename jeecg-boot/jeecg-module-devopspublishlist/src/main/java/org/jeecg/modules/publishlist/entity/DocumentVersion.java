@@ -18,64 +18,44 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * @Description: 模板
+ * @Description: 文档版本
  * @Author: jeecg-boot
- * @Date:   2023-04-18
+ * @Date:   2023-06-08
  * @Version: V1.0
  */
 @Data
-@TableName("pub_template")
+@TableName("pub_document_version")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="pub_template对象", description="模板")
-public class Template implements Serializable {
+@ApiModel(value="pub_document_version对象", description="文档版本")
+public class DocumentVersion implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
-    private String id;
-	/**类型*/
-	@Excel(name = "类型", width = 15)
-    @ApiModelProperty(value = "类型")
-    private String type;
-
-	/**产品线名*/
-	@Excel(name = "产品线名", width = 15)
-    @ApiModelProperty(value = "产品线名")
-    private String productLineName;
-
-	/**产品名*/
-	@Excel(name = "产品名", width = 15)
-    @ApiModelProperty(value = "产品名")
-    private String productName;
-	/**文档版本*/
-	@Excel(name = "文档版本", width = 15)
-    @ApiModelProperty(value = "文档版本")
-    private String documentVersion;
-    /**文档版本id*/
-    @Excel(name = "文档版本id", width = 15)
-    @ApiModelProperty(value = "文档版本id")
-    private String documentVersionId;
-	/**内容*/
-	@Excel(name = "内容", width = 15)
-    @ApiModelProperty(value = "内容")
-    private String content;
+    private java.lang.String id;
+	/**文档版本名*/
+	@Excel(name = "文档版本名", width = 15)
+    @ApiModelProperty(value = "文档版本名")
+    private java.lang.String documentVersionName;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
-    private String createBy;
+    private java.lang.String createBy;
 	/**创建日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "创建日期")
-    private Date createTime;
+    private java.util.Date createTime;
 	/**更新人*/
     @ApiModelProperty(value = "更新人")
-    private String updateBy;
+    private java.lang.String updateBy;
 	/**更新日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
-    private Date updateTime;
-
+    private java.util.Date updateTime;
+	/**所属部门*/
+    @ApiModelProperty(value = "所属部门")
+    private java.lang.String sysOrgCode;
 }

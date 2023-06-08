@@ -63,6 +63,10 @@ public class Publishlist implements Serializable {
     @Excel(name = "jira版本名", width = 15)
     @ApiModelProperty(value = "jira版本名")
     private String jiraVersionName;
+    /**文档版本id*/
+	@Excel(name = "文档版本id", width = 15)
+    @ApiModelProperty(value = "文档版本id")
+    private String documentVersionId;
     /**文档版本*/
     @Excel(name = "文档版本", width = 15)
     @ApiModelProperty(value = "文档版本")
