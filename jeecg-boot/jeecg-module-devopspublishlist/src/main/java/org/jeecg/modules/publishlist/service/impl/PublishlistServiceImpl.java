@@ -212,6 +212,35 @@ public class PublishlistServiceImpl extends ServiceImpl<PublishlistMapper, Publi
 	}
 
 	@Override
+	public Publishlist findPubByProductAndVersion(String productLineName, String productName, String version, String versionType){
+		if(productLineName==null || productName==null || version==null || versionType==null){
+			throw new BussinessException("查找发布单入参为空");
+		}
+		if(productLineName.isEmpty() || productName.isEmpty() || version.isEmpty() || versionType.isEmpty()){
+			throw new BussinessException("查找发布单入参为空");
+		}
+
+        Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("product_line_name",productLineName);
+		queryMap.put("product_name",productName);
+		queryMap.put("version_name",version);
+		queryMap.put("version_type",versionType);
+
+		List<Publishlist> publishlistList = publishlistMapper.selectByMap(queryMap);
+
+		if(publishlistList == null){
+			throw new BussinessException("没查询到对应参数的发布单！");
+		}
+
+		if(publishlistList.size() > 1){
+			throw new BussinessException("对应查询条件的发布单数量大于1，请检查发布单数据的有效性！");
+		}
+
+		return publishlistList.get(0);
+
+	}
+
+	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void delMain(String id) {
 		publishlistProjectMapper.deleteByMainId(id);

@@ -63,5 +63,7 @@ public interface IPublishlistService extends IService<Publishlist> {
 	public List<PublishlistQueryResult> listByMainMap(Map<String, Object> columnMap);
 
 	public List<PublishlistQueryResult> ListByMainWrapper(Wrapper queryWrapper);
+
+	public Publishlist findPubByProductAndVersion(String productLineName, String productName, String version, String versionType);
 	
 }

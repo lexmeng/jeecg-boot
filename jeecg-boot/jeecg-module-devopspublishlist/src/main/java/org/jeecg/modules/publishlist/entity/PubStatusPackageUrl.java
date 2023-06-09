@@ -39,6 +39,10 @@ public class PubStatusPackageUrl implements Serializable {
 	@Excel(name = "产品包url", width = 15)
     @ApiModelProperty(value = "产品包url")
     private java.lang.String packageUrl;
+    /**产品包名*/
+    @Excel(name = "产品包名", width = 15)
+    @ApiModelProperty(value = "产品包名")
+    private java.lang.String name;
 	/**发布单状态*/
 	@Excel(name = "发布单状态", width = 15)
     @ApiModelProperty(value = "发布单状态")
@@ -47,6 +51,22 @@ public class PubStatusPackageUrl implements Serializable {
 	@Excel(name = "存储类型", width = 15)
     @ApiModelProperty(value = "存储类型")
     private java.lang.String storageType;
+	/**产品线名*/
+	@Excel(name = "产品线名", width = 15)
+    @ApiModelProperty(value = "产品线名")
+    private java.lang.String productLineName;
+	/**产品名*/
+	@Excel(name = "产品名", width = 15)
+    @ApiModelProperty(value = "产品名")
+    private java.lang.String productName;
+	/**版本*/
+	@Excel(name = "版本", width = 15)
+    @ApiModelProperty(value = "版本")
+    private java.lang.String version;
+	/**版本类型*/
+	@Excel(name = "版本类型", width = 15)
+    @ApiModelProperty(value = "版本类型")
+    private java.lang.String versionType;
 	/**发布单id*/
 	@Excel(name = "发布单id", width = 15)
     @ApiModelProperty(value = "发布单id")

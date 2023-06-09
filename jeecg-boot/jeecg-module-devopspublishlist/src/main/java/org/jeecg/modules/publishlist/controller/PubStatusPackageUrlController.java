@@ -18,7 +18,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.publishlist.entity.PubStatusPackageUrl;
+import org.jeecg.modules.publishlist.entity.Publishlist;
 import org.jeecg.modules.publishlist.service.IPubStatusPackageUrlService;
+import org.jeecg.modules.publishlist.service.IPublishlistService;
+import org.jeecg.modules.publishlist.tools.IdTool;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -48,6 +51,9 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 public class PubStatusPackageUrlController extends JeecgController<PubStatusPackageUrl, IPubStatusPackageUrlService> {
 	@Autowired
 	private IPubStatusPackageUrlService pubStatusPackageUrlService;
+
+	@Autowired
+	private IPublishlistService publishlistService;
 	
 	/**
 	 * 分页列表查询
@@ -82,6 +88,10 @@ public class PubStatusPackageUrlController extends JeecgController<PubStatusPack
 	//@RequiresPermissions("org.jeecg.modules.demo:pub_status_package_url:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody PubStatusPackageUrl pubStatusPackageUrl) {
+		pubStatusPackageUrl.setId(IdTool.generalId());
+
+		Publishlist publishlist = publishlistService.findPubByProductAndVersion(pubStatusPackageUrl.getProductLineName(), pubStatusPackageUrl.getProductName(), pubStatusPackageUrl.getVersion(), pubStatusPackageUrl.getVersionType());
+		pubStatusPackageUrl.setPublishlistId(publishlist.getId());
 		pubStatusPackageUrlService.save(pubStatusPackageUrl);
 		return Result.OK("添加成功！");
 	}
