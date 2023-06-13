@@ -144,6 +144,10 @@ public class IssueDomainServiceImpl implements IIssueDomainService {
         return jiraClientUtils.fetchIssueDevStatus(issueId);
     }
 
+    @Override
+    public IssueDevStatusResult fetchIssuePR(String projectId, String jiraVersionName, String issueId){
+        return jiraClientUtils.fetchIssuePR(projectId, jiraVersionName, issueId);
+    }
 
     private List<Issue> convertIssueListToLocalIssueList(List<com.atlassian.jira.rest.client.api.domain.Issue> issueList, String publishlistId){
         List<Issue> localIssueList = new ArrayList<>();

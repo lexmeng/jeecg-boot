@@ -30,6 +30,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,6 +188,45 @@ public class JiraClientUtils {
         } catch (UnirestException | IOException e) {
             throw new RuntimeException("Jira系统访问产生错误: " + e.toString(), e);
         }
+    }
+
+    /**
+     * 按照projectId，jiraVersionName和issueId这些维度来筛选issue pr列表
+     * 注意：由于接口不提供projectId，jiraVersionName维度来筛选，所以事实上还是和只按照issue维度筛选是一样的。如果一个issue同时在2个jiraVersion中，那它会筛出这2个jiraVersion对issue的所有提交的pr
+     * @param projectId
+     * @param jiraVersionName
+     * @param issueId
+     * @return
+     */
+    public IssueDevStatusResult fetchIssuePR(String projectId, String jiraVersionName, String issueId){
+        final String devStatusApi = "https://olapio.atlassian.net/rest/dev-status/latest/issue/detail?projectId=%s&jiraVersionName=%s&issueId=%s&applicationType=GitHub&dataType=pullrequest";
+        try {
+            HttpResponse<JsonNode> response = Unirest.get(String.format(devStatusApi, URLEncoder.encode(delTab(projectId)), URLEncoder.encode(delTab(jiraVersionName)), URLEncoder.encode(delTab(issueId))))
+                    .basicAuth(jiraAccountName, jiraSign)
+                    .header("Accept", "application/json")
+                    .header("Content-Type", "application/json")
+                    .asJson();
+
+            log.info("Http request response. status code:" + response.getStatus());
+            log.info("Http request response. status text:" + response.getStatusText());
+            log.info("Http request response. body:" + response.getBody().toString());
+            if (response.getStatus() != 200) {
+                String errorMessage = String.format("读取issue 开发信息的网络请求出错！code:%s text:%s body:%s", response.getStatus(), response.getStatusText(), response.getBody().toString());
+                throw new BussinessException(errorMessage);
+            }
+
+            JSONObject data = response.getBody().getObject();
+            JSONArray detail = data.getJSONArray("detail");
+            if (detail.length() <= 0) {
+                return new IssueDevStatusResult();
+            }
+
+            return jacksonObjectMapper.readValue(detail.get(0).toString(), IssueDevStatusResult.class);
+
+        } catch (UnirestException | IOException e) {
+            throw new RuntimeException("Jira系统访问产生错误: " + e.toString(), e);
+        }
+
     }
 
     public IssueSearchResult restSearchIssueByProjectAndFixVersions(String projectName, String fixVersions) {

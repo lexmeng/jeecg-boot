@@ -1,6 +1,5 @@
 package org.jeecg.modules.publishlist.controller;
 
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,16 +13,13 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
-import org.jeecg.modules.publishlist.bpservice.DevPrCommitBPService;
-import org.jeecg.modules.publishlist.entity.DevCiUtPr;
+import org.jeecg.modules.publishlist.bpservice.DevPrBPService;
 import org.jeecg.modules.publishlist.entity.DevPrCommit;
-import org.jeecg.modules.publishlist.service.IDevCiUtPrService;
 import org.jeecg.modules.publishlist.service.IDevPrCommitService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -42,62 +38,56 @@ import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
 
  /**
- * @Description: pr的ci ut结果表
+ * @Description: pr commit表-跟pr ut一一对应
  * @Author: jeecg-boot
- * @Date:   2023-06-08
+ * @Date:   2023-06-12
  * @Version: V1.0
  */
-@Api(tags="pr的ci ut结果表")
+@Api(tags="pr commit表-跟pr ut一一对应")
 @RestController
-@RequestMapping("/dev/devCiUtPr")
+@RequestMapping("/dev/devPrCommit")
 @Slf4j
-public class DevCiUtPrController extends JeecgController<DevCiUtPr, IDevCiUtPrService> {
-	@Autowired
-	private IDevCiUtPrService devCiUtPrService;
-
-	@Autowired
-	private DevPrCommitBPService devPrCommitBPService;
-
+public class DevPrCommitController extends JeecgController<DevPrCommit, IDevPrCommitService> {
 	@Autowired
 	private IDevPrCommitService devPrCommitService;
+
+	@Autowired
+	private DevPrBPService devPrBPService;
 	
 	/**
 	 * 分页列表查询
 	 *
-	 * @param devCiUtPr
+	 * @param devPrCommit
 	 * @param pageNo
 	 * @param pageSize
 	 * @param req
 	 * @return
 	 */
-	//@AutoLog(value = "pr的ci ut结果表-分页列表查询")
-	@ApiOperation(value="pr的ci ut结果表-分页列表查询", notes="pr的ci ut结果表-分页列表查询")
+	//@AutoLog(value = "pr commit表-跟pr ut一一对应-分页列表查询")
+	@ApiOperation(value="pr commit表-跟pr ut一一对应-分页列表查询", notes="pr commit表-跟pr ut一一对应-分页列表查询")
 	@GetMapping(value = "/list")
-	public Result<IPage<DevCiUtPr>> queryPageList(DevCiUtPr devCiUtPr,
+	public Result<IPage<DevPrCommit>> queryPageList(DevPrCommit devPrCommit,
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
-		QueryWrapper<DevCiUtPr> queryWrapper = QueryGenerator.initQueryWrapper(devCiUtPr, req.getParameterMap());
-		Page<DevCiUtPr> page = new Page<DevCiUtPr>(pageNo, pageSize);
-		IPage<DevCiUtPr> pageList = devCiUtPrService.page(page, queryWrapper);
+		QueryWrapper<DevPrCommit> queryWrapper = QueryGenerator.initQueryWrapper(devPrCommit, req.getParameterMap());
+		Page<DevPrCommit> page = new Page<DevPrCommit>(pageNo, pageSize);
+		IPage<DevPrCommit> pageList = devPrCommitService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
 	
 	/**
 	 *   添加
-	 *
-	 *   保存一条pr ut记录，则记录下当时的pr信息。
-	 *   TODO: 用户merge代码的时候，也需要添加当时的PR信息
-	 * @param devCiUtPr
+	 *   PR UT运行完会添加一条PR Commit
+	 *   PR Merged进去会添加一条PR Commit
+	 * @param devPrCommit
 	 * @return
 	 */
-	@AutoLog(value = "pr的ci ut结果表-添加")
-	@ApiOperation(value="pr的ci ut结果表-添加", notes="pr的ci ut结果表-添加")
-	//@RequiresPermissions("org.jeecg.modules.demo:dev_ci_ut_pr:add")
+	@AutoLog(value = "pr commit表-跟pr ut一一对应-添加")
+	@ApiOperation(value="pr commit表-跟pr ut一一对应-添加", notes="pr commit表-跟pr ut一一对应-添加")
+	//@RequiresPermissions("org.jeecg.modules.demo:dev_pr_commit:add")
 	@PostMapping(value = "/add")
-	public Result<String> add(@RequestBody DevCiUtPr devCiUtPr) {
-		devCiUtPrService.save(devCiUtPr);
-		DevPrCommit devPrCommit = devPrCommitBPService.getCommitWhenPrUt(devCiUtPr);
+	public Result<String> add(@RequestBody DevPrCommit devPrCommit) {
 		devPrCommitService.save(devPrCommit);
 		return Result.OK("添加成功！");
 	}
@@ -105,15 +95,15 @@ public class DevCiUtPrController extends JeecgController<DevCiUtPr, IDevCiUtPrSe
 	/**
 	 *  编辑
 	 *
-	 * @param devCiUtPr
+	 * @param devPrCommit
 	 * @return
 	 */
-	@AutoLog(value = "pr的ci ut结果表-编辑")
-	@ApiOperation(value="pr的ci ut结果表-编辑", notes="pr的ci ut结果表-编辑")
-	//@RequiresPermissions("org.jeecg.modules.demo:dev_ci_ut_pr:edit")
+	@AutoLog(value = "pr commit表-跟pr ut一一对应-编辑")
+	@ApiOperation(value="pr commit表-跟pr ut一一对应-编辑", notes="pr commit表-跟pr ut一一对应-编辑")
+	//@RequiresPermissions("org.jeecg.modules.demo:dev_pr_commit:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
-	public Result<String> edit(@RequestBody DevCiUtPr devCiUtPr) {
-		devCiUtPrService.updateById(devCiUtPr);
+	public Result<String> edit(@RequestBody DevPrCommit devPrCommit) {
+		devPrCommitService.updateById(devPrCommit);
 		return Result.OK("编辑成功!");
 	}
 	
@@ -123,12 +113,12 @@ public class DevCiUtPrController extends JeecgController<DevCiUtPr, IDevCiUtPrSe
 	 * @param id
 	 * @return
 	 */
-	@AutoLog(value = "pr的ci ut结果表-通过id删除")
-	@ApiOperation(value="pr的ci ut结果表-通过id删除", notes="pr的ci ut结果表-通过id删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:dev_ci_ut_pr:delete")
+	@AutoLog(value = "pr commit表-跟pr ut一一对应-通过id删除")
+	@ApiOperation(value="pr commit表-跟pr ut一一对应-通过id删除", notes="pr commit表-跟pr ut一一对应-通过id删除")
+	//@RequiresPermissions("org.jeecg.modules.demo:dev_pr_commit:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
-		devCiUtPrService.removeById(id);
+		devPrCommitService.removeById(id);
 		return Result.OK("删除成功!");
 	}
 	
@@ -138,12 +128,12 @@ public class DevCiUtPrController extends JeecgController<DevCiUtPr, IDevCiUtPrSe
 	 * @param ids
 	 * @return
 	 */
-	@AutoLog(value = "pr的ci ut结果表-批量删除")
-	@ApiOperation(value="pr的ci ut结果表-批量删除", notes="pr的ci ut结果表-批量删除")
-	//@RequiresPermissions("org.jeecg.modules.demo:dev_ci_ut_pr:deleteBatch")
+	@AutoLog(value = "pr commit表-跟pr ut一一对应-批量删除")
+	@ApiOperation(value="pr commit表-跟pr ut一一对应-批量删除", notes="pr commit表-跟pr ut一一对应-批量删除")
+	//@RequiresPermissions("org.jeecg.modules.demo:dev_pr_commit:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		this.devCiUtPrService.removeByIds(Arrays.asList(ids.split(",")));
+		this.devPrCommitService.removeByIds(Arrays.asList(ids.split(",")));
 		return Result.OK("批量删除成功!");
 	}
 	
@@ -153,27 +143,27 @@ public class DevCiUtPrController extends JeecgController<DevCiUtPr, IDevCiUtPrSe
 	 * @param id
 	 * @return
 	 */
-	//@AutoLog(value = "pr的ci ut结果表-通过id查询")
-	@ApiOperation(value="pr的ci ut结果表-通过id查询", notes="pr的ci ut结果表-通过id查询")
+	//@AutoLog(value = "pr commit表-跟pr ut一一对应-通过id查询")
+	@ApiOperation(value="pr commit表-跟pr ut一一对应-通过id查询", notes="pr commit表-跟pr ut一一对应-通过id查询")
 	@GetMapping(value = "/queryById")
-	public Result<DevCiUtPr> queryById(@RequestParam(name="id",required=true) String id) {
-		DevCiUtPr devCiUtPr = devCiUtPrService.getById(id);
-		if(devCiUtPr==null) {
+	public Result<DevPrCommit> queryById(@RequestParam(name="id",required=true) String id) {
+		DevPrCommit devPrCommit = devPrCommitService.getById(id);
+		if(devPrCommit==null) {
 			return Result.error("未找到对应数据");
 		}
-		return Result.OK(devCiUtPr);
+		return Result.OK(devPrCommit);
 	}
 
     /**
     * 导出excel
     *
     * @param request
-    * @param devCiUtPr
+    * @param devPrCommit
     */
-    //@RequiresPermissions("org.jeecg.modules.demo:dev_ci_ut_pr:exportXls")
+    //@RequiresPermissions("org.jeecg.modules.demo:dev_pr_commit:exportXls")
     @RequestMapping(value = "/exportXls")
-    public ModelAndView exportXls(HttpServletRequest request, DevCiUtPr devCiUtPr) {
-        return super.exportXls(request, devCiUtPr, DevCiUtPr.class, "pr的ci ut结果表");
+    public ModelAndView exportXls(HttpServletRequest request, DevPrCommit devPrCommit) {
+        return super.exportXls(request, devPrCommit, DevPrCommit.class, "pr commit表-跟pr ut一一对应");
     }
 
     /**
@@ -183,10 +173,10 @@ public class DevCiUtPrController extends JeecgController<DevCiUtPr, IDevCiUtPrSe
     * @param response
     * @return
     */
-    //@RequiresPermissions("dev_ci_ut_pr:importExcel")
+    //@RequiresPermissions("dev_pr_commit:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        return super.importExcel(request, response, DevCiUtPr.class);
+        return super.importExcel(request, response, DevPrCommit.class);
     }
 
 }

@@ -10,9 +10,14 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.publishlist.bpservice.DevPrBPService;
 import org.jeecg.modules.publishlist.bpservice.IssueBPService;
+import org.jeecg.modules.publishlist.entity.DevPr;
 import org.jeecg.modules.publishlist.entity.Issue;
+import org.jeecg.modules.publishlist.entity.Publishlist;
+import org.jeecg.modules.publishlist.exception.BussinessException;
 import org.jeecg.modules.publishlist.service.IIssueService;
+import org.jeecg.modules.publishlist.service.IPublishlistService;
 import org.jeecg.modules.publishlist.tools.IssueDevStatusResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,9 +32,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
- /**
+/**
  * @Description: issue本地记录
  * @Author: jeecg-boot
  * @Date:   2023-04-17
@@ -45,6 +52,9 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 
 	@Autowired
 	private IssueBPService issueBPService;
+
+	@Autowired
+	private DevPrBPService devPrBPService;
 	
 	/**
 	 * 分页列表查询
@@ -127,7 +137,56 @@ public class IssueController extends JeecgController<Issue, IIssueService> {
 		this.issueService.removeByIds(Arrays.asList(ids.split(",")));
 		return Result.OK("批量删除成功!");
 	}
-	
+
+
+	/**
+	 * 打包的时候，查询包内的issue列表
+	 * 流程：查询所有issue关联的pr，只要有一个pr是merged的状态，就算包内的issue
+	 * @return
+	 */
+	@ApiOperation(value="打包时获取有pr merged的issue列表", notes="打包时获取有pr merged的issue列表")
+	@GetMapping(value = "/getIssuesWhenPackage")
+	public Result<List<Issue>> getIssuesWhenPackage(@RequestParam(name="publishlistId",required=true) String publishlistId){
+        List<Issue> resultIssueList = new ArrayList<>();
+
+		if(!issueBPService.isEnableUpdateIssue(publishlistId)){
+			throw new BussinessException("发布单已经发布，不支持该操作！");
+		}
+
+		//1、先更新issue列表
+		//issueBPService.updateIssueList(publishlistId);
+
+		//2、查询issue关联的pr，并且确认每个pr的状态
+		List<Issue> issueList = issueBPService.getIssueListByPublishlistId(publishlistId);
+        if(issueList == null || issueList.isEmpty()){
+			return Result.OK(resultIssueList);
+		}
+
+		for(Issue issue : issueList){
+			/*
+			IssueDevStatusResult devStatusResult = issueBPService.fetchIssuePR(issue.getProjectId(), issue.getJiraVersionName(), issue.getIssueId());
+
+			for(IssueDevStatusResult.PullRequest pr : devStatusResult.getPullRequests()){
+				if(pr.getStatus().equals("MERGED")){
+					resultIssueList.add(issue);
+					break;//如果找到1条，则跳出本循环
+				}
+			}
+            */
+			//从本地获取而不是从远程获取
+			List<DevPr> devPrList = devPrBPService.getIssuePr(issue.getIssueId(), issue.getJiraVersionName());
+			for(DevPr devPr : devPrList){
+				if(devPr.getPrStatus().equals("MERGED")){
+					resultIssueList.add(issue);
+					break;//如果找到1条，则跳出本循环
+				}
+			}
+		}
+
+		//3、返回含merged pr的issue列表
+		return Result.OK(resultIssueList);
+	}
+
 	/**
 	 * 通过id查询
 	 *

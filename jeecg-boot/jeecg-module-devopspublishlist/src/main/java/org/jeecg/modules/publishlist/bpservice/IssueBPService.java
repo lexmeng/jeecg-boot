@@ -53,6 +53,13 @@ public class IssueBPService {
     private IPublishlistDomainService publishlistDomainService;
 
 
+    public Boolean isEnableUpdateIssue(String publishlistId){
+        if(publishlistDomainService.isPublished(publishlistId)){
+            return false;
+        }else{
+            return true;
+        }
+    }
     //更新issue列表的业务流程
     public void updateIssueList(String publishlistId){
         if(publishlistDomainService.isPublished(publishlistId)){
@@ -121,6 +128,10 @@ public class IssueBPService {
         return issueDomainService.fetchIssueDevStatus(issueId);
     }
 
+    public IssueDevStatusResult fetchIssuePR(String projectId, String jiraVersionName, String issueId){
+        return issueDomainService.fetchIssuePR(projectId, jiraVersionName, issueId);
+    }
+
     public List<Issue> getIssueListForRelease(String publishlistId){
         Publishlist publishlist = publishlistService.getById(publishlistId);
 
@@ -135,6 +146,16 @@ public class IssueBPService {
             }
         }
         return resultIssueList;
+    }
+
+    public List<Issue> getIssueListByPublishlistId(String publishlistId){
+        Publishlist publishlist = publishlistService.getById(publishlistId);
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("publishlist_id",publishlistId);
+        List<Issue> issueList = issueService.list(queryWrapper);
+
+        return issueList;
     }
 
 

@@ -12,6 +12,8 @@ public interface IIssueDomainService {
 
     IssueDevStatusResult fetchIssueDevStatus(String issueId);
 
+    IssueDevStatusResult fetchIssuePR(String projectId, String jiraVersionName, String issueId);
+
     public void updateIssueList(String publishlistId, List<Issue> issueList);
 
     public void saveIssueListFirstTime(String publishlistId, List<Issue> issueList);
