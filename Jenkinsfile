@@ -3,10 +3,13 @@
 @Library('devopslib') _
 
 def IS_DEBUG = true
+def paramsDeploy = [:]
 
 pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
+        ansiColor('xterm')
+        timestamps()
     }
 
     agent {
@@ -94,7 +97,75 @@ spec:
     }
 
     stages {
-        stage('Build Frontend Image') {
+        stage('1.1.DEV Frontend Image') {
+          steps {
+              container('kaniko') {
+                  dir('ant-design-vue-jeecg') {
+                      sh "/kaniko/executor --cache=true --cache-dir=/cache \
+                                  --dockerfile=Dockerfile-dev \
+                                  --destination=${registry}/devops-web-frontend:dev-${version?:branch} \
+                                  --context=dir://\$(pwd)"
+                  }
+              }
+          }
+        }
+        stage('1.2.DEV Backend Image') {
+          steps {
+              container('kaniko') {
+                  dir('jeecg-boot') {
+                      sh "/kaniko/executor --cache=true --cache-dir=/cache \
+                                  --dockerfile=Dockerfile \
+                                  --destination=${registry}/devops-web-backend:dev-${version?:branch} \
+                                  --context=dir://\$(pwd)"
+                  }
+              }
+          }
+        }
+        stage('1.3.DEV Deploy') {
+          when {
+              expression {
+                  return IS_DEBUG
+              }
+          }
+          steps {
+              container('kubectl') {
+                  withCredentials([file(credentialsId: 'admin.kubeconfig', variable: 'KUBECONFIG')]) {
+                      script {
+                          sh 'pwd && ls -alt'
+                          sh "mkdir -p ~/.kube && cp ${KUBECONFIG} ~/.kube/config"
+                          if(deploy in ['Frontend','ALL']){
+                              sh "kubectl set image deployment/devops-web-frontend devops-web-frontend=harbor-ofs.kyligence.com/devops/devops-web-frontend:dev-${version?:branch} -n devops-web"
+                          }
+                          if(deploy in ['Backend','ALL']) {
+                              sh "kubectl set image deployment/devops-web-backend devops-web-backend=harbor-ofs.kyligence.com/devops/devops-web-backend:dev-${version?:branch} -n devops-web"
+                          }
+                      }
+                  }
+              }
+          }
+        }
+        stage('2.0.Approve Prod'){
+          steps{
+            script {
+              def checkMsg = '是否部署生成环境？'
+              paramsDeploy = input(
+                message: checkMsg,
+                ok: '确认！',
+                submitter: 'liming.meng',
+                submitterParameter: 'APPROVER',
+                parameters: [
+                  booleanParam(name: 'isProd', defaultValue: false, description: '是否发布生产环境')
+                ]
+              )
+            }
+          }
+        }
+        stage('2.1.Prod Build Frontend Image') {
+            when {
+              expression {
+                return paramsDeploy.isProd
+              }
+            }
             steps {
                 container('kaniko') {
                     dir('ant-design-vue-jeecg') {
@@ -106,7 +177,12 @@ spec:
                 }
             }
         }
-        stage('Build Backend Image') {
+        stage('2.2.Prod Build Backend Image') {
+            when {
+              expression {
+                return paramsDeploy.isProd
+              }
+            }
             steps {
                 container('kaniko') {
                     dir('jeecg-boot') {
@@ -118,10 +194,10 @@ spec:
                 }
             }
         }
-        stage('Deploy') {
+        stage('2.3.Prod Deploy') {
             when {
                 expression {
-                    return IS_DEBUG
+                    return IS_DEBUG && paramsDeploy.isProd
                 }
             }
             steps {

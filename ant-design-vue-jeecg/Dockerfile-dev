@@ -6,8 +6,7 @@ WORKDIR ant-design-vue-jeecg
 
 RUN npm config set registry https://registry.npm.taobao.org && \
     yarn install && \
-    yarn run build:prod
-
+    yarn run build:test
 
 FROM nginx
 
