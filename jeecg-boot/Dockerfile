@@ -4,13 +4,13 @@ ADD . jeecg-boot
 
 WORKDIR jeecg-boot
 
-RUN mvn -U clean install -Pprod
+RUN --no-cache mvn -U clean install -Pprod
 
 FROM anapsix/alpine-java:8_server-jre_unlimited AS runner
 
-RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN --no-cache ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-RUN mkdir -p /devopsweb/config/
+RUN --no-cache mkdir -p /devopsweb/config/
 
 WORKDIR /devopsweb
 
