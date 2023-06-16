@@ -101,7 +101,7 @@ spec:
           steps {
               container('kaniko') {
                   dir('ant-design-vue-jeecg') {
-                      sh "/kaniko/executor --cache=true --cache-dir=/cache \
+                      sh "/kaniko/executor \
                                   --dockerfile=Dockerfile-dev \
                                   --destination=${registry}/devops-web-frontend:dev-${version?:branch} \
                                   --context=dir://\$(pwd)"
@@ -113,7 +113,7 @@ spec:
           steps {
               container('kaniko') {
                   dir('jeecg-boot') {
-                      sh "/kaniko/executor --cache=true --cache-dir=/cache \
+                      sh "/kaniko/executor \
                                   --dockerfile=Dockerfile \
                                   --destination=${registry}/devops-web-backend:dev-${version?:branch} \
                                   --context=dir://\$(pwd)"
@@ -169,7 +169,7 @@ spec:
             steps {
                 container('kaniko') {
                     dir('ant-design-vue-jeecg') {
-                        sh "/kaniko/executor --cache=true --cache-dir=/cache \
+                        sh "/kaniko/executor \
                                     --dockerfile=Dockerfile \
                                     --destination=${registry}/devops-web-frontend:${version?:branch} \
                                     --context=dir://\$(pwd)"
@@ -186,7 +186,7 @@ spec:
             steps {
                 container('kaniko') {
                     dir('jeecg-boot') {
-                        sh "/kaniko/executor --cache=true --cache-dir=/cache \
+                        sh "/kaniko/executor \
                                     --dockerfile=Dockerfile \
                                     --destination=${registry}/devops-web-backend:${version?:branch} \
                                     --context=dir://\$(pwd)"
