@@ -99,48 +99,48 @@ spec:
     stages {
         stage('1.1.DEV Frontend Image') {
           steps {
-              container('kaniko') {
-                  dir('ant-design-vue-jeecg') {
-                      sh "/kaniko/executor \
-                                  --dockerfile=Dockerfile-dev \
-                                  --destination=${registry}/devops-web-frontend:dev-${version?:branch} \
-                                  --context=dir://\$(pwd)"
-                  }
+            container('kaniko') {
+              dir('ant-design-vue-jeecg') {
+                sh "/kaniko/executor --cache=true --cache-dir=/cache-dev \
+                    --dockerfile=Dockerfile-dev \
+                    --destination=${registry}/devops-web-frontend:dev-${version?:branch} \
+                    --context=dir://\$(pwd)"
               }
+            }
           }
         }
         stage('1.2.DEV Backend Image') {
           steps {
-              container('kaniko') {
-                  dir('jeecg-boot') {
-                      sh "/kaniko/executor \
-                                  --dockerfile=Dockerfile \
-                                  --destination=${registry}/devops-web-backend:dev-${version?:branch} \
-                                  --context=dir://\$(pwd)"
-                  }
+            container('kaniko') {
+              dir('jeecg-boot') {
+                sh "/kaniko/executor --cache=true --cache-dir=/cache-dev \
+                    --dockerfile=Dockerfile \
+                    --destination=${registry}/devops-web-backend:dev-${version?:branch} \
+                    --context=dir://\$(pwd)"
               }
+            }
           }
         }
         stage('1.3.DEV Deploy') {
           when {
-              expression {
-                  return IS_DEBUG
-              }
+            expression {
+              return IS_DEBUG
+            }
           }
           steps {
               container('kubectl') {
-                  withCredentials([file(credentialsId: 'admin.kubeconfig', variable: 'KUBECONFIG')]) {
-                      script {
-                          sh 'pwd && ls -alt'
-                          sh "mkdir -p ~/.kube && cp ${KUBECONFIG} ~/.kube/config"
-                          if(deploy in ['Frontend','ALL']){
-                              sh "kubectl set image deployment/devops-web-frontend devops-web-frontend=harbor-ofs.kyligence.com/devops/devops-web-frontend:dev-${version?:branch} -n devops-web"
-                          }
-                          if(deploy in ['Backend','ALL']) {
-                              sh "kubectl set image deployment/devops-web-backend devops-web-backend=harbor-ofs.kyligence.com/devops/devops-web-backend:dev-${version?:branch} -n devops-web"
-                          }
-                      }
+                withCredentials([file(credentialsId: 'admin.kubeconfig', variable: 'KUBECONFIG')]) {
+                  script {
+                    sh 'pwd && ls -alt'
+                    sh "mkdir -p ~/.kube && cp ${KUBECONFIG} ~/.kube/config"
+                    if(deploy in ['Frontend','ALL']){
+                      sh "kubectl set image deployment/devops-web-frontend devops-web-frontend=harbor-ofs.kyligence.com/devops/devops-web-frontend:dev-${version?:branch} -n devops-web"
+                    }
+                    if(deploy in ['Backend','ALL']) {
+                      sh "kubectl set image deployment/devops-web-backend devops-web-backend=harbor-ofs.kyligence.com/devops/devops-web-backend:dev-${version?:branch} -n devops-web"
+                    }
                   }
+                }
               }
           }
         }

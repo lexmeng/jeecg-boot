@@ -4,8 +4,7 @@ ADD . ant-design-vue-jeecg
 
 WORKDIR ant-design-vue-jeecg
 
-RUN npm config set registry https://registry.npm.taobao.org && \
-    yarn install && \
+RUN yarn install && \
     yarn run build:prod
 
 
