@@ -101,9 +101,10 @@ spec:
           steps {
             container('kaniko') {
               dir('ant-design-vue-jeecg') {
-
+                sh 'sed -i "s#yarn run build:prod#yarn run build:test#g" Dockerfile' 
+                sh 'cat Dockerfile'
                 sh "/kaniko/executor \
-                    --dockerfile=Dockerfile-dev \
+                    --dockerfile=Dockerfile \
                     --destination=${registry}/devops-web-frontend:dev-${version?:branch} \
                     --context=dir://\$(pwd)"
               }
@@ -116,7 +117,7 @@ spec:
               dir('jeecg-boot') {
                 sh "/kaniko/executor \
                     --dockerfile=Dockerfile \
-                    --destination=${registry}/devops-web-backend:dev-${version?:branch} \
+                    --destination=${registry}/devops-web-backend:${version?:branch} \
                     --context=dir://\$(pwd)"
               }
             }
@@ -154,53 +155,56 @@ spec:
                 ok: '确认！',
                 submitter: 'liming.meng',
                 submitterParameter: 'APPROVER',
-                parameters: [
-                  booleanParam(name: 'isProd', defaultValue: false, description: '是否发布生产环境')
-                ]
+                // parameters: [
+                //   booleanParam(name: 'isProd', defaultValue: false, description: '是否发布生产环境')
+                // ]
               )
             }
           }
         }
         stage('2.1.Prod Build Frontend Image') {
-            when {
-              expression {
-                return paramsDeploy.isProd
-              }
-            }
+            // when {
+            //   expression {
+            //     return paramsDeploy.isProd
+            //   }
+            // }
             steps {
                 container('kaniko') {
                     dir('ant-design-vue-jeecg') {
-                        sh "/kaniko/executor \
-                            --dockerfile=Dockerfile \
-                            --destination=${registry}/devops-web-frontend:${version?:branch} \
-                            --context=dir://\$(pwd)"
-                    }
-                }
-            }
-        }
-        stage('2.2.Prod Build Backend Image') {
-            when {
-              expression {
-                return paramsDeploy.isProd
-              }
-            }
-            steps {
-                container('kaniko') {
-                    dir('jeecg-boot') {
-                        sh "/kaniko/executor \
+                      sh 'cat Dockerfile'
+                      sh 'sed -i "s#yarn run build:test#yarn run build:prod#g" Dockerfile' 
+                      sh 'cat Dockerfile'
+                      sh "/kaniko/executor \
                           --dockerfile=Dockerfile \
-                          --destination=${registry}/devops-web-backend:${version?:branch} \
+                          --destination=${registry}/devops-web-frontend:${version?:branch} \
                           --context=dir://\$(pwd)"
                     }
                 }
             }
         }
+        // stage('2.2.Prod Build Backend Image') {
+        //     when {
+        //       expression {
+        //         return paramsDeploy.isProd
+        //       }
+        //     }
+        //     steps {
+        //         container('kaniko') {
+        //             dir('jeecg-boot') {
+        //                 sh "/kaniko/executor \
+        //                   --dockerfile=Dockerfile \
+        //                   --destination=${registry}/devops-web-backend:${version?:branch} \
+        //                   --context=dir://\$(pwd)"
+        //             }
+        //         }
+        //     }
+        // }
         stage('2.3.Prod Deploy') {
-            when {
-                expression {
-                    return IS_DEBUG && paramsDeploy.isProd
-                }
-            }
+            // when {
+            //     expression {
+            //         return IS_DEBUG && paramsDeploy.isProd
+            //     }
+            // }
             steps {
                 container('kubectl') {
                     withCredentials([file(credentialsId: 'devops.kubeconfig', variable: 'KUBECONFIG')]) {
