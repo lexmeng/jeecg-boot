@@ -139,7 +139,7 @@ spec:
                       sh "kubectl set image deployment/devops-web-frontend devops-web-frontend=harbor-ofs.kyligence.com/devops/devops-web-frontend:dev-${version?:branch} -n devops-web"
                     }
                     if(deploy in ['Backend','ALL']) {
-                      sh "kubectl set image deployment/devops-web-backend devops-web-backend=harbor-ofs.kyligence.com/devops/devops-web-backend:dev-${version?:branch} -n devops-web"
+                      sh "kubectl set image deployment/devops-web-backend devops-web-backend=harbor-ofs.kyligence.com/devops/devops-web-backend:${version?:branch} -n devops-web"
                     }
                   }
                 }
@@ -215,7 +215,7 @@ spec:
                                 sh "kubectl set image deployment/devops-web-frontend devops-web-frontend=harbor-ofs.kyligence.com/devops/devops-web-frontend:${version?:branch} -n devops-web"
                             }
                             if(deploy in ['Backend','ALL']) {
-                                sh "kubectl set image deployment/devops-web-backend devops-web-backend=harbor-ofs.kyligence.com/devops/devops-web-backend:${version ?: branch} -n devops-web"
+                                sh "kubectl set image deployment/devops-web-backend devops-web-backend=harbor-ofs.kyligence.com/devops/devops-web-backend:${version?:branch} -n devops-web"
                             }
                         }
                     }
