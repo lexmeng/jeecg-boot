@@ -334,6 +334,10 @@ third-app:
       client-id: ??
       # appSecret
       client-secret: ??
+    FEISHU-DEVOPSAPP:
+      enabled: true
+      app-id: appid
+      app-secret: appsecret
 jira:
   account-name: name_here
   sign: sign_here

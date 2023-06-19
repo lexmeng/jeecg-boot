@@ -162,6 +162,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/dev/devCiUtDaily/add", "anon");
         filterChainDefinitionMap.put("/dev/devCiUtPr/add", "anon");
 
+        //it生成软件月度成本
+        filterChainDefinitionMap.put("/it/itSoftwareMonthlyCostController/generateMonthlyCost", "anon");
+
         // 添加自己的过滤器并且取名为jwt
         Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
         //如果cloudServer为空 则说明是单体 需要加载跨域配置【微服务跨域切换】
