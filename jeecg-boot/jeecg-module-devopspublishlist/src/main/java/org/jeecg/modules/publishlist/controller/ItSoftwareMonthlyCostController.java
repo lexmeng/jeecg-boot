@@ -166,7 +166,8 @@ public class ItSoftwareMonthlyCostController extends JeecgController<ItSoftwareM
        return super.importExcel(request, response, ItSoftwareMonthlyCost.class);
    }
 
-   @RequestMapping(value="/generateMonthlyCost", method = RequestMethod.GET)
+   @ApiOperation(value="IT软件月成本-生成某年某月的月成本", notes="IT软件月成本-生成某年某月的月成本")
+   @RequestMapping(value="/generateMonthlyCost", method = RequestMethod.POST)
    public Result<?> generateMonthlyCost(@RequestParam(name="year",required=true) String year, @RequestParam(name="month",required=true) String month){
        itSoftwareMonthlyCostBPService.generateMonthlyCost(year,month);
        itSoftwareMonthlyCostBPService.validate(year, month);

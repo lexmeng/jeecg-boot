@@ -34,7 +34,7 @@ public class ItSoftwareMonthlyCostBPService {
     private ISysBaseAPI sysBaseAPI;
 
     @Autowired
-    private IItSoftwareMonthlyCostService iItSoftwareMonthlyCostService;
+    private IItSoftwareMonthlyCostService itSoftwareMonthlyCostService;
 
     @Autowired
     private IItCostRuleMonthService itCostRuleMonthService;
@@ -169,13 +169,13 @@ public class ItSoftwareMonthlyCostBPService {
             ItSoftwareMonthlyCost cost = new ItSoftwareMonthlyCost();
             cost.setYear(Integer.parseInt(year));
             cost.setMonth(Integer.parseInt(month));
-            cost.setDepartment(departmentName);
+            cost.setOwner(userName);
             cost.setSoftwareName(softwareName);
             cost.setDepartment(departmentName);
             cost.setCost(unitPriceMap.get(softwareName));
             list.add(cost);
         }
-        iItSoftwareMonthlyCostService.saveBatch(list);
+        itSoftwareMonthlyCostService.saveBatch(list);
     }
 
     @Transactional
@@ -185,9 +185,23 @@ public class ItSoftwareMonthlyCostBPService {
         initialSoftwareRule();
         validate();
         //如果已经有数据，则提示
-        //todo
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("month", Integer.parseInt(month));
+        queryMap.put("year", Integer.parseInt(year));
+        List<ItSoftwareMonthlyCost> itSoftwareMonthlyCostList = itSoftwareMonthlyCostService.listByMap(queryMap);
+        if(itSoftwareMonthlyCostList!=null && !itSoftwareMonthlyCostList.isEmpty()){
+            FeishuMessageUtils.sendFeiShuMsg(String.format("%s年%s月的数据已经存在，请检查！",year, month));
+            throw new BussinessException(String.format("%s年%s月的数据已经存在，请检查！",year, month));
+        }
         //如果没数据
         List<ComboModel> userList = sysBaseAPI.queryAllUserBackCombo();
+        /* For Test
+        List<ComboModel> userList = new ArrayList<>();
+        ComboModel model = new ComboModel();
+        model.setId("bg4cgg3a");
+        model.setUsername("jinyong.liu@kyligence.io");
+        userList.add(model);
+        */
         log.info("一共有"+userList.size()+"个用户！");
 
         Integer userTotal = 0;//由于有张三这种测试用户，所以需要统计有部门的用户总数
@@ -256,7 +270,7 @@ public class ItSoftwareMonthlyCostBPService {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("year", Integer.parseInt(year));
         queryMap.put("month", Integer.parseInt(month));
-        List<ItSoftwareMonthlyCost> list = iItSoftwareMonthlyCostService.listByMap(queryMap);
+        List<ItSoftwareMonthlyCost> list = itSoftwareMonthlyCostService.listByMap(queryMap);
 
         Integer itemTotal = userTotal*(softwareUnitPrice.size() + softwareTotalPrice.size());//单价软件数+总价软件数
         if(itemTotal.equals(Integer.valueOf(list.size()))){

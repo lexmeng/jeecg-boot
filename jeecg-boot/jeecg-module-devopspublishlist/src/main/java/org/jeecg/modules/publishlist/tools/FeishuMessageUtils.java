@@ -8,11 +8,15 @@ import java.util.UUID;
 import com.lark.oapi.core.request.RequestOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.modules.publishlist.exception.BussinessException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
+@Component
 public class FeishuMessageUtils {
 
     public static String  openIdLianfei = "ou_16983d1b6c11ee8018f1d895378d4656";

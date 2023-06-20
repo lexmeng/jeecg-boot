@@ -150,6 +150,9 @@ public class ShiroConfig {
         //测试模块排除
         filterChainDefinitionMap.put("/test/seata/**", "anon");
 
+        //package url添加接口
+        filterChainDefinitionMap.put("/release/pubStatusPackageUrl/add", "anon");
+
         //quard汇报状态接口排除
         filterChainDefinitionMap.put("/testing/quardReportProcessData/**", "anon");
 
