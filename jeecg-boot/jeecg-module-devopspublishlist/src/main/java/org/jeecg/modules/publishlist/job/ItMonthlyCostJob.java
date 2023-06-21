@@ -28,7 +28,13 @@ public class ItMonthlyCostJob implements Job {
 
         Integer year = DateUtils.getCalendar().get(Calendar.YEAR);
         Integer month = DateUtils.getCalendar().get(Calendar.MONTH);
-        itSoftwareMonthlyCostController.generateMonthlyCost(year.toString(), month.toString());
+        try{
+            itSoftwareMonthlyCostController.generateMonthlyCost(year.toString(), month.toString());
+        }catch (Exception e){
+            log.info(String.format(" Jeecg-Boot 普通定时任务 ItMonthlyCostJob 报错结束!  时间:" + DateUtils.getTimestamp()));
+            feishuMessageUtils.sendFeiShuMsg("定时任务ItMonthlyCostJob报错结束！错误："+e.getMessage());
+        }
+
 
         log.info(String.format(" Jeecg-Boot 普通定时任务 ItMonthlyCostJob 结束!  时间:" + DateUtils.getTimestamp()));
         feishuMessageUtils.sendFeiShuMsg("定时任务ItMonthlyCostJob结束！");
