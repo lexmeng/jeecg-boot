@@ -339,9 +339,13 @@ third-app:
       app-id: appid
       app-secret: appsecret
 
+jenkins:
+  url: ??
+  account: ??
+  password: ??
 jira:
-  account-name: name_here
-  sign: sign_here
+  account-name: ??
+  sign: ??
 
 jenkins:
   OFS:

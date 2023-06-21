@@ -1,10 +1,10 @@
 <template>
-  <a-card :bordered="false">
+  <div>
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button @click="handleCodeFreeze" type="danger" icon="lock">Code Freeze</a-button>
+      <a-button @click="handleCodeFreeze" type="primary" icon="lock">Code Freeze</a-button>
       <a-button @click="handlePakcage" type="primary" icon="build">打DEV包</a-button>
-      <a-divider type="vertical" />
+      <!-- <a-divider type="vertical" /> -->
       <a-button @click="handleUpdateList" type="primary" icon="retweet">更新Issue信息</a-button>
       <!-- 高级查询区域 -->
       <j-super-query :fieldList="superFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery"></j-super-query>
@@ -95,7 +95,7 @@
     </div>
 
     <issue-modal ref="modalForm" @ok="modalFormOk"></issue-modal>
-  </a-card>
+  </div>
 </template>
 
 <script>
@@ -280,4 +280,5 @@
 </script>
 <style scoped>
   @import '~@assets/less/common.less';
+  .ant-card-body{padding:0}
 </style>

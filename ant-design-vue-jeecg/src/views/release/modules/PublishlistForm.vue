@@ -37,29 +37,28 @@
                 <a-input v-model="model.versionName" placeholder="请输入发布版本号"></a-input>
               </a-form-model-item>
             </a-col>
-<!--            <a-col :lg="8" :md="12" :sm="24" :span="24">-->
-<!--              <a-form-model-item label="版本类型" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="versionType">-->
-<!--                <j-dict-select-tag type="list" v-model="model.versionType" dictCode="version_type"-->
-<!--                                   placeholder="请选择业务线" />-->
-<!--              </a-form-model-item>-->
-<!--            </a-col>-->
+           <a-col :lg="8" :md="12" :sm="24" :span="24">
+             <a-form-model-item label="版本类型" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="versionType">
+               <j-dict-select-tag type="list" v-model="model.versionType" dictCode="version_type"
+                                  placeholder="请选择业务线" />
+             </a-form-model-item>
+           </a-col>
             <a-col :lg="8" :md="12" :sm="24" :span="24">
               <a-form-model-item label="文档版本" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="documentVersion">
                 <a-input v-model="model.documentVersion" placeholder="请输入文档版本"></a-input>
               </a-form-model-item>
             </a-col>
-<!--            <a-col :lg="8" :md="12" :sm="24" :span="24">-->
-<!--              <a-form-model-item label="迭代冲刺号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="scrumNum">-->
-<!--                <a-input v-model="model.scrumNum" placeholder="请输入迭代冲刺号"></a-input>-->
-<!--              </a-form-model-item>-->
-<!--            </a-col>-->
-<!--            <a-col :lg="8" :md="12" :sm="24" :span="24">-->
-<!--              <a-form-model-item label="迭代阶段" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="scrumStage">-->
-<!--                &lt;!&ndash;              <a-input v-model="model.scrumStage" placeholder="请输入迭代阶段" ></a-input>&ndash;&gt;-->
-<!--                <j-dict-select-tag type="list" v-model="model.scrumStage" dictCode="sprint_stage"-->
-<!--                                   placeholder="请选择迭代阶段" />-->
-<!--              </a-form-model-item>-->
-<!--            </a-col>-->
+           <a-col :lg="8" :md="12" :sm="24" :span="24">
+             <a-form-model-item label="迭代冲刺号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="scrumNum">
+               <a-input v-model="model.scrumNum" placeholder="请输入迭代冲刺号"></a-input>
+             </a-form-model-item>
+           </a-col>
+           <!-- <a-col :lg="8" :md="12" :sm="24" :span="24">
+             <a-form-model-item label="迭代阶段" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="scrumStage">
+               <j-dict-select-tag type="list" v-model="model.scrumStage" dictCode="sprint_stage"
+                                  placeholder="请选择迭代阶段" />
+             </a-form-model-item>
+           </a-col> -->
             <a-col :lg="8" :md="12" :sm="24" :span="24">
               <a-form-model-item label="发布单状态" :labelCol="labelCol" :wrapperCol="wrapperCol"
                                  prop="publishlistStage">
