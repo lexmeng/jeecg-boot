@@ -169,7 +169,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/it/itSoftwareMonthlyCostController/generateMonthlyCost", "anon");
 
         //查询配置项
-        filterChainDefinitionMap.put("/system/property/query", "anon");
+        filterChainDefinitionMap.put("/system/property/**", "anon");
 
 
         // 添加自己的过滤器并且取名为jwt

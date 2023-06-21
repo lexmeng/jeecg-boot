@@ -38,6 +38,7 @@ import java.util.List;
 @Slf4j
 @Component
 public class JiraClientUtils {
+    private static final long serialVersionUID = 1L;
     private JiraRestClient jiraRestClient;
     private IssueRestClient issueClient;
 

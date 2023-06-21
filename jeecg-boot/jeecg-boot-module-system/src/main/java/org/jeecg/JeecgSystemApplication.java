@@ -38,6 +38,7 @@ public class JeecgSystemApplication extends SpringBootServletInitializer {
         String port = env.getProperty("server.port");
         String path = oConvertUtils.getString(env.getProperty("server.servlet.context-path"));
         PropertyController.environment = env;
+        PropertyController.applicationContext = application;
         log.info("\n----------------------------------------------------------\n\t" +
                 "Application Jeecg-Boot is running! Access URLs:\n\t" +
                 "Local: \t\thttp://localhost:" + port + path + "/\n\t" +

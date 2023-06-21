@@ -15,9 +15,12 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+
 @Slf4j
 @Component
 public class FeishuMessageUtils {
+    private static final long serialVersionUID = 1L;
 
     public static String  openIdLianfei = "ou_16983d1b6c11ee8018f1d895378d4656";
     public static String openIdJinYong = "ou_5a2ee67721da6095c303715c453e19e5";
@@ -25,10 +28,10 @@ public class FeishuMessageUtils {
     public static String openIdXinTao = "ou_412e5e6507a4105f757391352aafd1a4";
 
     @Value("${third-app.type.FEISHU-DEVOPSAPP.app-id}")
-    public static String appId;
+    public String appId;
 
     @Value("${third-app.type.FEISHU-DEVOPSAPP.app-secret}")
-    public static String getAppIdsecret;
+    public String getAppIdsecret;
 
     public static String tenantAccessToken = "";
 
@@ -45,7 +48,8 @@ public class FeishuMessageUtils {
      * @param content
      * @throws Exception
      */
-    public static void sendFeiShuMsg(String content) {
+    public void sendFeiShuMsg(String content) {
+
         // 构建client
         Client client = Client.newBuilder(appId, getAppIdsecret)
                 .disableTokenCache() //如需SDK自动管理租户Token的获取与刷新,可删除该行
@@ -96,7 +100,7 @@ public class FeishuMessageUtils {
     }
 
     String url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal";
-    public static String updateTalentAccessToken(){
+    public String updateTalentAccessToken(){
         String url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

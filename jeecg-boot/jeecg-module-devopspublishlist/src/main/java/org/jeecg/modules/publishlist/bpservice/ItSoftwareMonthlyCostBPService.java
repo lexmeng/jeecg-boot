@@ -45,6 +45,9 @@ public class ItSoftwareMonthlyCostBPService {
     @Autowired
     private IItSoftwareRuleService itSoftwareRuleService;
 
+    @Autowired
+    private FeishuMessageUtils feishuMessageUtils;
+
     private String softwareGitHub = "GitHub";
 
     private String softwareO365Business = "O365 Business";
@@ -119,7 +122,7 @@ public class ItSoftwareMonthlyCostBPService {
         softwareNamePriceSet.addAll(softwareTotalPrice.keySet());
 
         if(!softwareNameSet.equals(softwareNamePriceSet)){
-            FeishuMessageUtils.sendFeiShuMsg("it_software_rule表的软件数量和价格表的软件数量不匹配，任务失败！");
+            feishuMessageUtils.sendFeiShuMsg("it_software_rule表的软件数量和价格表的软件数量不匹配，任务失败！");
             throw new BussinessException("it_software_rule表的软件数量和价格表的软件数量不匹配，任务失败！");
         }
     }
@@ -137,7 +140,7 @@ public class ItSoftwareMonthlyCostBPService {
         }
 
         if(!allUserName.equals(userNameList)){
-            FeishuMessageUtils.sendFeiShuMsg("it_software_rule表的用户集和系统的用户集不匹配，任务失败！");
+            feishuMessageUtils.sendFeiShuMsg("it_software_rule表的用户集和系统的用户集不匹配，任务失败！");
             throw new BussinessException("it_software_rule表的用户集和系统的用户集不匹配，任务失败！");
         }
     }
@@ -152,7 +155,7 @@ public class ItSoftwareMonthlyCostBPService {
                 }
             }
         }
-        FeishuMessageUtils.sendFeiShuMsg(userName + "没有包含在itSoftwareRule表中！");
+        feishuMessageUtils.sendFeiShuMsg(userName + "没有包含在itSoftwareRule表中！");
         log.error(userName + "没有包含在itSoftwareRule表中！");
         throw new BussinessException(userName + "没有包含在itSoftwareRule表中！");
     }
@@ -190,7 +193,7 @@ public class ItSoftwareMonthlyCostBPService {
         queryMap.put("year", Integer.parseInt(year));
         List<ItSoftwareMonthlyCost> itSoftwareMonthlyCostList = itSoftwareMonthlyCostService.listByMap(queryMap);
         if(itSoftwareMonthlyCostList!=null && !itSoftwareMonthlyCostList.isEmpty()){
-            FeishuMessageUtils.sendFeiShuMsg(String.format("%s年%s月的数据已经存在，请检查！",year, month));
+            feishuMessageUtils.sendFeiShuMsg(String.format("%s年%s月的数据已经存在，请检查！",year, month));
             throw new BussinessException(String.format("%s年%s月的数据已经存在，请检查！",year, month));
         }
         //如果没数据
@@ -276,7 +279,7 @@ public class ItSoftwareMonthlyCostBPService {
         if(itemTotal.equals(Integer.valueOf(list.size()))){
             return true;
         }else{
-            FeishuMessageUtils.sendFeiShuMsg("生成的总数不对。应该生成"+itemTotal+"。实际生成"+list.size());
+            feishuMessageUtils.sendFeiShuMsg("生成的总数不对。应该生成"+itemTotal+"。实际生成"+list.size());
             throw new BussinessException("生成的总数不对。应该生成"+itemTotal+"。实际生成"+list.size());
         }
     }
@@ -309,7 +312,7 @@ public class ItSoftwareMonthlyCostBPService {
             messageDTO.setTitle(title);
             messageDTO.setContent(content);
             sysBaseAPI.sendSysAnnouncement(messageDTO);
-            FeishuMessageUtils.sendFeiShuMsg(content);
+            feishuMessageUtils.sendFeiShuMsg(content);
         }catch (Exception e){
             e.printStackTrace();
         }
