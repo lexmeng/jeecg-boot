@@ -60,7 +60,7 @@ public class FeishuMessageUtils {
         CreateMessageReq req = CreateMessageReq.newBuilder()
                 .receiveIdType("open_id")
                 .createMessageReqBody(CreateMessageReqBody.newBuilder()
-                        .receiveId(openIdLianfei)
+                        .receiveId(openIdJinYong)
                         .msgType("text")
                         .content(contentStr)
                         .uuid(UUID.randomUUID().toString())
