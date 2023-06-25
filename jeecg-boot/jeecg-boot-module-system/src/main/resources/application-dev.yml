@@ -58,6 +58,7 @@ spring:
             isClustered: true
             misfireThreshold: 12000
             clusterCheckinInterval: 15000
+            acquireTriggersWithinLock: true
           threadPool:
             class: org.quartz.simpl.SimpleThreadPool
             threadCount: 10
