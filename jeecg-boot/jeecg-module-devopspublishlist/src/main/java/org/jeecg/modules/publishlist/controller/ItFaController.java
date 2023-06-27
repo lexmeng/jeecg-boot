@@ -91,11 +91,11 @@ public class ItFaController extends JeecgController<ItFa, IItFaService> {
 	 //@AutoLog(value = "固定资产调拨")
 	 @ApiOperation(value="固定资产调拨", notes="固定资产调拨")
 	 @PostMapping(value = "/transfer")
-	 public Result<String> transfer(@RequestBody String fixAssertId,
-			                        @RequestBody String toUserOwner,
-									@RequestBody String toDepartment,
-									@RequestBody String toUseStatus,
-									@RequestBody String toLocation) {
+	 public Result<String> transfer(@RequestParam(name="fixAssertId",required=true) String fixAssertId,
+			                        @RequestParam(name="toUserOwner",required=true) String toUserOwner,
+									@RequestParam(name="toDepartment",required=true) String toDepartment,
+									@RequestParam(name="toUseStatus",required=true) String toUseStatus,
+									@RequestParam(name="toLocation",required=true) String toLocation) {
 
 		 itFixAssertsBPService.transfer(fixAssertId, toUserOwner, toDepartment, toUseStatus, toLocation);
 		 return Result.OK("调拨成功");
@@ -110,7 +110,7 @@ public class ItFaController extends JeecgController<ItFa, IItFaService> {
 	 //@AutoLog(value = "固定资产折旧")
 	 @ApiOperation(value="固定资产折旧", notes="固定资产折旧")
 	 @PostMapping(value = "/depreciation")
-	 public Result<String> depreciation(@RequestBody String fixAssertId) {
+	 public Result<String> depreciation(@RequestParam(name="fixAssertId",required=true) String fixAssertId) {
 		 itFixAssertsBPService.depreciation(fixAssertId);
 		 return Result.OK("折旧成功");
 	 }
