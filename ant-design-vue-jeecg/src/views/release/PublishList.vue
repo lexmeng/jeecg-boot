@@ -91,7 +91,6 @@
             </a-menu>
           </a-dropdown>
         </span>
-
       </a-table>
     </div>
 
@@ -263,7 +262,7 @@
         return record.publishlistStage && record.publishlistStage === 'done'
       },
       handleDeploy(record){
-        this.$router.push({ path: '/release/publish', query: {id:record.id,record:record} })
+        this.$router.push({ path: '/release/publish', query: {id:record.id} })
       },
       handleIssues(record){
         // console.log("handleIssues: ", record)

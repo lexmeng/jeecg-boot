@@ -42,14 +42,17 @@
         <a href="#">hello</a>
       </template>
       <a-collapse-panel key="1" header="研发阶段" :style="customStyle">
-        <issue-dev-list :pid="publishlistId" ref="issueList"></issue-dev-list>
+        <a-row>
+          <a-col :span="12">
+            <issue-dev-list :pid="publishlistId" ref="issueList"></issue-dev-list>
+          </a-col>
+          <a-col :span="12">
+            <pub-status-package-url-list stage="DEV" :publishForm="publishForm"></pub-status-package-url-list>
+          </a-col>
+        </a-row>
       </a-collapse-panel>
       <a-collapse-panel key="2" header="测试阶段" :style="customStyle">
-        <a-button-group>
-          <a-button @click="handlePakcage" type="primary" icon="build">打QA包</a-button>
-          <a-button @click="handleQuard" type="primary" icon="build">Run Quard</a-button>
-          <a-button @click="handleStep" type="primary" icon="build">Run Step</a-button>
-        </a-button-group>
+        <pub-status-package-url-list stage="QA" :publishForm="publishForm"></pub-status-package-url-list>
 
         <!--        <a-steps direction="horizontal" :current="testingCurrent" progressDot>-->
         <!--          <a-step key="1" title="打包"></a-step>-->
@@ -57,7 +60,11 @@
         <!--          <a-step key="3" title="Step"></a-step>-->
         <!--        </a-steps>-->
       </a-collapse-panel>
-      <a-collapse-panel key="3" header="交付阶段" :style="customStyle">
+      <a-collapse-panel key="3" header="RC阶段" :style="customStyle">
+        <pub-status-package-url-list stage="RC" :publishForm="publishForm"></pub-status-package-url-list>
+
+      </a-collapse-panel>
+      <a-collapse-panel key="4" header="交付阶段" :style="customStyle">
         <!-- actions -->
         <project-gen-actions :publishlistId="publishlistId"></project-gen-actions>
       </a-collapse-panel>
@@ -77,6 +84,8 @@ import GenTextDrawer from '@views/release/modules/GenTextDrawer.vue'
 import ProjectDrawer from '@views/release/modules/ProjectDrawer.vue'
 import IssueDevList from '@views/release/IssueDevList.vue'
 
+import PubStatusPackageUrlList from '@views/dev/PubStatusPackageUrlList.vue'
+
 import ProjectGenActions from '@views/release/modules/ProjectGenActions.vue'
 import PublishInfo from '@views/release/modules/PublishInfo.vue'
 
@@ -93,10 +102,10 @@ export default {
     DetailListItem,
     JMarkdownEditor,
     PublishlistForm,
-
     PublishInfo,
-    ProjectGenActions
-  },
+    ProjectGenActions,
+    PubStatusPackageUrlList
+},
   mixins: [mixinDevice],
   data() {
     return {
@@ -116,12 +125,6 @@ export default {
       customStyle: 'background: #fff;border-radius:4px;margin-top:0;margin-bottom: 5px;border: 0;overflow: hidden',
       url: {
         queryById: '/release/queryById',
-        // genReleaseNote: '/release/generateReleaseNoteContent',
-        // genReleaseEmail: '/release/generateReleaseMailContent',
-        // genPackagePr: '/release/generateProductPackagePRContent',
-        // genHandbookChPr: '/release/generateProductHandbookPRChContent',
-        // genHandbookEnPr: '/release/generateProductHandbookPREnContent',
-        // genWebsite: '/release/generateWebsiteContent',
         issueList: '/release/issue/list'
       }
     }
@@ -138,7 +141,7 @@ export default {
       return ss.indexOf(this.publishForm.scrumStage)
     },
     currentStage() {
-      return '1'
+      return '2'
     }
   },
   methods: {
@@ -184,120 +187,6 @@ export default {
           this.loading = false
         })
     },
-    // handleReleaseNote() {
-    //   this.isMarkDown = true
-    //   const params = { id: this.publishlistId }
-    //   getAction(this.url.genReleaseNote, params).then((res) => {
-    //     if (res.success) {
-    //       console.log(res.result)
-    //       this.txtContent = res.result
-    //       this.$refs.modalForm.view({
-    //         'publishlistId': this.publishlistId,
-    //         'title': 'ReleaseNote',
-    //         'content': res.result,
-    //         'isMarkDown': this.isMarkDown,
-    //         'templateType': 'ReleaseNote'
-    //       })
-    //     } else {
-    //       this.$message.error(res.message)
-    //     }
-    //   })
-    // },
-    // handleReleaseMail() {
-    //   this.isMarkDown = false
-    //   const params = { id: this.publishlistId }
-    //   getAction(this.url.genReleaseEmail, params).then((res) => {
-    //     if (res.success) {
-    //       console.log(res.result)
-    //       this.txtContent = res.result
-    //       this.$refs.modalForm.view({
-    //         'publishlistId': this.publishlistId,
-    //         'title': 'Release Email',
-    //         'content': res.result,
-    //         'isMarkDown': this.isMarkDown,
-    //         'templateType': 'ReleaseMail'
-    //       })
-    //     } else {
-    //       this.$message.error(res.message)
-    //     }
-    //   })
-    // },
-    // handlePackagePR() {
-    //   this.isMarkDown = true
-    //   const params = { id: this.publishlistId }
-    //   getAction(this.url.genPackagePr, params).then((res) => {
-    //     if(res.success){
-    //       console.log(res.result)
-    //       this.txtContent = res.result
-    //       this.$refs.modalForm.view({
-    //         'publishlistId': this.publishlistId,
-    //         'title': '打包 PR 生成',
-    //         'content': res.result,
-    //         'isMarkDown': this.isMarkDown,
-    //         'templateType': 'ProductPackagePRContent'
-    //       })
-    //     }else{
-    //       this.$message.error(res.message)
-    //     }
-    //   })
-    // },
-    // handleHandbookChPR() {
-    //   this.isMarkDown = true
-    //   const params = { id: this.publishlistId }
-    //   getAction(this.url.genHandbookChPr, params).then((res) => {
-    //     if (res.success) {
-    //       console.log(res.result)
-    //       this.txtContent = res.result
-    //       this.$refs.modalForm.view({
-    //         'publishlistId': this.publishlistId,
-    //         'title': '手册中文 PR 生成',
-    //         'content': res.result,
-    //         'isMarkDown': this.isMarkDown,
-    //         'templateType': 'HandBookPRChContent'
-    //       })
-    //     } else {
-    //       this.$message.error(res.message)
-    //     }
-    //   })
-    // },
-    // handleHandbookEnPR() {
-    //   this.isMarkDown = true
-    //   const params = { id: this.publishlistId }
-    //   getAction(this.url.genHandbookEnPr, params).then((res) => {
-    //     if (res.success) {
-    //       console.log(res.result)
-    //       this.txtContent = res.result
-    //       this.$refs.modalForm.view({
-    //         'publishlistId': this.publishlistId,
-    //         'title': '手册英文 PR 生成',
-    //         'content': res.result,
-    //         'isMarkDown': this.isMarkDown,
-    //         'templateType': 'HandBookPREnContent'
-    //       })
-    //     } else {
-    //       this.$message.error(res.message)
-    //     }
-    //   })
-    // },
-    // handleWebsite() {
-    //   this.isMarkDown = true
-    //   const params = { id: this.publishlistId }
-    //   getAction(this.url.genWebsite, params).then((res) => {
-    //     if (res.success) {
-    //       console.log(res.result)
-    //       this.txtContent = res.result
-    //       this.$refs.modalForm.view({
-    //         'publishlistId': this.publishlistId,
-    //         'title': '官网内容生成',
-    //         'content': res.result,
-    //         'isMarkDown': this.isMarkDown,
-    //         'templateType': 'Website'
-    //       })
-    //     } else {
-    //       this.$message.error(res.message)
-    //     }
-    //   })
-    // },
     modalFormOk() {},
     add() {
       this.visible = true
@@ -316,9 +205,6 @@ export default {
       this.visible = false
     },
     publish() {},
-    handlePakcage() {},
-    handleQuard() {},
-    handleStep() {}
   }
 }
 </script>

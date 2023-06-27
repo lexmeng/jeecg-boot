@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <a-card :bordered="false">
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleCodeFreeze" type="primary" icon="lock">Code Freeze</a-button>
-      <a-button @click="handlePakcage" type="primary" icon="build">打DEV包</a-button>
+<!--      <a-button @click="handlePakcage" type="primary" icon="build">打DEV包</a-button>-->
       <!-- <a-divider type="vertical" /> -->
       <a-button @click="handleUpdateList" type="primary" icon="retweet">更新Issue信息</a-button>
       <!-- 高级查询区域 -->
@@ -95,7 +95,7 @@
     </div>
 
     <issue-modal ref="modalForm" @ok="modalFormOk"></issue-modal>
-  </div>
+  </a-card>
 </template>
 
 <script>
