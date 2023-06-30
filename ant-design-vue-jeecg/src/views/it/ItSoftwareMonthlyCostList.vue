@@ -182,12 +182,12 @@
           {
             title:'拥有者',
             align:"center",
-            dataIndex: 'owner_dictText'
+            dataIndex: 'owner'
           },
           {
             title:'部门',
             align:"center",
-            dataIndex: 'department_dictText'
+            dataIndex: 'department'
           },
           {
             title: '操作',
@@ -227,8 +227,8 @@
         fieldList.push({type:'int',value:'month',text:'月份',dictCode:''})
         fieldList.push({type:'int',value:'year',text:'年份',dictCode:''})
         fieldList.push({type:'double',value:'cost',text:'成本',dictCode:''})
-        fieldList.push({type:'sel_user',value:'owner',text:'拥有者'})
-        fieldList.push({type:'sel_depart',value:'department',text:'部门'})
+        fieldList.push({type:'string',value:'owner',text:'拥有者',dictCode:''})
+        fieldList.push({type:'string',value:'department',text:'部门',dictCode:''})
         this.superFieldList = fieldList
       }
     }

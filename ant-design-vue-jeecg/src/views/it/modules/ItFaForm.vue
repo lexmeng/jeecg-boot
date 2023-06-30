@@ -25,17 +25,24 @@
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="使用部门" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="useOrgCode">
-              <a-input v-model="model.useOrgCode" placeholder="请输入使用部门"  ></a-input>
+              <j-select-depart v-model="model.useOrgCode" :trigger-change="true" placeholder="请选择使用部门" customReturnField="orgCode" :multi="false"></j-select-depart>
+<!--              <a-input v-model="model.useOrgCode" placeholder="请输入使用部门"  ></a-input>-->
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="保管人员" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="useOwner">
-              <a-input v-model="model.useOwner" placeholder="请输入保管人员"  ></a-input>
+              <j-select-multi-user v-model="model.useOwner" placeholder="请选择保管人员" :query-config="selectUserQueryConfig"/>
+<!--              <a-input v-model="model.useOwner" placeholder="请输入保管人员"  ></a-input>-->
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="存放地点" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="site">
               <j-dict-select-tag type="list" v-model="model.site" dictCode="it_site" placeholder="请选择存放地点" />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-model-item label="邮箱" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="equEmail">
+              <a-input v-model="model.equEmail" placeholder="请输入邮箱"  ></a-input>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
@@ -49,6 +56,11 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
+            <a-form-model-item label="折旧期数" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="equYear">
+              <a-input v-model="model.equYear" placeholder="请输入折旧期数"  ></a-input>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="24">
             <a-form-model-item label="设备分类" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="equipmentClass">
               <j-dict-select-tag type="list" v-model="model.equipmentClass" dictCode="equ_type" placeholder="请选择设备分类" />
             </a-form-model-item>
@@ -58,11 +70,11 @@
               <j-date placeholder="请选择时间" v-model="model.itTime"  style="width: 100%" />
             </a-form-model-item>
           </a-col>
-          <a-col :span="24">
-            <a-form-model-item label="备注" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="remarks">
-              <a-input v-model="model.remarks" placeholder="请输入备注"  ></a-input>
-            </a-form-model-item>
-          </a-col>
+<!--          <a-col :span="24">-->
+<!--            <a-form-model-item label="备注" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="remarks">-->
+<!--              <a-input v-model="model.remarks" placeholder="请输入备注"  ></a-input>-->
+<!--            </a-form-model-item>-->
+<!--          </a-col>-->
         </a-row>
       </a-form-model>
     </j-form-container>

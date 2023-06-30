@@ -36,12 +36,14 @@ public class ItSoftwareRule implements Serializable {
     @ApiModelProperty(value = "主键")
     private java.lang.String id;
 	/**软件名称*/
-	@Excel(name = "软件名称", width = 15)
+    @Excel(name = "软件名称", width = 15, dicCode = "SOFTWARE_TYPE")
+    @Dict(dicCode = "SOFTWARE_TYPE")
     @ApiModelProperty(value = "软件名称")
     private java.lang.String name;
 	/**使用者*/
 	@Excel(name = "使用者", width = 15)
     @ApiModelProperty(value = "使用者")
+    @Dict(dicCode = "username", dicText = "realname", dictTable = "sys_user")
     private java.lang.String owner;
 	/**是否*/
 	@Excel(name = "是否", width = 15)
@@ -49,6 +51,7 @@ public class ItSoftwareRule implements Serializable {
     private java.lang.String yesOrNo;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
+    @Dict(dicCode = "username", dicText = "realname", dictTable = "sys_user")
     private java.lang.String createBy;
 	/**创建日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")

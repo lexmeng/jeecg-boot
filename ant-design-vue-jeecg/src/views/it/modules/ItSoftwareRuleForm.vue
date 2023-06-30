@@ -4,21 +4,18 @@
       <a-form-model ref="form" :model="model" :rules="validatorRules" slot="detail">
         <a-row>
           <a-col :span="24">
-            <a-form-model-item label="publishlist的id" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="publishlistId">
-              <j-popup
-                v-model="model.publishlistId"
-                field="publishlistId"
-                org-fields=""
-                dest-fields=""
-                code=""
-                :multi="true"
-                @input="popupCallback"
-                />
+            <a-form-model-item label="软件名称" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="name">
+              <j-dict-select-tag type="list" v-model="model.name" dictCode="SOFTWARE_TYPE" placeholder="请选择软件名称" />
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="jira项目id" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="projectId">
-              <a-input v-model="model.projectId" placeholder="请输入jira项目id"  ></a-input>
+            <a-form-model-item label="使用者" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="owner">
+              <a-input v-model="model.owner" placeholder="请输入使用者"  ></a-input>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-model-item label="在用" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="yesOrNo">
+              <j-switch v-model="model.yesOrNo" :options="["YES","NO"]" ></j-switch>
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -33,7 +30,7 @@
   import { validateDuplicateValue } from '@/utils/util'
 
   export default {
-    name: 'PublishlistProjectForm',
+    name: 'ItSoftwareRuleForm',
     components: {
     },
     props: {
@@ -47,7 +44,7 @@
     data () {
       return {
         model:{
-        },
+         },
         labelCol: {
           xs: { span: 24 },
           sm: { span: 5 },
@@ -58,17 +55,11 @@
         },
         confirmLoading: false,
         validatorRules: {
-           publishlistId: [
-              { required: true, message: '请输入publishlist的id!'},
-           ],
-           projectId: [
-              { required: true, message: '请输入jira项目id!'},
-           ],
         },
         url: {
-          add: "/release/publishlistProject/add",
-          edit: "/release/publishlistProject/edit",
-          queryById: "/release/publishlistProject/queryById"
+          add: "/it/itSoftwareRule/add",
+          edit: "/it/itSoftwareRule/edit",
+          queryById: "/it/itSoftwareRule/queryById"
         }
       }
     },
@@ -117,9 +108,6 @@
           }
          
         })
-      },
-      popupCallback(value,row){
-         this.model = Object.assign(this.model, row);
       },
     }
   }

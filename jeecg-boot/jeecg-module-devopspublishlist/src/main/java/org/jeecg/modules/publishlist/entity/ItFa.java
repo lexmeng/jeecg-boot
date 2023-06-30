@@ -73,6 +73,7 @@ public class ItFa implements Serializable {
     private java.lang.String useState;
 	/**使用部门*/
 	@Excel(name = "使用部门", width = 15)
+    @Dict(dicCode = "use_type")
     @ApiModelProperty(value = "使用部门")
     private java.lang.String useOrgCode;
 	/**保管人员*/

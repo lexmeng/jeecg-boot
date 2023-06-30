@@ -44,7 +44,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
  */
 @Api(tags="软件分配表")
 @RestController
-@RequestMapping("/org.jeecg.modules.publishlist/itSoftwareRule")
+@RequestMapping("/it/itSoftwareRule")
 @Slf4j
 public class ItSoftwareRuleController extends JeecgController<ItSoftwareRule, IItSoftwareRuleService> {
 	@Autowired

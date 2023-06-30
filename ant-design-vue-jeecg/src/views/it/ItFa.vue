@@ -1,50 +1,82 @@
 <template>
   <a-card :bordered="false">
-
+    <a-row>
+      <!-- 操作按钮区域 -->
+      <div class="table-operator">
+        <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+      </div>
+    </a-row>
     <a-row :gutter="8">
-      <a-col :span="6">
-        <!-- 加上 show-line 属性后，展开收起图标自动变成 +- 样式 -->
-        <a-tree
-          class="template-5-tree"
-          :tree-data="treeData"
-          show-icon
-          show-line
-          :expandedKeys="treeExpandedKeys"
-          :selectedKeys="[pagination.current]"
-          @expand="handleTreeExpand"
-          @select="handleTreeSelect"
-        >
-          <!-- 自定义子节点图标 -->
-          <a-icon slot="myIcon" type="unordered-list" style="color:#0c8fcf;"/>
-        </a-tree>
-      </a-col>
-      <a-col :span="18">
+      <!-- 左侧父 -->
+      <a-col :span="12">
         <j-vxe-table
           row-number
           row-selection
-          :height="750"
-          :loading="loading"
-          :columns="columns"
-          :dataSource="dataSource"
-          :pagination="pagination"
-          @pageChange="handleTablePageChange"
+          row-selection-type="radio"
+          click-select-row
+          highlight-current-row
+          :radio-config="{highlight: false}"
+          :checkbox-config="{highlight: false}"
+          :height="950"
+          :loading="table1.loading"
+          :columns="table1.columns"
+          :dataSource="table1.dataSource"
+          :pagination="table1.pagination"
+          @pageChange="handleTable1PageChange"
+          @selectRowChange="handleTable1SelectRowChange"
         />
+      </a-col>
+      <a-col :span="12">
+
+        <j-vxe-table
+          row-number
+          row-selection
+          click-select-row
+          :height="456"
+          :loading="table3.loading"
+          :columns="table3.columns"
+          :dataSource="table3.dataSource"
+          :pagination="table3.pagination"
+          @pageChange="handleTable3PageChange"
+          @selectRowChange="handleTable3SelectRowChange"
+        />
+        <!-- 左侧选择的数据展示在这里 -->
+        <j-vxe-table
+          row-number
+          row-selection
+          click-select-row
+          highlight-current-row
+          :height="456"
+          :loading="table2.loading"
+          :columns="table2.columns"
+          :dataSource="table2.dataSource"
+          :pagination="table2.pagination"
+          @pageChange="handleTable2PageChange"
+          @selectRowChange="handleTable2SelectRowChange"
+        />
+
+        <!-- 右下子 -->
       </a-col>
     </a-row>
 
-
+    <it-fa-modal ref="modalForm" @ok="modalFormOk"></it-fa-modal>
   </a-card>
 </template>
 
 <script>
-  import { getAction } from '@api/manage'
-  import { JVXETypes } from '@/components/jeecg/JVxeTable'
+import { getAction } from '@api/manage'
+import { JVXETypes } from '@/components/jeecg/JVxeTable'
+import ItFaModal from './modules/ItFaModal'
 
-  // 【多种布局模板】左侧为树，右侧为行编辑
-  export default {
-    name: 'Template5',
-    data() {
-      return {
+// 【多种布局模板】 左边选择后，记录选到右侧，右侧是父、子
+export default {
+  name: 'ItFa',
+  components: {
+    ItFaModal
+  },
+  data() {
+    return {
+      table1: {
         // 是否正在加载
         loading: false,
         // 分页器参数
@@ -52,173 +84,342 @@
           // 当前页码
           current: 1,
           // 每页的条数
-          pageSize: 50,
+          pageSize: 20,
           // 可切换的条数
-          pageSizeOptions: ['50'],
+          pageSizeOptions: ['10', '20', '30', '100', '200'],
           // 数据总数（目前并不知道真实的总数，所以先填写0，在后台查出来后再赋值）
           total: 0,
         },
+        // 最后选中的行
+        lastRow: null,
         // 选择的行
         selectedRows: [],
         // 数据源，控制表格的数据
         dataSource: [],
         // 列配置，控制表格显示的列
         columns: [
-          {key: 'num', title: '序号', width: '80px'},
           {
-            // 字段key，跟后台数据的字段名匹配
-            key: 'ship_name',
-            // 列的标题
-            title: '船名',
-            // 列的宽度
-            width: '180px',
-            // 如果加上了该属性，就代表当前单元格是可编辑的，type就是表单的类型，input就是简单的输入框
-            type: JVXETypes.input
+            title:'固定资产编号',
+            align:"center",
+            key: 'fixedAssetsNumber',
+            width: '130px',
           },
-          {key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input},
-          {key: 'len', title: '长', width: '80px', type: JVXETypes.input},
-          {key: 'ton', title: '吨', width: '120px', type: JVXETypes.input},
-          {key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input},
-          {key: 'count', title: '数', width: '40px'},
           {
-            key: 'company',
-            title: '公司',
-            // 最小宽度，与宽度不同的是，这个不是固定的宽度，如果表格有多余的空间，会平均分配给设置了 minWidth 的列
-            // 如果要做占满表格的列可以这么写
-            minWidth: '180px',
-            type: JVXETypes.input
+            title:'设备分类',
+            align:"center",
+            key: 'equipmentClass_dictText',
+            width: '120px'
           },
-          {key: 'trend', title: '动向', width: '120px', type: JVXETypes.input},
+          {
+            title:'设备名称',
+            align:"center",
+            key: 'equipmentName',
+            width: '120px'
+          },
+          {
+            title:'设备型号',
+            align:"center",
+            key: 'equipmentModel',
+            width: '120px'
+          },
+          {
+            title:'使用状态',
+            align:"center",
+            key: 'useState_dictText',
+            width: '60px'
+          },
+          {
+            title:'使用部门',
+            align:"center",
+            key: 'useOrgCode',
+            width: '120px'
+          },
+          {
+            title:'保管人员',
+            align:"center",
+            key: 'useOwner',
+            width: '80px'
+          },
+          {
+            title:'存放地点',
+            align:"center",
+            key: 'site_dictText',
+            width: '120px'
+          },
+          // {
+          //   title:'设备原值',
+          //   align:"center",
+          //   key: 'equOriValue'
+          // },
+          // {
+          //   title:'设备净值',
+          //   align:"center",
+          //   key: 'equNetValue'
+          // },
+          // {
+          //   title:'时间',
+          //   align:"center",
+          //   key: 'itTime',
+          //   customRender:function (text) {
+          //     return !text?"":(text.length>10?text.substr(0,10):text)
+          //   }
+          // },
         ],
-        // 树的数据，这里模拟分页固定数据，实际情况应该是后台查出来的数据
-        treeData: [
-          // 第1级数据
+      },
+      // 子级表的配置信息 （配置和主表的完全一致，就不写冗余的注释了）
+      table2: {
+        loading: false,
+        pagination: {current: 1, pageSize: 200, pageSizeOptions: ['100', '200'], total: 0},
+        selectedRows: [],
+        dataSource: [],
+        columns: [
           {
-            title: '1-10页',
-            key: '1-10',
-            // 第2级数据
-            children: [
-              {title: '第 1 页', key: 1, slots: {icon: 'myIcon'}},
-              {title: '第 2 页', key: 2, slots: {icon: 'myIcon'}},
-              {
-                title: '第 3 页',
-                key: 3,
-                slots: {icon: 'myIcon'},
-                // 第3级数据
-                children: [
-                  {title: '第 333 页', key: 333, slots: {icon: 'myIcon'}},
-                  {title: '第 444 页', key: 444, slots: {icon: 'myIcon'}},
-                  {title: '第 555 页', key: 555, slots: {icon: 'myIcon'}},
-                  // 第4第5级以此类推，加上 children 属性即可
-                ],
-              },
-              {title: '第 4 页', key: 4, slots: {icon: 'myIcon'}},
-              {title: '第 5 页', key: 5, slots: {icon: 'myIcon'}},
-              {title: '第 6 页', key: 6, slots: {icon: 'myIcon'}},
-              {title: '第 7 页', key: 7, slots: {icon: 'myIcon'}},
-              {title: '第 8 页', key: 8, slots: {icon: 'myIcon'}},
-              {title: '第 9 页', key: 9, slots: {icon: 'myIcon'}},
-              {title: '第 10 页', key: 10, slots: {icon: 'myIcon'}},
-            ],
-            slots: {icon: 'myIcon'},
+            title:'固定资产编号',
+            align:"center",
+            key: 'fixAssertsId',
+            width: '180px'
           },
           {
-            title: '11-20页',
-            key: '11-20',
-            children: [
-              {title: '第 11 页', key: 11, slots: {icon: 'myIcon'}},
-              {title: '第 12 页', key: 12, slots: {icon: 'myIcon'}},
-              {title: '第 13 页', key: 13, slots: {icon: 'myIcon'}},
-              {title: '第 14 页', key: 14, slots: {icon: 'myIcon'}},
-              {title: '第 15 页', key: 15, slots: {icon: 'myIcon'}},
-              {title: '第 16 页', key: 16, slots: {icon: 'myIcon'}},
-              {title: '第 17 页', key: 17, slots: {icon: 'myIcon'}},
-              {title: '第 18 页', key: 18, slots: {icon: 'myIcon'}},
-              {title: '第 19 页', key: 19, slots: {icon: 'myIcon'}},
-              {title: '第 20 页', key: 20, slots: {icon: 'myIcon'}},
-            ],
-            slots: {icon: 'myIcon'},
+            title:'净值',
+            align:"center",
+            key: 'netValue',
+            width: '120px'
+          },
+          {
+            title:'年',
+            align:"center",
+            key: 'year',
+            width: '120px'
+          },
+          {
+            title:'月',
+            align:"center",
+            key: 'month',
+            width: '120px'
+          },
+          {
+            title:'日',
+            align:"center",
+            key: 'day',
+            width: '120px'
           },
         ],
-        // 树展开的列，默认 1-10
-        treeExpandedKeys: ['1-10'],
-        // 查询url地址
-        url: {
-          getData: '/mock/vxe/getData',
-        },
+      },
+      table3: {
+        loading: false,
+        pagination: {current: 1, pageSize: 200, pageSizeOptions: ['100', '200'], total: 0},
+        selectedRows: [],
+        dataSource: [],
+        columns: [
+          {
+            title:'固定资产id',
+            align:"center",
+            key: 'fixAssertsId',
+            width: '120px',
+          },
+          {
+            title:'原保管人员',
+            align:"center",
+            key: 'fromOwnName',
+            width: '120px',
+          },
+          {
+            title:'原部门',
+            align:"center",
+            key: 'fromDepartment',
+            width: '120px',
+          },
+          {
+            title:'原存放地点',
+            align:"center",
+            key: 'fromLocation',
+            width: '120px',
+          },
+          {
+            title:'原使用状态',
+            align:"center",
+            key: 'fromUseStatus',
+            width: '120px',
+          },
+          {
+            title:'目的保管人员',
+            align:"center",
+            key: 'toOwnerName',
+            width: '120px',
+          },
+          {
+            title:'目的部门',
+            align:"center",
+            key: 'toDepartment',
+            width: '120px',
+          },
+          {
+            title:'目的存放地点',
+            align:"center",
+            key: 'toLocation',
+            width: '120px',
+          },
+          {
+            title:'目的使用状态',
+            align:"center",
+            key: 'toUseStatus',
+            width: '120px',
+          },
+        ],
+      },
+      // 查询url地址
+      url: {
+        getData: '/mock/vxe/getData',
+        getItFaUrl: "/it/itFa/list",
+        itNetList: "/it/itFixAssetsNetValue/list",
+        itTransferRecordList: "/it/itFixAssertsTransferRecord/list",
+      },
+    }
+  },
+  // 监听器
+  watch: {
+    // 监听table1 【主表】选择的数据发生了变化
+    ['table1.lastRow']() {
+      this.loadTable2Data()
+      this.loadTable3Data()
+    },
+
+  },
+  created() {
+    this.loadTable1Data()
+  },
+  methods: {
+
+    // 加载table1【主表】的数据
+    loadTable1Data() {
+      // 封装查询条件
+      let formData = {
+        pageNo: this.table1.pagination.current,
+        pageSize: this.table1.pagination.pageSize
       }
-    },
-    created() {
-      this.loadData()
-    },
-    methods: {
-
-      // 加载行编辑的数据
-      loadData() {
-        // 封装查询条件
-        let formData = {
-          pageNo: this.pagination.current,
-          pageSize: this.pagination.pageSize
-        }
-        // 调用查询数据接口
-        this.loading = true
-        getAction(this.url.getData, formData).then(res => {
-          if (res.success) {
-            // 后台查询回来的 total，数据总数量
-            this.pagination.total = res.result.total
-            // 将查询的数据赋值给 dataSource
-            this.dataSource = res.result.records
-            // 重置选择
-            this.selectedRows = []
-          } else {
-            this.$error({title: '主表查询失败', content: res.message})
-          }
-        }).finally(() => {
-          // 这里是无论成功或失败都会执行的方法，在这里关闭loading
-          this.loading = false
-        })
-      },
-
-      handleTablePageChange(event) {
-        // 重新赋值
-        this.pagination.current = event.current
-        this.pagination.pageSize = event.pageSize
-        // 查询数据
-        this.loadData()
-        // 判断树展开的key
-        if (event.current <= 10) {
-          this.treeExpandedKeys = ['1-10']
+      // 调用查询数据接口
+      this.table1.loading = true
+      getAction(this.url.getItFaUrl, formData).then(res => {
+        if (res.success) {
+          // 后台查询回来的 total，数据总数量
+          this.table1.pagination.total = res.result.total
+          // 将查询的数据赋值给 dataSource
+          this.table1.dataSource = res.result.records
+          // 重置选择
+          this.table1.selectedRows = []
         } else {
-          this.treeExpandedKeys = ['11-20']
+          this.$error({title: '主表查询失败', content: res.message})
         }
-      },
-
-      // 树被选择触发的事件
-      handleTreeSelect(selectedKeys) {
-        let key = selectedKeys[0]
-        if (typeof key === 'string') {
-          // 控制树展开为当前选择的列
-          this.treeExpandedKeys = selectedKeys
-        } else {
-          this.pagination.current = key
-          this.loadData()
-        }
-      },
-
-      // 树被选择触发的事件
-      handleTreeExpand(expandedKeys) {
-        this.treeExpandedKeys = expandedKeys
-      },
-
+      }).finally(() => {
+        // 这里是无论成功或失败都会执行的方法，在这里关闭loading
+        this.table1.loading = false
+      })
     },
+    
+    // 加载table2【子表】的数据，根据主表的id进行查询
+    loadTable2Data() {
+      // 如果主表没有选择，则不查询
+      let selectedRows = this.table1.selectedRows
+      let formData = {
+        pageNo: this.table2.pagination.current,
+        pageSize: this.table2.pagination.pageSize,
+        fixAssertsId: this.table1.lastRow.fixedAssetsNumber
+      }
+      this.table2.loading = true
+      getAction(this.url.itNetList, formData).then(res => {
+        if (res.success) {
+          this.table2.pagination.total = res.result.total
+          this.table2.dataSource = res.result.records
+          this.table2.selectedRows = []
+        } else {
+          this.$error({title: '子表查询失败', content: res.message})
+        }
+      }).finally(() => {
+        this.table2.loading = false
+      })
+    },
+
+    // 加载table3【子表】的数据，根据主表的id进行查询
+    loadTable3Data() {
+      // 如果主表没有选择，则不查询
+      let selectedRows = this.table1.selectedRows
+      let formData = {
+        pageNo: this.table3.pagination.current,
+        pageSize: this.table3.pagination.pageSize,
+        fixAssertsId: this.table1.lastRow.fixedAssetsNumber
+      }
+      this.table3.loading = true
+      getAction(this.url.itTransferRecordList, formData).then(res => {
+        if (res.success) {
+          this.table3.pagination.total = res.result.total
+          this.table3.dataSource = res.result.records
+          this.table3.selectedRows = []
+        } else {
+          this.$error({title: '子表查询失败', content: res.message})
+        }
+      }).finally(() => {
+        this.table3.loading = false
+      })
+    },
+
+    // table1【主表】当选择的行变化时触发的事件
+    handleTable1SelectRowChange(event) {
+      this.handleTableSelectRowChange(this.table1, event)
+    },
+
+    // table2【子表】当选择的行变化时触发的事件
+    handleTable2SelectRowChange(event) {
+      this.table2.selectedRows = event.selectedRows
+    },
+
+    // table3【子表】当选择的行变化时触发的事件
+    handleTable3SelectRowChange(event) {
+      this.table3.selectedRows = event.selectedRows
+    },
+
+    // 当table1【主表】分页参数变化时触发的事件
+    handleTable1PageChange(event) {
+      // 重新赋值
+      this.table1.pagination.current = event.current
+      this.table1.pagination.pageSize = event.pageSize
+      // 查询数据
+      this.loadTable1Data()
+    },
+
+    // 当table2【子表】分页参数变化时触发的事件
+    handleTable2PageChange(event) {
+      // 重新赋值
+      this.table2.pagination.current = event.current
+      this.table2.pagination.pageSize = event.pageSize
+      // 查询数据
+      this.loadTable2Data()
+    },
+
+    /** 公共方法：处理表格选中变化事件 */
+    handleTableSelectRowChange(table, event) {
+      let {row, action, selectedRows, $table} = event
+      // 获取最后一个选中的
+      let lastSelected = selectedRows[selectedRows.length - 1]
+      if (action === 'selected') {
+        table.lastRow = row
+      } else if (action === 'selected-all') {
+        // 取消全选
+        if (selectedRows.length === 0) {
+          table.lastRow = null
+        } else if (!table.lastRow) {
+          table.lastRow = lastSelected
+        }
+      } else if (action === 'unselected' && row === table.lastRow) {
+        table.lastRow = lastSelected
+      }
+      $table.setCurrentRow(table.lastRow)
+      table.selectedRows = selectedRows
+    },
+
   }
+}
 </script>
 
-<style lang="less">
-  /** 隐藏文件小图标 */
-  .template-5-tree.ant-tree {
-    li span.ant-tree-switcher.ant-tree-switcher-noop {
-      display: none;
-    }
-  }
+<style scoped>
+
 </style>

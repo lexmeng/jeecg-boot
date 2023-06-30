@@ -12,7 +12,7 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls('固定资产表')">导出</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('软件分配表1')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
@@ -69,8 +69,7 @@
 
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
-          <a-divider type="vertical" />
-          <a @click="handleTransfer(record)">调拨</a>
+
           <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
@@ -90,8 +89,7 @@
       </a-table>
     </div>
 
-    <it-fa-modal ref="modalForm" @ok="modalFormOk"></it-fa-modal>
-    <it-fa-transfer-drawer ref="transferForm" @ok="trasferFormOk"></it-fa-transfer-drawer>
+    <it-software-rule-modal ref="modalForm" @ok="modalFormOk"></it-software-rule-modal>
   </a-card>
 </template>
 
@@ -100,20 +98,18 @@
   import '@/assets/less/TableExpand.less'
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import ItFaModal from './modules/ItFaModal'
-  import ItFaTransferDrawer from "@views/it/modules/ItFaTransferDrawer";
+  import ItSoftwareRuleModal from './modules/ItSoftwareRuleModal'
   import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
 
   export default {
-    name: 'ItFaList',
+    name: 'ItSoftwareRuleList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
-      ItFaModal,
-      ItFaTransferDrawer
+      ItSoftwareRuleModal
     },
     data () {
       return {
-        description: '固定资产表管理页面',
+        description: '软件分配表1管理页面',
         // 表头
         columns: [
           {
@@ -127,77 +123,20 @@
             }
           },
           {
-            title:'固定资产编号',
+            title:'软件名称',
             align:"center",
-            dataIndex: 'fixedAssetsNumber'
+            dataIndex: 'name'
           },
           {
-            title:'设备名称',
+            title:'使用者',
             align:"center",
-            dataIndex: 'equipmentName'
+            dataIndex: 'owner_dictText'
           },
           {
-            title:'设备型号',
+            title:'在用',
             align:"center",
-            dataIndex: 'equipmentModel'
-          },
-          {
-            title:'使用状态',
-            align:"center",
-            dataIndex: 'useState_dictText'
-          },
-          {
-            title:'使用部门',
-            align:"center",
-            dataIndex: 'useOrgCode'
-          },
-          {
-            title:'保管人员',
-            align:"center",
-            dataIndex: 'useOwner'
-          },
-          {
-            title:'存放地点',
-            align:"center",
-            dataIndex: 'site_dictText'
-          },
-          {
-            title:'邮箱',
-            align:"center",
-            dataIndex: 'equEmail'
-          },
-          {
-            title:'设备原值',
-            align:"center",
-            dataIndex: 'equOriValue'
-          },
-          {
-            title:'设备净值',
-            align:"center",
-            dataIndex: 'equNetValue'
-          },
-          {
-            title:'折旧期数',
-            align:"center",
-            dataIndex: 'equYear'
-          },
-          {
-            title:'设备分类',
-            align:"center",
-            dataIndex: 'equipmentClass_dictText'
-          },
-          {
-            title:'时间',
-            align:"center",
-            dataIndex: 'itTime',
-            customRender:function (text) {
-              return !text?"":(text.length>10?text.substr(0,10):text)
-            }
-          },
-          {
-            title:'备注',
-            align:"center",
-            dataIndex: 'remarks'
+            dataIndex: 'yesOrNo',
+            customRender: (text) => (text ? filterMultiDictText(this.dictOptions['yesOrNo'], text) : ''),
           },
           {
             title: '操作',
@@ -209,11 +148,11 @@
           }
         ],
         url: {
-          list: "/it/itFa/list",
-          delete: "/it/itFa/delete",
-          deleteBatch: "/it/itFa/deleteBatch",
-          exportXlsUrl: "/it/itFa/exportXls",
-          importExcelUrl: "it/itFa/importExcel",
+          list: "/it/itSoftwareRule/list",
+          delete: "/it/itSoftwareRule/delete",
+          deleteBatch: "/it/itSoftwareRule/deleteBatch",
+          exportXlsUrl: "/it/itSoftwareRule/exportXls",
+          importExcelUrl: "it/itSoftwareRule/importExcel",
           
         },
         dictOptions:{},
@@ -221,7 +160,8 @@
       }
     },
     created() {
-      this.getSuperFieldList();
+      this.$set(this.dictOptions, 'yesOrNo', [{text:'是',value:'YES'},{text:'否',value:'NO'}])
+    this.getSuperFieldList();
     },
     computed: {
       importExcelUrl: function(){
@@ -229,33 +169,13 @@
       },
     },
     methods: {
-      handleTransfer(record){
-        console.log('handleTransfer', record)
-        this.$refs.transferForm.transfer(record)
-        this.$refs.transferForm.title="资产调拨"
-        this.$refs.transferForm.disableSubmit = false;
-      },
-      trasferFormOk(){
-
-      },
       initDictConfig(){
       },
       getSuperFieldList(){
         let fieldList=[];
-        fieldList.push({type:'string',value:'fixedAssetsNumber',text:'固定资产编号',dictCode:''})
-        fieldList.push({type:'string',value:'equipmentName',text:'设备名称',dictCode:''})
-        fieldList.push({type:'string',value:'equipmentModel',text:'设备型号',dictCode:''})
-        fieldList.push({type:'string',value:'useState',text:'使用状态',dictCode:'use_type'})
-        fieldList.push({type:'string',value:'useOrgCode',text:'使用部门',dictCode:''})
-        fieldList.push({type:'string',value:'useOwner',text:'保管人员',dictCode:''})
-        fieldList.push({type:'string',value:'site',text:'存放地点',dictCode:'it_site'})
-        fieldList.push({type:'string',value:'equEmail',text:'邮箱',dictCode:''})
-        fieldList.push({type:'double',value:'equOriValue',text:'设备原值',dictCode:''})
-        fieldList.push({type:'double',value:'equNetValue',text:'设备净值',dictCode:''})
-        fieldList.push({type:'string',value:'equYear',text:'折旧期数',dictCode:''})
-        fieldList.push({type:'string',value:'equipmentClass',text:'设备分类',dictCode:'equ_type'})
-        fieldList.push({type:'date',value:'itTime',text:'时间'})
-        fieldList.push({type:'string',value:'remarks',text:'备注',dictCode:''})
+        fieldList.push({type:'string',value:'name',text:'软件名称',dictCode:'SOFTWARE_TYPE'})
+        fieldList.push({type:'string',value:'owner',text:'使用者',dictCode:''})
+        fieldList.push({type:'switch',value:'yesOrNo',text:'在用'})
         this.superFieldList = fieldList
       }
     }

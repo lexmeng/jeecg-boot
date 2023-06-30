@@ -33,7 +33,7 @@ import java.util.Arrays;
 */
 @Api(tags="IT软件月成本")
 @RestController
-@RequestMapping("/it/itSoftwareMonthlyCostController")
+@RequestMapping("/it/itSoftwareMonthlyCost")
 @Slf4j
 public class ItSoftwareMonthlyCostController extends JeecgController<ItSoftwareMonthlyCost, IItSoftwareMonthlyCostService> {
    @Autowired
