@@ -49,7 +49,7 @@ public class FeiShuVoMappingUtil {
         sysUser.setSex(user.getGender());
         sysUser.setEmail(user.getEmail());
         sysUser.setPhone(user.getMobile());
-        sysUser.setStatus(user.getStatus().getIsActivated() ? 1 : 2);
+        sysUser.setStatus(user.getStatus().getIsActivated() && !user.getStatus().getIsResigned() ? 1 : 2);
         sysUser.setDelFlag(user.getStatus().getIsResigned() ? 1 : 0);
 
         return sysUser;
