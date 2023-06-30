@@ -172,7 +172,7 @@ public class ItSoftwareMonthlyCostController extends JeecgController<ItSoftwareM
    @RequestMapping(value="/generateMonthlyCost", method = RequestMethod.POST)
    public Result<?> generateMonthlyCost(@RequestParam(name="year",required=true) String year, @RequestParam(name="month",required=true) String month){
        itSoftwareMonthlyCostBPService.generateMonthlyCost(year,month);
-       itSoftwareMonthlyCostBPService.validate(year, month);
+       //itSoftwareMonthlyCostBPService.validate(year, month);
        feishuMessageUtils.sendFeiShuMsg(String.format("%s年%s月软件价格记录生成完成",year, month));
        return Result.OK("生成完成");
    }

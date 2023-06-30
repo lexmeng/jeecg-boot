@@ -76,6 +76,10 @@ public class ItSoftwareMonthlyCostBPService {
 
     private List<ItSoftwareRule> itSoftwareRuleList = new ArrayList<>();
 
+    private Map<String, List<ItSoftwareRule>> totalPriceUserMap = new HashMap<>();
+
+    private Map<String, Set<String>> totalPriceUserSet = new HashMap<>();
+
     private void initialUnitPriceMap(){
         List<ItCostRuleMonth> itCostRuleMonthList = itCostRuleMonthService.list();
         for(ItCostRuleMonth itCostRuleMonth: itCostRuleMonthList){
@@ -107,6 +111,26 @@ public class ItSoftwareMonthlyCostBPService {
 
     private void initialSoftwareRule(){
         itSoftwareRuleList = itSoftwareRuleService.list();
+    }
+
+    private void initialTotalPriceUserMap(){
+        List<ItCostRuleYear> itCostRuleYearList = itCostRuleYearService.list();
+
+        for(ItCostRuleYear itCostRuleYear : itCostRuleYearList){
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", itCostRuleYear.getSoftwareName());
+            map.put("yes_or_no", "YES");
+            List<ItSoftwareRule> list = itSoftwareRuleService.listByMap(map);
+            totalPriceUserMap.put(itCostRuleYear.getSoftwareName(), list);
+
+            Set<String> set = new HashSet<>();
+            for(ItSoftwareRule rule : list){
+                set.add(rule.getOwner());
+            }
+            totalPriceUserSet.put(itCostRuleYear.getSoftwareName(),set);
+        }
+
     }
 
     private void validate(){
@@ -145,9 +169,9 @@ public class ItSoftwareMonthlyCostBPService {
         }
     }
 
-    private Boolean findUserRule(String userName){
+    private Boolean findUserRule(String userName, String softwareName){
         for(ItSoftwareRule itSoftwareRule : itSoftwareRuleList){
-            if(itSoftwareRule.getOwner().equals(userName)){
+            if(itSoftwareRule.getOwner().equals(userName) && itSoftwareRule.getName().equals(softwareName)){
                 if(itSoftwareRule.getYesOrNo().equals("YES")){
                     return true;
                 }else{
@@ -155,20 +179,55 @@ public class ItSoftwareMonthlyCostBPService {
                 }
             }
         }
-        feishuMessageUtils.sendFeiShuMsg(userName + "没有包含在itSoftwareRule表中！");
-        log.error(userName + "没有包含在itSoftwareRule表中！");
-        throw new BussinessException(userName + "没有包含在itSoftwareRule表中！");
+        feishuMessageUtils.sendFeiShuMsg(userName + ":"+softwareName+"没有包含在itSoftwareRule表中！");
+        log.error(userName + ":"+softwareName+"没有包含在itSoftwareRule表中！");
+        throw new BussinessException(userName + ":"+softwareName+"没有包含在itSoftwareRule表中！");
+    }
+
+    private Boolean findUserRuleTotalSoftware(String userName){
+        for(String softwareName : softwareUnitPrice.keySet()){
+            if(!findUserRule(userName, softwareName)){
+                return false;
+            }
+        }
+
+        for(String softwareName : softwareTotalPrice.keySet()){
+            if(!findUserRule(userName, softwareName)){
+                return false;
+            }
+        }
+
+        return true;
     }
     @Transactional
     private void saveBatchMap(Map<String, Double> unitPriceMap, String year, String month, String userName, String departmentName){
-        Boolean isNeeded = findUserRule(userName);
-        if(!isNeeded){
-            return;
-        }
-
         List<ItSoftwareMonthlyCost> list = new ArrayList<>();
 
         for(String softwareName : unitPriceMap.keySet()){
+            Boolean isNeeded = findUserRule(userName, softwareName);
+            if(!isNeeded){
+                continue;
+            }
+            ItSoftwareMonthlyCost cost = new ItSoftwareMonthlyCost();
+            cost.setYear(Integer.parseInt(year));
+            cost.setMonth(Integer.parseInt(month));
+            cost.setOwner(userName);
+            cost.setSoftwareName(softwareName);
+            cost.setDepartment(departmentName);
+            cost.setCost(unitPriceMap.get(softwareName));
+            list.add(cost);
+        }
+        itSoftwareMonthlyCostService.saveBatch(list);
+    }
+
+    @Transactional
+    private void saveBatchMapForTotalPrice(Map<String, Double> unitPriceMap, String year, String month, String userName, String departmentName){
+        List<ItSoftwareMonthlyCost> list = new ArrayList<>();
+
+        for(String softwareName : unitPriceMap.keySet()){
+            if(!totalPriceUserSet.get(softwareName).contains(userName)){
+                continue;
+            }
             ItSoftwareMonthlyCost cost = new ItSoftwareMonthlyCost();
             cost.setYear(Integer.parseInt(year));
             cost.setMonth(Integer.parseInt(month));
@@ -186,6 +245,7 @@ public class ItSoftwareMonthlyCostBPService {
         initialUnitPriceMap();
         initialTotalPriceMap();
         initialSoftwareRule();
+        initialTotalPriceUserMap();
         validate();
         //如果已经有数据，则提示
         Map<String,Object> queryMap = new HashMap<>();
@@ -217,10 +277,12 @@ public class ItSoftwareMonthlyCostBPService {
                 continue;
             }
             //该用户不需要记录
-            if(!findUserRule(user.getUsername())){
+            /*
+            if(!findUserRuleTotalSoftware(user.getUsername())){
                 log.info(user.getUsername() + "不需要记录");
                 continue;
             }
+            */
             validUserList.add(user);
             userTotal++;
 
@@ -244,12 +306,17 @@ public class ItSoftwareMonthlyCostBPService {
                 Map<String, Double> unitPriceMap = new HashMap<>();
                 //2、save total price to db
                 for(String softwareName : softwareTotalPrice.keySet()){
+                    Integer totalPriceUserTotal = totalPriceUserMap.get(softwareName).size();
+                    if(totalPriceUserTotal.equals(0)){
+                        feishuMessageUtils.sendFeiShuMsg(String.format("%s没人使用，单价溢出！",softwareName));
+                        throw new BussinessException(String.format("%s没人使用，单价溢出！",softwareName));
+                    }
                     Double monthPrice = softwareTotalPrice.get(softwareName)/12d;
-                    Double unitPrice = limitDoubleTwo(monthPrice/userTotal);
+                    Double unitPrice = limitDoubleTwo(monthPrice/totalPriceUserTotal);
                     unitPriceMap.put(softwareName, unitPrice);
                 }
                 //save to db
-                saveBatchMap(unitPriceMap, year, month, user.getUsername(), userDepartmentMap.get(user.getUsername()));
+                saveBatchMapForTotalPrice(unitPriceMap, year, month, user.getUsername(), userDepartmentMap.get(user.getUsername()));
             }
         }
 
@@ -264,9 +331,11 @@ public class ItSoftwareMonthlyCostBPService {
             if(departmentNameList == null || departmentNameList.isEmpty()){
                 continue;
             }
-            if(!findUserRule(user.getUsername())){
+            /*
+            if(!findUserRuleTotalSoftware(user.getUsername())){
                 continue;
             }
+            */
             userTotal++;
         }
 
