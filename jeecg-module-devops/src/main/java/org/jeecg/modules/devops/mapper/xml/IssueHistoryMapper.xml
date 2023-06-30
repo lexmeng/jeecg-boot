@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.devops.mapper.IssueHistoryMapper">
+
+    <select id="selectBatchNumBySort" resultType="java.lang.Integer">
+        select * from
+        (select distinct(batch_num) from pub_issue_history where publishlist_id = #{publishlistId}) as batch_num
+        order by batch_num
+        limit #{start}, #{size}
+    </select>
+
+    <select id="selectBatchNumCount" resultType="java.lang.Integer">
+        select count(distinct(batch_num)) from
+        pub_issue_history
+        where publishlist_id = #{publishlistId}
+    </select>
+
+
+</mapper>

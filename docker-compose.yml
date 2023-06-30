@@ -1,0 +1,60 @@
+version: '2'
+services:
+  devops-web-mysql:
+    build:
+      context: ./db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+      TZ: Asia/Shanghai
+    restart: always
+    container_name: jeecg-boot-mysql
+    image: jeecg-boot-mysql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --max_allowed_packet=128M
+      --default-authentication-plugin=caching_sha2_password
+    ports:
+      - 3306:3306
+
+  devops-web-redis:
+    image: redis:5.0
+    networks:
+      - devopsweb_default
+    ports:
+      - 6379:6379
+    restart: always
+    hostname: devops-web-redis
+    container_name: devops-web-redis
+
+  devops-web-server:
+    build:
+      context: ./jeecg-module-system/jeecg-system-start
+    restart: on-failure
+    depends_on:
+      - devops-web-mysql
+      - devops-web-redis
+    container_name: jeecg-boot-system
+    image: jeecg-boot-system
+    hostname: jeecg-boot-system
+    networks:
+      - devopsweb_default
+    ports:
+      - 8080:8080
+  devops-web-frontend:
+    restart: on-failure
+    depends_on:
+      - devops-web-server
+    container_name: devops-web-frontend
+    image: repo-ofs.kyligence.com/devops-web-frontend:3.3.0
+    hostname: devops-web-frontend
+    networks:
+      - devopsweb_default
+    ports:
+      - 8088:80
+      - 8443:443
+networks:
+  devopsweb_default:
